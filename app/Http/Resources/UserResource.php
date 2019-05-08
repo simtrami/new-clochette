@@ -3,7 +3,7 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\Resource;
+use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
  * @property mixed id
@@ -13,7 +13,7 @@ use Illuminate\Http\Resources\Json\Resource;
  * @method getRoleNames()
  * @method getPermissionNames()
  */
-class UserResource extends Resource
+class UserResource extends JsonResource
 {
     /**
      * Transform the resource collection into an array.

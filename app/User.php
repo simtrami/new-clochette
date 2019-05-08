@@ -2,7 +2,7 @@
 
 namespace App;
 
-use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Foundation\Auth\User as Authenticable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
@@ -10,7 +10,7 @@ use Spatie\Permission\Traits\HasRoles;
 /**
  * @method static paginate(int $int)
  */
-class User extends Authenticatable
+class User extends Authenticable
 {
     use HasRoles, HasApiTokens, Notifiable;
 
