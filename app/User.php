@@ -7,9 +7,12 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 
+/**
+ * @method static paginate(int $int)
+ */
 class User extends Authenticatable
 {
-    use HasApiTokens, Notifiable;
+    use HasRoles, HasApiTokens, Notifiable;
 
     /**
      * The attributes that are mass assignable.
