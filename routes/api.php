@@ -31,3 +31,17 @@ Route::group(['namespace' => 'Api', 'prefix' => '/customers'], function () {
     Route::put('/{customer}', 'CustomersController@update');
     Route::delete('/{customer}', 'CustomersController@destroy');
 });
+Route::group(['namespace' => 'Api', 'prefix' => '/suppliers'], function () {
+    Route::get('/', 'SuppliersController@index');
+    Route::post('/', 'SuppliersController@store');
+    Route::get('/{supplier}', 'SuppliersController@show');
+    Route::put('/{supplier}', 'SuppliersController@update');
+    Route::delete('/{supplier}', 'SuppliersController@destroy');
+});
+Route::group(['namespace' => 'Api', 'prefix' => '/contacts'], function () {
+    Route::get('/', 'ContactsController@index');
+    Route::post('/', 'ContactsController@store');
+    Route::get('/{contact}', 'ContactsController@show');
+    Route::put('/{contact}', 'ContactsController@update');
+    Route::delete('/{contact}', 'ContactsController@destroy');
+});
