@@ -43,7 +43,7 @@ class UsersController extends Controller
             'name' => 'required|string',
             'username' => 'required|string|unique:users',
             'email' => 'required|email|unique:users',
-            'password' => 'required|confirmed'
+            'password' => 'required|confirmed',
         ]);
 
         $data['password'] = Hash::make($data['password']);
@@ -72,7 +72,7 @@ class UsersController extends Controller
                 'email',
                 Rule::unique('users')->ignore($user)
             ],
-            'password' => 'confirmed'
+            'password' => 'confirmed',
         ]);
 
         if ($request->has('password')) {

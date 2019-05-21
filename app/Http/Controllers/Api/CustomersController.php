@@ -44,7 +44,7 @@ class CustomersController extends Controller
             'nickname' => 'required|string|min:2|max:100|unique:customers',
             'balance' => 'required|numeric',
             'is_staff' => 'boolean',
-            'staff_nickname' => 'nullable|string|min:2|max:100|unique:customers'
+            'staff_nickname' => 'nullable|string|min:2|max:100|unique:customers',
         ]);
 
         $customer = new Customer($data);
@@ -66,13 +66,13 @@ class CustomersController extends Controller
             'last_name' => 'string',
             'nickname' => [
                 'string', 'min:2', 'max:100',
-                Rule::unique('customers')->ignore($customer)
+                Rule::unique('customers')->ignore($customer),
             ],
             'balance' => 'numeric',
             'is_staff' => 'boolean',
             'staff_nickname' => [
                 'nullable', 'string', 'min:2', 'max:100',
-                Rule::unique('customers')->ignore($customer)
+                Rule::unique('customers')->ignore($customer),
             ],
         ]);
 

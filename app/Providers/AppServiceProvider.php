@@ -13,7 +13,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        // Write something here...
     }
 
     /**
@@ -23,6 +23,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        // Write something here...
     }
 }

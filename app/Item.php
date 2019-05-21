@@ -117,10 +117,11 @@ class Item extends Model
             // First value is the same, second value is null and has to be set
             // Active price is updated in this case only
             if ($activePrice) {
-                if ($activePrice->value == $first_value && !$activePrice->second_value && $second_value) {
+                !($activePrice->value == $first_value &&
+                    !$activePrice->second_value &&
+                    $second_value) ?:
                     $activePrice->update(['second_value' => $second_value]);
-                    return;
-                }
+                return;
             }
 
             // In other cases, a new Price is created and the current active price is deactivated afterward
@@ -134,25 +135,31 @@ class Item extends Model
 
             $activePrice->deactivate();
         } else {
-            // The values already exist in an active or inactive price related to this item, activating it if necessary
-            $existingPrice = $this->prices()->where(['value' => $first_value, 'second_value' => $second_value])->first();
+            // The values already exist in a price related to this item.
+            // It is activated if necessary.
+            $existingPrice = $this->prices()
+                ->where([
+                    'value' => $first_value,
+                    'second_value' => $second_value])
+                ->first();
             /** @var Price $existingPrice */
-            $this->setActivePrice($existingPrice);
+            $this->switchActivePrice($existingPrice);
         }
     }
 
     /**
      * @param Price $price
      */
-    public function setActivePrice(Price $price)
+    public function switchActivePrice(Price $price)
     {
         // Given price has to be one of the item's prices
         if (!$this->prices->contains('id', $price->id)) {
-            throw new ModelNotFoundException("Price not found in item's prices.");
+            throw new ModelNotFoundException(
+                "Price not found in item's prices.");
         }
 
         // Deactivate currently activated price if it is not the given price
-        if (!$price->isActive() && !empty($this->activePrice())) {
+        if (!$price->isActive() && $this->activePrice()) {
             $this->activePrice()->deactivate();
         }
         // This function doesn't do anything if the given price is already activated
@@ -164,8 +171,9 @@ class Item extends Model
      */
     public function changeSecondPrice($value)
     {
-        if (empty($this->activePrice())) {
-            throw new ModelNotFoundException("Item does not have an active price.");
+        if (!$this->activePrice()) {
+            throw new ModelNotFoundException(
+                "Item does not have an active price.");
         }
         $this->changePrices($this->activePrice()->value, $value);
     }

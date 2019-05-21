@@ -2,9 +2,19 @@
 
 namespace App\Http\Resources;
 
+use App\Article;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * @property Article article
+ * @property float volume
+ * @property string withdrawal_type
+ * @property mixed article_id
+ * @method name()
+ * @method quantity()
+ * @method pricesHistory()
+ */
 class BarrelResource extends JsonResource
 {
     /**
@@ -16,9 +26,9 @@ class BarrelResource extends JsonResource
     public function toArray($request)
     {
         $ret = [
-            'id' => $this->article->item_id,
-            'name' => $this->article->name(),
-            'quantity' => $this->article->quantity(),
+            'id' => $this->article_id,
+            'name' => $this->name(),
+            'quantity' => $this->quantity(),
             'unitPrice' => $this->article->unit_price,
         ];
         $price = $this->article->price();
@@ -28,7 +38,7 @@ class BarrelResource extends JsonResource
             'secondValue' => $price->second_value,
         ];
         $ret = array_merge($ret, [
-            'pricesHistory' => $this->article->pricesHistory(),
+            'pricesHistory' => $this->pricesHistory(),
 //            'kits' => KitResource::collection($this->whenLoaded('kits')),
             'volume' => $this->volume,
             'withdrawalType' => $this->withdrawal_type,
@@ -42,7 +52,7 @@ class BarrelResource extends JsonResource
                 'address' => $supplier->address,
                 'phone' => $supplier->phone,
                 'email' => $supplier->email,
-                'supplierSince' => $supplier->supplier_since
+                'supplierSince' => $supplier->supplier_since,
             ];
         }
 

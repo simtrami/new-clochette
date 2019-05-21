@@ -44,7 +44,7 @@ class SuppliersController extends Controller
             'address' => 'nullable|string',
             'phone' => 'nullable|string',
             'email' => 'nullable|email',
-            'supplier_since' => 'required|date'
+            'supplier_since' => 'required|date',
         ]);
 
         $supplier = new Supplier($data);
@@ -64,13 +64,13 @@ class SuppliersController extends Controller
         $data = $request->validate([
             'name' => [
                 'string', 'min:2', 'max:255',
-                Rule::unique('suppliers')->ignore($supplier)
+                Rule::unique('suppliers')->ignore($supplier),
             ],
             'description' => 'string|min:2|max:500',
             'address' => 'nullable|string',
             'phone' => 'nullable|string',
             'email' => 'nullable|email',
-            'supplier_since' => 'date'
+            'supplier_since' => 'date',
         ]);
 
         $supplier->update($data);

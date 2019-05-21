@@ -25,7 +25,8 @@ class BarrelsController extends Controller
      */
     public function index()
     {
-        return ArticleResource::collection(Article::has('barrel')->paginate(10));
+        return ArticleResource::collection(Article::has('barrel')
+            ->paginate(10));
     }
 
     /**
@@ -34,9 +35,7 @@ class BarrelsController extends Controller
      */
     public function show(Barrel $barrel)
     {
-        if ($barrel->article->trashed()) {
-            throw new NotFoundHttpException("Requested resource does not exist or has been deleted.");
-        }
+        $this->checkIfTrashed($barrel);
         return new BarrelResource($barrel);
     }
 
@@ -54,23 +53,22 @@ class BarrelsController extends Controller
             'value' => 'required|numeric|min:0',
             'second_value' => 'nullable|numeric|min:0',
             'volume' => 'required|numeric|min:0',
-            'withdrawal_type' => 'required|string|min:1|max:255'
+            'withdrawal_type' => 'required|string|min:1|max:255',
         ]);
-
-        $barrel = new Barrel($data);
-
-        $article = new Article($data);
-        if ($request->has('supplier_id')) {
-            $article->supplier()->associate(Supplier::find($data['supplier_id']));
-        }
 
         $item = new Item($data);
         $item->save();
         $item->prices()->save(new Price($data));
 
+        $article = new Article($data);
+        if ($request->has('supplier_id')) {
+            $article->supplier()
+                ->associate(Supplier::find($data['supplier_id']));
+        }
         $article->item()->associate(Item::find($item->id));
         $article->save();
 
+        $barrel = new Barrel($data);
         $barrel->article()->associate(Article::find($item->id));
         $barrel->save();
 
@@ -84,9 +82,7 @@ class BarrelsController extends Controller
      */
     public function update(Barrel $barrel, Request $request)
     {
-        if ($barrel->article->trashed()) {
-            throw new NotFoundHttpException("Requested resource does not exist or has been deleted.");
-        }
+        $this->checkIfTrashed($barrel);
 
         $data = $request->validate([
             'name' => 'string|min:2|max:255',
@@ -96,7 +92,7 @@ class BarrelsController extends Controller
             'value' => 'numeric|min:0',
             'second_value' => 'nullable|numeric|min:0',
             'volume' => 'numeric|min:0',
-            'withdrawal_type' => 'string|min:1|max:255'
+            'withdrawal_type' => 'string|min:1|max:255',
         ]);
 
         $item = $barrel->article->item;
@@ -104,13 +100,7 @@ class BarrelsController extends Controller
         $item->update($data);
 
         // Update price / create a new one
-        if ($request->has(['value', 'second_value'])) {
-            $item->changePrices($data['value'], $data['second_value']);
-        } elseif ($request->has('value')) {
-            $item->changePrice($data['value']);
-        } elseif ($request->has('second_value')) {
-            $item->changeSecondPrice($data['second_value']);
-        }
+        $this->updatePrice($barrel, $request, $data);
 
         $article = $barrel->article;
         // Update article's fields
@@ -118,7 +108,8 @@ class BarrelsController extends Controller
 
         // Update supplier
         if ($request->has('supplier_id')) {
-            $article->supplier()->associate(Supplier::find($data['supplier_id']));
+            $article->supplier()
+                ->associate(Supplier::find($data['supplier_id']));
             $article->update();
         }
 
@@ -135,9 +126,7 @@ class BarrelsController extends Controller
      */
     public function destroy(Barrel $barrel)
     {
-        if ($barrel->trashed() && $barrel->article->trashed() && $barrel->article->item->trashed()) {
-            throw new NotFoundHttpException("Requested resource does not exist or has been deleted.");
-        }
+        $this->checkIfTrashed($barrel);
 
         try {
             $barrel->article->item->delete();
@@ -148,5 +137,34 @@ class BarrelsController extends Controller
         }
 
         return response(null, 204);
+    }
+
+    /**
+     * @param Barrel $barrel
+     * @param Request $request
+     * @param array $data
+     */
+    private function updatePrice(Barrel $barrel, Request $request, array $data)
+    {
+        if ($request->has(['value', 'second_value'])) {
+            $barrel->changePrices($data['value'], $data['second_value']);
+        } elseif ($request->has('value')) {
+            $barrel->changePrice($data['value']);
+        } elseif ($request->has('second_value')) {
+            $barrel->changeSecondPrice($data['second_value']);
+        }
+    }
+
+    /**
+     * @param Barrel $barrel
+     */
+    private function checkIfTrashed(Barrel $barrel)
+    {
+        if ($barrel->trashed() ||
+            $barrel->article->trashed() ||
+            $barrel->article->item->trashed()) {
+            throw new NotFoundHttpException(
+                "Requested resource does not exist or has been deleted.");
+        }
     }
 }

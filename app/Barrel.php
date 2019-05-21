@@ -50,33 +50,31 @@ class Barrel extends Model
     /**
      * @param $value
      */
-    public function setPrice($value)
+    public function changePrice($value)
     {
-        $this->article->item->setPrice($value);
+        $this->article->item->changePrice($value);
     }
 
     /**
      * @param $value
      */
-    public function setSecondPrice($value)
+    public function changeSecondPrice($value)
     {
-        $this->article->item->setSecondPrice($value);
+        $this->article->item->changeSecondPrice($value);
     }
 
     /**
      * @param $first_value
      * @param null $second_value
      */
-    public function setPrices($first_value, $second_value = null)
+    public function changePrices($first_value, $second_value = null)
     {
-        $this->article->item->setPrices($first_value, $second_value);
+        $this->article->item->changePrices($first_value, $second_value);
     }
 
     ##
     # Extended Properties
     # Must be called with parenthesis
-    # camelCase: made up property
-    # snake_case: parent's attribute
     ##
 
     /**
@@ -96,35 +94,11 @@ class Barrel extends Model
     }
 
     /**
-     * @return Collection|null
-     */
-    public function kits()
-    {
-        return $this->article->kits;
-    }
-
-    /**
-     * @return Supplier|null
-     */
-    public function supplier()
-    {
-        return $this->article->supplier;
-    }
-
-    /**
      * @return string
      */
     public function name()
     {
         return $this->article->item->name;
-    }
-
-    /**
-     * @return float
-     */
-    public function unit_price()
-    {
-        return $this->article->unit_price;
     }
 
     /**

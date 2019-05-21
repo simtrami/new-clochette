@@ -22,6 +22,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property Supplier|null supplier
  * @property float unit_price
  * @property DateTime updated_at
+ * @method price()
  */
 class Article extends Model
 {
@@ -63,7 +64,8 @@ class Article extends Model
      */
     public function kits()
     {
-        return $this->belongsToMany(Kit::class, 'kits_articles', 'article_id', 'kit_id')
+        return $this
+            ->belongsToMany(Kit::class, 'kits_articles', 'article_id', 'kit_id')
             ->using(KitArticle::class)->withPivot('quantity')->withTimestamps();
     }
 
@@ -103,13 +105,7 @@ class Article extends Model
     # Functions
     ##
 
-    /**
-     * @return Collection|null
-     */
-    public function pricesHistory()
-    {
-        return $this->item->pricesHistory();
-    }
+    // Write something here...
 
     ##
     # Extended Properties
@@ -119,53 +115,20 @@ class Article extends Model
     ##
 
     /**
-     * @return Collection|null
-     */
-    public function prices()
-    {
-        return $this->item->prices;
-    }
-
-    /**
-     * @return Price|null
-     */
-    public function price()
-    {
-        return $this->item->price();
-    }
-
-    /**
      * @return string|null
      */
     public function type()
     {
-        if (!is_null($this->barrel)) {
+        if ($this->barrel) {
             return 'barrel';
-        } elseif (!is_null($this->bottle)) {
+        } elseif ($this->bottle) {
             return 'bottle';
-        } elseif (!is_null($this->food)) {
+        } elseif ($this->food) {
             return 'food';
-        } elseif (!is_null($this->other)) {
+        } elseif ($this->other) {
             return 'other';
         } else {
             return null;
         }
     }
-
-    /**
-     * @return string
-     */
-    public function name()
-    {
-        return $this->item->name;
-    }
-
-    /**
-     * @return float
-     */
-    public function quantity()
-    {
-        return $this->item->quantity;
-    }
-
 }

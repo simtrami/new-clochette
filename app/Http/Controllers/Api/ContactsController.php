@@ -69,7 +69,7 @@ class ContactsController extends Controller
             'phone' => 'string',
             'email' => [
                 'email',
-                Rule::unique('contacts')->ignore($contact)
+                Rule::unique('contacts')->ignore($contact),
             ],
             'role' => 'string|min:2|max:255',
             'notes' => 'nullable|string|min:2|max:500',
