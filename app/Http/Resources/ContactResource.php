@@ -33,7 +33,7 @@ class ContactResource extends JsonResource
             'phone' => $this->phone,
             'email' => $this->email,
             'role' => $this->role,
-            'notes' => $this->notes
+            'notes' => $this->notes,
         ];
     }
 }

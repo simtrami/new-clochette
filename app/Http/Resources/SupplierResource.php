@@ -33,7 +33,7 @@ class SupplierResource extends JsonResource
             'phone' => $this->phone,
             'email' => $this->email,
             'supplierSince' => $this->supplier_since,
-            'contacts' => ContactResource::collection($this->whenLoaded('contacts'))
+            'contacts' => ContactResource::collection($this->whenLoaded('contacts')),
         ];
     }
 }
