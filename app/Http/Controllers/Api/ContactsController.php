@@ -89,8 +89,8 @@ class ContactsController extends Controller
     {
         try {
             $contact->delete();
-        } catch (Exception $e) {
-            return response()->json($e, 500);
+        } catch (Exception $err) {
+            return response()->json($err, 500);
         }
 
         return response(null, 204);

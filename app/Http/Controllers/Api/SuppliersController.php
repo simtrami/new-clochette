@@ -13,7 +13,6 @@ use Illuminate\Http\Response;
 use Illuminate\Routing\ResponseFactory;
 use Illuminate\Validation\Rule;
 
-
 class SuppliersController extends Controller
 {
     /**
@@ -88,8 +87,8 @@ class SuppliersController extends Controller
     {
         try {
             $supplier->delete();
-        } catch (Exception $e) {
-            return response()->json($e, 500);
+        } catch (Exception $err) {
+            return response()->json($err, 500);
         }
 
         return response(null, 204);
