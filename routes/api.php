@@ -45,3 +45,10 @@ Route::group(['namespace' => 'Api', 'prefix' => '/contacts'], function () {
     Route::put('/{contact}', 'ContactsController@update');
     Route::delete('/{contact}', 'ContactsController@destroy');
 });
+Route::group(['namespace' => 'Api', 'prefix' => '/barrels'], function () {
+    Route::get('/', 'BarrelsController@index');
+    Route::post('/', 'BarrelsController@store');
+    Route::get('/{barrel}', 'BarrelsController@show');
+    Route::put('/{barrel}', 'BarrelsController@update');
+    Route::delete('/{barrel}', 'BarrelsController@destroy');
+});
