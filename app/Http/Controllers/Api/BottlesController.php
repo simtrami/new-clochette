@@ -112,7 +112,7 @@ class BottlesController extends Controller
 
         // Update price / create a new one
         if ($request->has('value')) {
-            $item->changePrices($data['value']);
+            $item->changePrice($data['value']);
         }
 
         $article = $bottle->article;
