@@ -57,8 +57,6 @@ class Item extends Model
     ##
     # Extended Properties
     # Must be called with parenthesis
-    # camelCase: made up property
-    # snake_case: parent's attribute
     ##
 
     /**
@@ -98,56 +96,6 @@ class Item extends Model
     ##
 
     /**
-     * @param $value
-     */
-    public function changePrice($value)
-    {
-        $this->changePrices($value);
-    }
-
-    /**
-     * @param $first_value
-     * @param $second_value = null
-     */
-    public function changePrices($first_value, $second_value = null)
-    {
-        if ($this->prices()->where(['value' => $first_value, 'second_value' => $second_value])->doesntExist()) {
-            $activePrice = $this->activePrice();
-
-            // First value is the same, second value is null and has to be set
-            // Active price is updated in this case only
-            if ($activePrice) {
-                !($activePrice->value == $first_value &&
-                    !$activePrice->second_value &&
-                    $second_value) ?:
-                    $activePrice->update(['second_value' => $second_value]);
-                return;
-            }
-
-            // In other cases, a new Price is created and the current active price is deactivated afterward
-            $newPrice = new Price([
-                'item_id' => $this->id,
-                'value' => $first_value,
-                'second_value' => $second_value,
-            ]);
-
-            $this->prices()->save($newPrice);
-
-            $activePrice->deactivate();
-        } else {
-            // The values already exist in a price related to this item.
-            // It is activated if necessary.
-            $existingPrice = $this->prices()
-                ->where([
-                    'value' => $first_value,
-                    'second_value' => $second_value])
-                ->first();
-            /** @var Price $existingPrice */
-            $this->switchActivePrice($existingPrice);
-        }
-    }
-
-    /**
      * @param Price $price
      */
     public function switchActivePrice(Price $price)
@@ -164,6 +112,52 @@ class Item extends Model
         }
         // This function doesn't do anything if the given price is already activated
         $price->activate();
+    }
+
+    /**
+     * @param $first_value
+     * @param $second_value = null
+     */
+    public function changePrices($first_value, $second_value = null)
+    {
+        if ($this->prices()->where(['value' => $first_value, 'second_value' => $second_value])->doesntExist()) {
+            $activePrice = $this->activePrice();
+
+            // First value is the same, second value is null and has to be set
+            // Active price is updated in this case only
+            if ($activePrice) {
+                if ($activePrice->value == $first_value && !$activePrice->second_value && $second_value) {
+                    $activePrice->update(['second_value' => $second_value]);
+                    return;
+                }
+            }
+
+            // In other cases, a new Price is created and the current active price is deactivated afterward
+//            $newPrice = new Price();
+            $this->prices()->create([
+                'value' => $first_value,
+                'second_value' => $second_value,
+            ]);
+            $activePrice->deactivate();
+        } else {
+            // The values already exist in a price related to this item.
+            // It is activated if necessary.
+            $existingPrice = $this->prices()
+                ->where([
+                    'value' => $first_value,
+                    'second_value' => $second_value])
+                ->first();
+            /** @var Price $existingPrice */
+            $this->switchActivePrice($existingPrice);
+        }
+    }
+
+    /**
+     * @param $value
+     */
+    public function changePrice($value)
+    {
+        $this->changePrices($value);
     }
 
     /**

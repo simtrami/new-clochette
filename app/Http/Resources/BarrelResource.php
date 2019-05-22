@@ -14,6 +14,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  * @method name()
  * @method quantity()
  * @method pricesHistory()
+ * @method price()
  */
 class BarrelResource extends JsonResource
 {
@@ -31,7 +32,7 @@ class BarrelResource extends JsonResource
             'quantity' => $this->quantity(),
             'unitPrice' => $this->article->unit_price,
         ];
-        $price = $this->article->price();
+        $price = $this->price();
         $ret['price'] = [
             'id' => $price->id,
             'value' => $price->value,

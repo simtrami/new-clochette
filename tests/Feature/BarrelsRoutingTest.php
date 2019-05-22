@@ -10,7 +10,7 @@ use App\Supplier;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-class BarrelRoutingTest extends TestCase
+class BarrelsRoutingTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -54,7 +54,9 @@ class BarrelRoutingTest extends TestCase
                         'name',
                         'quantity',
                         'unitPrice',
-                        'price',
+                        'price' => [
+                            'id', 'value', 'secondValue',
+                        ],
                         'pricesHistory',
                         'volume',
                         'withdrawalType',
@@ -64,7 +66,9 @@ class BarrelRoutingTest extends TestCase
                         'name',
                         'quantity',
                         'unitPrice',
-                        'price',
+                        'price' => [
+                            'id', 'value', 'secondValue',
+                        ],
                         'pricesHistory',
                         'volume',
                         'withdrawalType',
