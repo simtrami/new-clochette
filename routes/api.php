@@ -66,3 +66,10 @@ Route::group(['namespace' => 'Api', 'prefix' => '/foods'], function () {
     Route::put('/{food}', 'FoodsController@update');
     Route::delete('/{food}', 'FoodsController@destroy');
 });
+Route::group(['namespace' => 'Api', 'prefix' => '/others'], function () {
+    Route::get('/', 'OthersController@index');
+    Route::post('/', 'OthersController@store');
+    Route::get('/{other}', 'OthersController@show');
+    Route::put('/{other}', 'OthersController@update');
+    Route::delete('/{other}', 'OthersController@destroy');
+});
