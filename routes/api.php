@@ -52,3 +52,10 @@ Route::group(['namespace' => 'Api', 'prefix' => '/barrels'], function () {
     Route::put('/{barrel}', 'BarrelsController@update');
     Route::delete('/{barrel}', 'BarrelsController@destroy');
 });
+Route::group(['namespace' => 'Api', 'prefix' => '/bottles'], function () {
+    Route::get('/', 'BottlesController@index');
+    Route::post('/', 'BottlesController@store');
+    Route::get('/{bottle}', 'BottlesController@show');
+    Route::put('/{bottle}', 'BottlesController@update');
+    Route::delete('/{bottle}', 'BottlesController@destroy');
+});

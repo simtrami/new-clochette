@@ -40,7 +40,6 @@ class ArticleResource extends JsonResource
         $ret['price'] = [
             'id' => $price->id,
             'value' => $price->value,
-            'second_value' => $price->second_value,
         ];
         $ret = array_merge($ret, [
             'pricesHistory' => $this->item->pricesHistory(),
@@ -53,6 +52,7 @@ class ArticleResource extends JsonResource
             case 'barrel':
                 $ret['volume'] = $this->barrel->volume;
                 $ret['withdrawalType'] = $this->barrel->withdrawal_type;
+                $ret['price']['secondValue'] = $price->second_value;
                 break;
             case 'bottle':
                 $ret['volume'] = $this->bottle->volume;
