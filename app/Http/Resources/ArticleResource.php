@@ -60,7 +60,7 @@ class ArticleResource extends JsonResource
                 break;
             case 'food':
                 $ret['isBulk'] = $this->food->is_bulk;
-                $ret['unitsLeft'] = $this->food->units_left;
+                $this->food->is_bulk == 0 ?: $ret['unitsLeft'] = $this->food->units_left;
                 break;
             case 'other':
                 $ret['description'] = $this->other->description;

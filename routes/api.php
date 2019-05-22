@@ -59,3 +59,10 @@ Route::group(['namespace' => 'Api', 'prefix' => '/bottles'], function () {
     Route::put('/{bottle}', 'BottlesController@update');
     Route::delete('/{bottle}', 'BottlesController@destroy');
 });
+Route::group(['namespace' => 'Api', 'prefix' => '/foods'], function () {
+    Route::get('/', 'FoodsController@index');
+    Route::post('/', 'FoodsController@store');
+    Route::get('/{food}', 'FoodsController@show');
+    Route::put('/{food}', 'FoodsController@update');
+    Route::delete('/{food}', 'FoodsController@destroy');
+});
