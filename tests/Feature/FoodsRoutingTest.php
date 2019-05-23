@@ -57,7 +57,6 @@ class FoodsRoutingTest extends TestCase
                         'price' => [
                             'id', 'value',
                         ],
-                        'pricesHistory',
                         'isBulk',
                         'unitsLeft',
                     ],
@@ -69,7 +68,6 @@ class FoodsRoutingTest extends TestCase
                         'price' => [
                             'id', 'value',
                         ],
-                        'pricesHistory',
                         'isBulk',
                     ]
                 ]

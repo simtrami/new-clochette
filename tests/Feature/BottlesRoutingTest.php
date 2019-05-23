@@ -57,7 +57,6 @@ class BottlesRoutingTest extends TestCase
                         'price' => [
                             'id', 'value',
                         ],
-                        'pricesHistory',
                         'volume',
                         'isReturnable',
                     ],
@@ -69,7 +68,6 @@ class BottlesRoutingTest extends TestCase
                         'price' => [
                             'id', 'value',
                         ],
-                        'pricesHistory',
                         'volume',
                         'isReturnable',
                     ]

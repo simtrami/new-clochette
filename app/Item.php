@@ -138,7 +138,7 @@ class Item extends Model
                 'value' => $first_value,
                 'second_value' => $second_value,
             ]);
-            $activePrice->deactivate();
+            !$activePrice ?: $activePrice->deactivate();
         } else {
             // The values already exist in a price related to this item.
             // It is activated if necessary.

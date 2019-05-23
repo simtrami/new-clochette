@@ -57,7 +57,6 @@ class BarrelsRoutingTest extends TestCase
                         'price' => [
                             'id', 'value', 'secondValue',
                         ],
-                        'pricesHistory',
                         'volume',
                         'withdrawalType',
                     ],
@@ -69,7 +68,6 @@ class BarrelsRoutingTest extends TestCase
                         'price' => [
                             'id', 'value', 'secondValue',
                         ],
-                        'pricesHistory',
                         'volume',
                         'withdrawalType',
                     ]

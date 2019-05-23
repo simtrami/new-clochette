@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Article;
 use App\Barrel;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\ArticleResource;
+use App\Http\Resources\ArticleCollectionResource;
 use App\Http\Resources\BarrelResource;
 use App\Item;
 use App\Price;
@@ -25,7 +25,7 @@ class BarrelsController extends Controller
      */
     public function index()
     {
-        return ArticleResource::collection(Article::has('barrel')
+        return ArticleCollectionResource::collection(Article::has('barrel')
             ->paginate(10));
     }
 

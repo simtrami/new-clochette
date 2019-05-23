@@ -20,7 +20,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  * @property Other other
  * @method type()
  */
-class ArticleResource extends JsonResource
+class ArticleCollectionResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -41,12 +41,8 @@ class ArticleResource extends JsonResource
             'id' => $price->id,
             'value' => $price->value,
         ];
-        $ret = array_merge($ret, [
-            'pricesHistory' => $this->item->pricesHistory(),
-//            'kits' => KitResource::collection($this->whenLoaded('kits')),
-            'supplier' => SupplierResource::collection(
-                $this->whenLoaded('supplier')),
-        ]);
+        $ret['supplier'] = SupplierResource::collection(
+            $this->whenLoaded('supplier'));
 
         switch ($this->type()) {
             case 'barrel':

@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Article;
 use App\Food;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\ArticleResource;
+use App\Http\Resources\ArticleCollectionResource;
 use App\Http\Resources\FoodResource;
 use App\Item;
 use App\Price;
@@ -25,7 +25,7 @@ class FoodsController extends Controller
      */
     public function index()
     {
-        return ArticleResource::collection(Article::has('food')
+        return ArticleCollectionResource::collection(Article::has('food')
             ->paginate(10));
     }
 

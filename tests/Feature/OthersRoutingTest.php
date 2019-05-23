@@ -57,7 +57,6 @@ class OthersRoutingTest extends TestCase
                         'price' => [
                             'id', 'value',
                         ],
-                        'pricesHistory',
                         'description',
                     ],
                     1 => [
@@ -68,7 +67,6 @@ class OthersRoutingTest extends TestCase
                         'price' => [
                             'id', 'value',
                         ],
-                        'pricesHistory',
                         'description',
                     ]
                 ]

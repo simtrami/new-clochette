@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Article;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\ArticleResource;
+use App\Http\Resources\ArticleCollectionResource;
 use App\Http\Resources\OtherResource;
 use App\Item;
 use App\Other;
@@ -25,7 +25,7 @@ class OthersController extends Controller
      */
     public function index()
     {
-        return ArticleResource::collection(Article::has('other')
+        return ArticleCollectionResource::collection(Article::has('other')
             ->paginate(10));
     }
 
