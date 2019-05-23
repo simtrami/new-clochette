@@ -73,3 +73,10 @@ Route::group(['namespace' => 'Api', 'prefix' => '/others'], function () {
     Route::put('/{other}', 'OthersController@update');
     Route::delete('/{other}', 'OthersController@destroy');
 });
+Route::group(['namespace' => 'Api', 'prefix' => '/kits'], function () {
+    Route::get('/', 'KitsController@index');
+    Route::post('/', 'KitsController@store');
+    Route::get('/{kit}', 'KitsController@show');
+    Route::put('/{kit}', 'KitsController@update');
+    Route::delete('/{kit}', 'KitsController@destroy');
+});
