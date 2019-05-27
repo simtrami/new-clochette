@@ -19,30 +19,17 @@ class FoodsRoutingTest extends TestCase
      */
     public function testIndex()
     {
-        factory(Supplier::class)->create();
-        $supplier = Supplier::first();
-
-        $article_1 = factory(Article::class)->make();
-        $article_2 = factory(Article::class)->make();
-
-        // Verifying the supplier is not loaded when entities are listed
-        $article_1->supplier()->associate($supplier);
-        $article_2->supplier()->associate($supplier);
-
-        $price_1 = factory(Price::class)->make();
-        $price_2 = factory(Price::class)->make();
-        $food_1 = factory(Food::class)->make(['is_bulk' => true, 'units_left' => 50]);
-        $food_2 = factory(Food::class)->make(['is_bulk' => false, 'units_left' => null]);
+        $supplier = factory(Supplier::class)->create();
 
         $item_1 = factory(Item::class)->create();
-        $item_2 = factory(Item::class)->create();
+        factory(Price::class)->create(['item_id' => $item_1->id]);
+        factory(Article::class)->create(['item_id' => $item_1->id, 'supplier_id' => $supplier->id]);
+        factory(Food::class)->create(['article_id' => $item_1->id, 'is_bulk' => true, 'units_left' => 50]);
 
-        $item_1->prices()->save($price_1);
-        $item_1->article()->save($article_1);
-        $item_1->article->food()->save($food_1);
-        $item_2->prices()->save($price_2);
-        $item_2->article()->save($article_2);
-        $item_2->article->food()->save($food_2);
+        $item_2 = factory(Item::class)->create();
+        factory(Price::class)->create(['item_id' => $item_2->id]);
+        factory(Article::class)->create(['item_id' => $item_2->id, 'supplier_id' => $supplier->id]);
+        factory(Food::class)->create(['article_id' => $item_2->id, 'is_bulk' => false, 'units_left' => null]);
 
         $response = $this->get('/api/foods');
 
