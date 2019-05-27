@@ -2,27 +2,47 @@
 
 namespace App;
 
-use DateTime;
+use Eloquent;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Query\Builder;
+use Illuminate\Support\Carbon;
 
 /**
- * @property Item|null item
- * @property Barrel|null barrel
- * @property Bottle|null bottle
- * @property DateTime created_at
- * @property DateTime deleted_at
- * @property Food|null food
- * @property Collection|null kits
- * @property Other|null other
- * @property Supplier|null supplier
- * @property float unit_price
- * @property DateTime updated_at
- * @method price()
+ * App\Article
+ *
+ * @property int $item_id
+ * @property int|null $supplier_id
+ * @property float $unit_price
+ * @property Carbon|null $deleted_at
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property-read Barrel $barrel
+ * @property-read Bottle $bottle
+ * @property-read Food $food
+ * @property-read Item $item
+ * @property-read Collection|Kit[] $kits
+ * @property-read Other $other
+ * @property-read Supplier|null $supplier
+ * @method static bool|null forceDelete()
+ * @method static \Illuminate\Database\Eloquent\Builder|Article newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Article newQuery()
+ * @method static Builder|Article onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|Article query()
+ * @method static bool|null restore()
+ * @method static \Illuminate\Database\Eloquent\Builder|Article whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Article whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Article whereItemId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Article whereSupplierId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Article whereUnitPrice($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Article whereUpdatedAt($value)
+ * @method static Builder|Article withTrashed()
+ * @method static Builder|Article withoutTrashed()
+ * @mixin Eloquent
  */
 class Article extends Model
 {
@@ -66,7 +86,7 @@ class Article extends Model
     {
         return $this
             ->belongsToMany(Kit::class, 'kits_articles', 'article_id', 'kit_id')
-            ->using(KitArticle::class)->withPivot('quantity')->withTimestamps();
+            ->using(KitArticle::class)->withPivot('article_quantity')->withTimestamps();
     }
 
     /**

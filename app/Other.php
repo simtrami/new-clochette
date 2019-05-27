@@ -2,17 +2,37 @@
 
 namespace App;
 
-use DateTime;
+use Eloquent;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Query\Builder;
+use Illuminate\Support\Carbon;
 
 /**
- * @property Article|null article
- * @property DateTime created_at
- * @property string description
- * @property DateTime updated_at
+ * App\Other
+ *
+ * @property int $article_id
+ * @property string|null $description
+ * @property Carbon|null $deleted_at
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property-read Article $article
+ * @method static bool|null forceDelete()
+ * @method static \Illuminate\Database\Eloquent\Builder|Other newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Other newQuery()
+ * @method static Builder|Other onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|Other query()
+ * @method static bool|null restore()
+ * @method static \Illuminate\Database\Eloquent\Builder|Other whereArticleId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Other whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Other whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Other whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Other whereUpdatedAt($value)
+ * @method static Builder|Other withTrashed()
+ * @method static Builder|Other withoutTrashed()
+ * @mixin Eloquent
  */
 class Other extends Model
 {

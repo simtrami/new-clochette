@@ -2,23 +2,43 @@
 
 namespace App;
 
-use DateTime;
+use Eloquent;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Query\Builder;
+use Illuminate\Support\Carbon;
 
 /**
- * @property Article|null article
- * @property DateTime created_at
- * @property DateTime deleted_at
- * @property integer id
- * @property string name
- * @property Collection prices
- * @property integer quantity
- * @property DateTime updated_at
+ * App\Item
+ *
+ * @property int $id
+ * @property string $name
+ * @property int $quantity
+ * @property Carbon|null $deleted_at
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property-read Article $article
+ * @property-read Kit $kit
+ * @property-read Collection|Price[] $prices
+ * @method static bool|null forceDelete()
+ * @method static \Illuminate\Database\Eloquent\Builder|Item newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Item newQuery()
+ * @method static Builder|Item onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|Item query()
+ * @method static bool|null restore()
+ * @method static \Illuminate\Database\Eloquent\Builder|Item whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Item whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Item whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Item whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Item whereQuantity($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Item whereUpdatedAt($value)
+ * @method static Builder|Item withTrashed()
+ * @method static Builder|Item withoutTrashed()
+ * @mixin Eloquent
  */
 class Item extends Model
 {

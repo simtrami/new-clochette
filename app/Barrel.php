@@ -11,12 +11,36 @@ use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Carbon;
 
 /**
- * @property Article|null article
- * @property DateTime created_at
- * @property DateTime updated_at
- * @property float volume
- * @property string withdrawal_type
- * @method static paginate(int $int)
+ * App\Barrel
+ *
+ * @property int $article_id
+ * @property float $volume
+ * @property string|null $withdrawal_type
+ * @property float|null $abv
+ * @property float|null $ibu
+ * @property string|null $variety
+ * @property Carbon|null $deleted_at
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property-read Article $article
+ * @method static bool|null forceDelete()
+ * @method static \Illuminate\Database\Eloquent\Builder|Barrel newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Barrel newQuery()
+ * @method static Builder|Barrel onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|Barrel query()
+ * @method static bool|null restore()
+ * @method static \Illuminate\Database\Eloquent\Builder|Barrel whereAbv($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Barrel whereArticleId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Barrel whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Barrel whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Barrel whereIbu($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Barrel whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Barrel whereVariety($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Barrel whereVolume($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Barrel whereWithdrawalType($value)
+ * @method static Builder|Barrel withTrashed()
+ * @method static Builder|Barrel withoutTrashed()
+ * @mixin Eloquent
  */
 class Barrel extends Model
 {

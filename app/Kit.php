@@ -2,18 +2,36 @@
 
 namespace App;
 
-use DateTime;
+use Eloquent;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Query\Builder;
+use Illuminate\Support\Carbon;
 
 /**
- * @property Collection|null articles
- * @property DateTime created_at
- * @property DateTime deleted_at
- * @property Item|null item
- * @property DateTime updated_at
+ * App\Kit
+ *
+ * @property int $item_id
+ * @property Carbon|null $deleted_at
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property-read Collection|Article[] $articles
+ * @property-read Item $item
+ * @method static bool|null forceDelete()
+ * @method static \Illuminate\Database\Eloquent\Builder|Kit newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Kit newQuery()
+ * @method static Builder|Kit onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|Kit query()
+ * @method static bool|null restore()
+ * @method static \Illuminate\Database\Eloquent\Builder|Kit whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Kit whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Kit whereItemId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Kit whereUpdatedAt($value)
+ * @method static Builder|Kit withTrashed()
+ * @method static Builder|Kit withoutTrashed()
+ * @mixin Eloquent
  */
 class Kit extends Model
 {

@@ -11,11 +11,36 @@ use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Carbon;
 
 /**
- * @property Article|null article
- * @property DateTime created_at
- * @property integer is_returnable
- * @property DateTime updated_at
- * @property float volume
+ * App\Bottle
+ *
+ * @property int $article_id
+ * @property float $volume
+ * @property int $is_returnable
+ * @property float|null $abv
+ * @property float|null $ibu
+ * @property string|null $variety
+ * @property Carbon|null $deleted_at
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property-read Article $article
+ * @method static bool|null forceDelete()
+ * @method static \Illuminate\Database\Eloquent\Builder|Bottle newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Bottle newQuery()
+ * @method static Builder|Bottle onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|Bottle query()
+ * @method static bool|null restore()
+ * @method static \Illuminate\Database\Eloquent\Builder|Bottle whereAbv($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Bottle whereArticleId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Bottle whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Bottle whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Bottle whereIbu($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Bottle whereIsReturnable($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Bottle whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Bottle whereVariety($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Bottle whereVolume($value)
+ * @method static Builder|Bottle withTrashed()
+ * @method static Builder|Bottle withoutTrashed()
+ * @mixin Eloquent
  */
 class Bottle extends Model
 {

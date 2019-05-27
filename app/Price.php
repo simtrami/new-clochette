@@ -2,18 +2,34 @@
 
 namespace App;
 
-use DateTime;
+use Eloquent;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Carbon;
 
 /**
- * @property Item|null item
- * @property DateTime created_at
- * @property integer id
- * @property integer is_active
- * @property float second_value
- * @property DateTime updated_at
- * @property float value
+ * App\Price
+ *
+ * @property int $id
+ * @property int $item_id
+ * @property float $value
+ * @property float|null $second_value
+ * @property int $is_active
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property-read Item $item
+ * @method static Builder|Price newModelQuery()
+ * @method static Builder|Price newQuery()
+ * @method static Builder|Price query()
+ * @method static Builder|Price whereCreatedAt($value)
+ * @method static Builder|Price whereId($value)
+ * @method static Builder|Price whereIsActive($value)
+ * @method static Builder|Price whereItemId($value)
+ * @method static Builder|Price whereSecondValue($value)
+ * @method static Builder|Price whereUpdatedAt($value)
+ * @method static Builder|Price whereValue($value)
+ * @mixin Eloquent
  */
 class Price extends Model
 {

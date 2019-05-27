@@ -2,18 +2,39 @@
 
 namespace App;
 
-use DateTime;
+use Eloquent;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Query\Builder;
+use Illuminate\Support\Carbon;
 
 /**
- * @property Article|null article
- * @property DateTime created_at
- * @property integer is_bulk
- * @property integer units_left
- * @property DateTime updated_at
+ * App\Food
+ *
+ * @property int $article_id
+ * @property int $is_bulk
+ * @property int|null $units_left
+ * @property Carbon|null $deleted_at
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property-read Article $article
+ * @method static bool|null forceDelete()
+ * @method static \Illuminate\Database\Eloquent\Builder|Food newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Food newQuery()
+ * @method static Builder|Food onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|Food query()
+ * @method static bool|null restore()
+ * @method static \Illuminate\Database\Eloquent\Builder|Food whereArticleId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Food whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Food whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Food whereIsBulk($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Food whereUnitsLeft($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Food whereUpdatedAt($value)
+ * @method static Builder|Food withTrashed()
+ * @method static Builder|Food withoutTrashed()
+ * @mixin Eloquent
  */
 class Food extends Model
 {
