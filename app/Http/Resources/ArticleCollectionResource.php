@@ -48,11 +48,17 @@ class ArticleCollectionResource extends JsonResource
             case 'barrel':
                 $ret['volume'] = $this->barrel->volume;
                 $ret['withdrawalType'] = $this->barrel->withdrawal_type;
+                $ret['abv'] = $this->barrel->abv;
+                $ret['ibu'] = $this->barrel->ibu;
+                $ret['variety'] = $this->barrel->variety;
                 $ret['price']['secondValue'] = $price->second_value;
                 break;
             case 'bottle':
                 $ret['volume'] = $this->bottle->volume;
                 $ret['isReturnable'] = $this->bottle->is_returnable;
+                $ret['abv'] = $this->bottle->abv;
+                $ret['ibu'] = $this->bottle->ibu;
+                $ret['variety'] = $this->bottle->variety;
                 break;
             case 'food':
                 $ret['isBulk'] = $this->food->is_bulk;

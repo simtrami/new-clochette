@@ -11,6 +11,9 @@ use Illuminate\Http\Resources\Json\JsonResource;
  * @property float volume
  * @property string withdrawal_type
  * @property mixed article_id
+ * @property mixed abv
+ * @property mixed ibu
+ * @property mixed variety
  * @method name()
  * @method quantity()
  * @method pricesHistory()
@@ -40,9 +43,11 @@ class BarrelResource extends JsonResource
         ];
         $ret = array_merge($ret, [
             'pricesHistory' => $this->pricesHistory(),
-//            'kits' => KitResource::collection($this->whenLoaded('kits')),
             'volume' => $this->volume,
             'withdrawalType' => $this->withdrawal_type,
+            'abv' => $this->abv,
+            'ibu' => $this->ibu,
+            'variety' => $this->variety,
         ]);
         $supplier = $this->article->supplier;
         if ($supplier) {

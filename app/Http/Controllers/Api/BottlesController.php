@@ -66,6 +66,9 @@ class BottlesController extends Controller
             'value' => 'required|numeric|min:0',
             'volume' => 'required|numeric|min:0',
             'is_returnable' => 'boolean',
+            'abv' => 'nullable|numeric|min:0',
+            'ibu' => 'nullable|numeric|min:0',
+            'variety' => 'nullable|string|min:1|max:255',
         ]);
 
         $item = new Item($data);
@@ -104,6 +107,9 @@ class BottlesController extends Controller
             'value' => 'numeric|min:0',
             'volume' => 'numeric|min:0',
             'is_returnable' => 'boolean',
+            'abv' => 'nullable|numeric|min:0',
+            'ibu' => 'nullable|numeric|min:0',
+            'variety' => 'nullable|string|min:1|max:255',
         ]);
 
         $item = $bottle->article->item;

@@ -53,7 +53,10 @@ class BarrelsController extends Controller
             'value' => 'required|numeric|min:0',
             'second_value' => 'nullable|numeric|min:0',
             'volume' => 'required|numeric|min:0',
-            'withdrawal_type' => 'required|string|min:1|max:255',
+            'withdrawal_type' => 'nullable|string|min:1|max:255',
+            'abv' => 'nullable|numeric|min:0',
+            'ibu' => 'nullable|numeric|min:0',
+            'variety' => 'nullable|string|min:1|max:255',
         ]);
 
         $item = new Item($data);
@@ -92,7 +95,10 @@ class BarrelsController extends Controller
             'value' => 'numeric|min:0',
             'second_value' => 'nullable|numeric|min:0',
             'volume' => 'numeric|min:0',
-            'withdrawal_type' => 'string|min:1|max:255',
+            'withdrawal_type' => 'nullable|string|min:1|max:255',
+            'abv' => 'nullable|numeric|min:0',
+            'ibu' => 'nullable|numeric|min:0',
+            'variety' => 'nullable|string|min:1|max:255',
         ]);
 
         $item = $barrel->article->item;

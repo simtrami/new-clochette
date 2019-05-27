@@ -19,30 +19,17 @@ class BarrelsRoutingTest extends TestCase
      */
     public function testIndex()
     {
-        factory(Supplier::class)->create();
-        $supplier = Supplier::first();
-
-        $article_1 = factory(Article::class)->make();
-        $article_2 = factory(Article::class)->make();
-
-        // Verifying the supplier is not loaded when entities are listed
-        $article_1->supplier()->associate($supplier);
-        $article_2->supplier()->associate($supplier);
-
-        $price_1 = factory(Price::class)->make(['second_value' => '4.2']);
-        $price_2 = factory(Price::class)->make(['second_value' => '2.4']);
-        $barrel_1 = factory(Barrel::class)->make();
-        $barrel_2 = factory(Barrel::class)->make();
+        $supplier = factory(Supplier::class)->create();
 
         $item_1 = factory(Item::class)->create();
-        $item_2 = factory(Item::class)->create();
+        factory(Price::class)->create(['item_id' => $item_1->id, 'second_value' => '4.2']);
+        factory(Article::class)->create(['item_id' => $item_1->id, 'supplier_id' => $supplier->id]);
+        factory(Barrel::class)->create(['article_id' => $item_1->id]);
 
-        $item_1->prices()->save($price_1);
-        $item_1->article()->save($article_1);
-        $item_1->article->barrel()->save($barrel_1);
-        $item_2->prices()->save($price_2);
-        $item_2->article()->save($article_2);
-        $item_2->article->barrel()->save($barrel_2);
+        $item_2 = factory(Item::class)->create();
+        factory(Price::class)->create(['item_id' => $item_2->id, 'second_value' => '2.4']);
+        factory(Article::class)->create(['item_id' => $item_2->id, 'supplier_id' => $supplier->id]);
+        factory(Barrel::class)->create(['article_id' => $item_2->id]);
 
         $response = $this->get('/api/barrels');
 
@@ -59,6 +46,7 @@ class BarrelsRoutingTest extends TestCase
                         ],
                         'volume',
                         'withdrawalType',
+                        'abv', 'ibu', 'variety',
                     ],
                     1 => [
                         'id',
@@ -70,6 +58,7 @@ class BarrelsRoutingTest extends TestCase
                         ],
                         'volume',
                         'withdrawalType',
+                        'abv', 'ibu', 'variety',
                     ]
                 ]
             ]);
@@ -88,6 +77,7 @@ class BarrelsRoutingTest extends TestCase
             'second_value' => '2.6',
             'volume' => '30',
             'withdrawal_type' => 'KeyKeg',
+            'abv' => '4.5',
         ]);
 
         $response->assertStatus(201)
@@ -103,6 +93,7 @@ class BarrelsRoutingTest extends TestCase
                     'pricesHistory',
                     'volume',
                     'withdrawalType',
+                    'abv', 'ibu', 'variety',
                     'supplier' => [
                         'id', 'name', 'description', 'address', 'phone', 'email', 'supplierSince',
                     ],
@@ -112,7 +103,6 @@ class BarrelsRoutingTest extends TestCase
 
     public function testUpdate()
     {
-
         $supplier_1 = factory(Supplier::class)->create();
         $item = factory(Item::class)->create();
         $id = $item->id;
@@ -131,6 +121,7 @@ class BarrelsRoutingTest extends TestCase
             'second_value' => '2.6',
             'volume' => '30',
             'withdrawal_type' => 'KeyKeg',
+            'abv' => '4.5',
         ]);
 
         $response->assertStatus(200)
@@ -148,6 +139,9 @@ class BarrelsRoutingTest extends TestCase
 //                    'pricesHistory' is present but will need to be defined later, will return true anyway
                     'volume' => '30',
                     'withdrawalType' => 'KeyKeg',
+                    'abv' => '4.50',
+                    'ibu' => null,
+                    'variety' => null,
                     'supplier' => [
                         'id' => $supplier_2->id,
                         'name' => $supplier_2->name,
@@ -185,6 +179,7 @@ class BarrelsRoutingTest extends TestCase
                     'pricesHistory',
                     'volume',
                     'withdrawalType',
+                    'abv', 'ibu', 'variety',
                     'supplier' => [
                         'id', 'name', 'description', 'address', 'phone', 'email', 'supplierSince',
                     ],

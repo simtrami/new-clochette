@@ -16,7 +16,10 @@ class CreateBarrelsTable extends Migration
         Schema::create('barrels', function (Blueprint $table) {
             $table->unsignedBigInteger('article_id')->primary();
             $table->unsignedDecimal('volume', 5, 2);
-            $table->string('withdrawal_type');
+            $table->string('withdrawal_type')->nullable();
+            $table->unsignedDecimal('abv', 4, 2)->nullable();
+            $table->unsignedDecimal('ibu', 4, 1)->nullable();
+            $table->string('variety')->nullable();
             $table->softDeletes();
             $table->timestamps();
 

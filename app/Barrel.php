@@ -2,11 +2,13 @@
 
 namespace App;
 
-use DateTime;
+use Eloquent;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Query\Builder;
+use Illuminate\Support\Carbon;
 
 /**
  * @property Article|null article
@@ -22,7 +24,7 @@ class Barrel extends Model
 
     protected $primaryKey = 'article_id';
 
-    protected $fillable = ['volume', 'withdrawal_type'];
+    protected $fillable = ['volume', 'withdrawal_type', 'abv', 'ibu', 'variety'];
 
     /**
      * The relationships that should always be loaded.

@@ -11,6 +11,9 @@ use Illuminate\Http\Resources\Json\JsonResource;
  * @property Article article
  * @property mixed volume
  * @property mixed is_returnable
+ * @property mixed abv
+ * @property mixed ibu
+ * @property mixed variety
  * @method name()
  * @method quantity()
  * @method pricesHistory()
@@ -42,6 +45,9 @@ class BottleResource extends JsonResource
 //            'kits' => KitResource::collection($this->whenLoaded('kits')),
             'volume' => $this->volume,
             'isReturnable' => $this->is_returnable,
+            'abv' => $this->abv,
+            'ibu' => $this->ibu,
+            'variety' => $this->variety,
         ]);
         $supplier = $this->article->supplier;
         if ($supplier) {

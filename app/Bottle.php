@@ -2,11 +2,13 @@
 
 namespace App;
 
-use DateTime;
+use Eloquent;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Query\Builder;
+use Illuminate\Support\Carbon;
 
 /**
  * @property Article|null article
@@ -21,7 +23,7 @@ class Bottle extends Model
 
     protected $primaryKey = 'article_id';
 
-    protected $fillable = ['volume', 'is_returnable'];
+    protected $fillable = ['volume', 'is_returnable', 'abv', 'ibu', 'variety'];
 
     /**
      * The relationships that should always be loaded.
