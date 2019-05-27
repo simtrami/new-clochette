@@ -61,6 +61,17 @@ class BarrelResource extends JsonResource
                 'supplierSince' => $supplier->supplier_since,
             ];
         }
+        $kits = $this->article->kits;
+        if ($kits) {
+            $ret['kits'] = [];
+            foreach ($kits as $kit) {
+                array_push($ret['kits'], [
+                    'id', $kit->id,
+                    'name' => $kit->name,
+                    'articleQuantity' => $kit->pivot->article_quantity,
+                ]);
+            }
+        }
 
         return $ret;
     }
