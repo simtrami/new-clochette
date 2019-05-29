@@ -80,3 +80,10 @@ Route::group(['namespace' => 'Api', 'prefix' => '/kits'], function () {
     Route::put('/{kit}', 'KitsController@update');
     Route::delete('/{kit}', 'KitsController@destroy');
 });
+Route::group(['namespace' => 'Api', 'prefix' => '/payment-methods'], function () {
+    Route::get('/', 'PaymentMethodsController@index');
+    Route::post('/', 'PaymentMethodsController@store');
+    Route::get('/{paymentMethod}', 'PaymentMethodsController@show');
+    Route::put('/{paymentMethod}', 'PaymentMethodsController@update');
+    Route::delete('/{paymentMethod}', 'PaymentMethodsController@destroy');
+});
