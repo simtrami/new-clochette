@@ -80,4 +80,13 @@ class User extends Authenticable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    ##
+    # Relationships
+    ##
+
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class);
+    }
 }

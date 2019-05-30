@@ -74,6 +74,14 @@ class Item extends Model
         return $this->prices->where('is_active', false);
     }
 
+    public function transactions()
+    {
+        return $this->belongsToMany(Transaction::class, 'transaction_details',
+            'item_id', 'transaction_id')
+            ->using(TransactionDetail::class)
+            ->withPivot('quantity');
+    }
+
     ##
     # Extended Properties
     # Must be called with parenthesis
