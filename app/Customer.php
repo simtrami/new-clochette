@@ -33,6 +33,7 @@ use Illuminate\Support\Carbon;
  * @method static Builder|Customer whereStaffNickname($value)
  * @method static Builder|Customer whereUpdatedAt($value)
  * @mixin Eloquent
+ * @property-read Collection|Transaction[] $transactions
  */
 class Customer extends Model
 {

@@ -49,6 +49,7 @@ use Spatie\Permission\Traits\HasRoles;
  * @method static Builder|User whereUpdatedAt($value)
  * @method static Builder|User whereUsername($value)
  * @mixin Eloquent
+ * @property-read Collection|Transaction[] $transactions
  */
 class User extends Authenticable
 {

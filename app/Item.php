@@ -39,6 +39,7 @@ use Illuminate\Support\Carbon;
  * @method static Builder|Item withTrashed()
  * @method static Builder|Item withoutTrashed()
  * @mixin Eloquent
+ * @property-read Collection|Transaction[] $transactions
  */
 class Item extends Model
 {

@@ -86,6 +86,7 @@ class KitsController extends Controller
             'articles.*.article_id' => 'required_with:articles|exists:articles,item_id|distinct',
             'articles.*.quantity' => 'required_with:articles|numeric|min:0',
             'detached_articles' => 'array|min:1',
+            'detached_articles.*' => 'required_with:detached_articles|exists:articles,item_id',
         ]);
 
         $item = $kit->item;
