@@ -8,6 +8,6 @@ use Illuminate\Database\Eloquent\Factory;
 
 $factory->define(Other::class, function (Faker $faker) {
     return [
-        'description' => $faker->paragraph
+        'description' => $faker->text(255)
     ];
 });

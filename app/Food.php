@@ -40,6 +40,8 @@ class Food extends Model
 {
     use SoftDeletes;
 
+    protected $table = 'foods';
+
     protected $primaryKey = 'article_id';
 
     protected $fillable = ['is_bulk', 'units_left'];

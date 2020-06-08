@@ -102,7 +102,7 @@ class TransactionsRoutingTest extends TestCase
         $payment_method_2 = factory(PaymentMethod::class)->create([
             'parameters' => json_encode(['requires_account' => true])
         ]);
-        $customer = factory(Customer::class)->create();
+        $customer = factory(Customer::class)->create(['is_staff' => true]);
 
         $item_1 = factory(Item::class)->create();
         factory(Price::class)->create(['item_id' => $item_1->id, 'value' => 4]);
