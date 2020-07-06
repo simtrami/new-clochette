@@ -13,7 +13,7 @@ use Illuminate\Support\Carbon;
 /**
  * App\Bottle
  *
- * @property int $article_id
+ * @property int $id
  * @property float $volume
  * @property int $is_returnable
  * @property float|null $abv
@@ -41,12 +41,11 @@ use Illuminate\Support\Carbon;
  * @method static Builder|Bottle withTrashed()
  * @method static Builder|Bottle withoutTrashed()
  * @mixin Eloquent
+ * @method static \Illuminate\Database\Eloquent\Builder|Bottle whereId($value)
  */
 class Bottle extends Model
 {
     use SoftDeletes;
-
-    protected $primaryKey = 'article_id';
 
     protected $fillable = ['volume', 'is_returnable', 'abv', 'ibu', 'variety'];
 
@@ -64,9 +63,9 @@ class Bottle extends Model
     /**
      * @return BelongsTo
      */
-    public function article()
+    public function article(): BelongsTo
     {
-        return $this->belongsTo(Article::class, 'article_id', 'item_id');
+        return $this->belongsTo(Article::class, 'id');
     }
 
     ##
@@ -76,7 +75,7 @@ class Bottle extends Model
     /**
      * @param $value
      */
-    public function changePrice($value)
+    public function changePrice($value): void
     {
         $this->article->item->changePrice($value);
     }
@@ -89,7 +88,7 @@ class Bottle extends Model
     /**
      * @return Collection|null
      */
-    public function pricesHistory()
+    public function pricesHistory(): ?Collection
     {
         return $this->article->item->pricesHistory();
     }
@@ -97,7 +96,7 @@ class Bottle extends Model
     /**
      * @return Price|null
      */
-    public function price()
+    public function price(): ?Price
     {
         return $this->article->item->price();
     }
@@ -105,7 +104,7 @@ class Bottle extends Model
     /**
      * @return string
      */
-    public function name()
+    public function name(): string
     {
         return $this->article->item->name;
     }
@@ -113,7 +112,7 @@ class Bottle extends Model
     /**
      * @return float
      */
-    public function quantity()
+    public function quantity(): float
     {
         return $this->article->item->quantity;
     }

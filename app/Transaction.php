@@ -6,6 +6,9 @@ use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
 
 /**
@@ -36,6 +39,8 @@ use Illuminate\Support\Carbon;
  * @method static Builder|Transaction whereUserId($value)
  * @method static Builder|Transaction whereValue($value)
  * @mixin Eloquent
+ * @property-read int|null $details_count
+ * @property-read int|null $items_count
  */
 class Transaction extends Model
 {
@@ -52,27 +57,27 @@ class Transaction extends Model
     # Relationships
     ##
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    public function customer()
+    public function customer(): BelongsTo
     {
         return $this->belongsTo(Customer::class);
     }
 
-    public function paymentMethod()
+    public function paymentMethod(): BelongsTo
     {
         return $this->belongsTo(PaymentMethod::class);
     }
 
-    public function details()
+    public function details(): HasMany
     {
         return $this->hasMany(TransactionDetail::class);
     }
 
-    public function items()
+    public function items(): BelongsToMany
     {
         return $this->belongsToMany(Item::class, 'transaction_details',
             'transaction_id', 'item_id')

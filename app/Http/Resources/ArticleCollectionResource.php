@@ -12,7 +12,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
  * @property Item item
- * @property int item_id
+ * @property int id
  * @property float unit_price
  * @property Barrel barrel
  * @property Bottle bottle
@@ -31,7 +31,7 @@ class ArticleCollectionResource extends JsonResource
     public function toArray($request)
     {
         $ret = [
-            'id' => $this->item_id,
+            'id' => $this->id,
             'name' => $this->item->name,
             'quantity' => $this->item->quantity,
             'unitPrice' => $this->unit_price,
@@ -47,7 +47,7 @@ class ArticleCollectionResource extends JsonResource
         switch ($this->type()) {
             case 'barrel':
                 $ret['volume'] = $this->barrel->volume;
-                $ret['withdrawalType'] = $this->barrel->withdrawal_type;
+                $ret['coupler'] = $this->barrel->coupler;
                 $ret['abv'] = $this->barrel->abv;
                 $ret['ibu'] = $this->barrel->ibu;
                 $ret['variety'] = $this->barrel->variety;
@@ -62,7 +62,7 @@ class ArticleCollectionResource extends JsonResource
                 break;
             case 'food':
                 $ret['isBulk'] = $this->food->is_bulk;
-                $this->food->is_bulk == 0 ?: $ret['unitsLeft'] = $this->food->units_left;
+                $this->food->is_bulk === 0 ?: $ret['unitsLeft'] = $this->food->units_left;
                 break;
             case 'other':
                 $ret['description'] = $this->other->description;

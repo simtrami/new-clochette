@@ -18,7 +18,7 @@ class ContactsController extends Controller
     /**
      * @return AnonymousResourceCollection
      */
-    public function index()
+    public function index(): AnonymousResourceCollection
     {
         return ContactResource::collection(Contact::paginate(10));
     }
@@ -27,7 +27,7 @@ class ContactsController extends Controller
      * @param Contact $contact
      * @return ContactResource
      */
-    public function show(Contact $contact)
+    public function show(Contact $contact): ContactResource
     {
         return new ContactResource($contact->loadMissing('supplier'));
     }
@@ -36,14 +36,14 @@ class ContactsController extends Controller
      * @param Request $request
      * @return ContactResource
      */
-    public function store(Request $request)
+    public function store(Request $request): ContactResource
     {
         $data = $request->validate([
             'supplier_id' => 'required|exists:suppliers,id',
             'first_name' => 'required|string|min:2|max:255',
             'last_name' => 'required|string|min:2|max:255',
-            'phone' => 'required|string',
-            'email' => 'required|email|unique:contacts',
+            'phone' => 'string',
+            'email' => 'email',
             'role' => 'required|string|min:2|max:255',
             'notes' => 'nullable|string|min:2|max:500',
         ]);
@@ -60,7 +60,7 @@ class ContactsController extends Controller
      * @param Request $request
      * @return ContactResource
      */
-    public function update(Contact $contact, Request $request)
+    public function update(Contact $contact, Request $request): ContactResource
     {
         $data = $request->validate([
             'supplier_id' => 'exists:suppliers,id',

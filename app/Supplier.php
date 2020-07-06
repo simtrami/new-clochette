@@ -6,6 +6,7 @@ use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
 
 /**
@@ -34,6 +35,7 @@ use Illuminate\Support\Carbon;
  * @method static Builder|Supplier whereSupplierSince($value)
  * @method static Builder|Supplier whereUpdatedAt($value)
  * @mixin Eloquent
+ * @property-read int|null $contacts_count
  */
 class Supplier extends Model
 {
@@ -44,8 +46,8 @@ class Supplier extends Model
     /**
      * Relations
      */
-    public function contacts()
+    public function contacts(): HasMany
     {
-        return $this->hasMany('App\Contact');
+        return $this->hasMany(Contact::class);
     }
 }

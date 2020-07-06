@@ -16,18 +16,14 @@ class CreateTransactionsTable extends Migration
         Schema::create('transactions', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->decimal('value', 8, 2);
-            $table->unsignedBigInteger('user_id')->nullable();
-            $table->unsignedBigInteger('payment_method_id')->nullable();
-            $table->unsignedBigInteger('customer_id')->nullable();
+            $table->foreignId('user_id')->nullable()->constrained()
+                ->onDelete('set null')->onUpdate('cascade');
+            $table->foreignId('payment_method_id')->nullable()->constrained()
+                ->onDelete('set null')->onUpdate('cascade');
+            $table->foreignId('customer_id')->nullable()->constrained()
+                ->onDelete('set null')->onUpdate('cascade');
             $table->string('comments')->nullable();
             $table->timestamps();
-
-            $table->foreign('user_id')->references('id')->on('users')
-                ->onDelete('set null')->onUpdate('cascade');
-            $table->foreign('payment_method_id')->references('id')->on('payment_methods')
-                ->onDelete('set null')->onUpdate('cascade');
-            $table->foreign('customer_id')->references('id')->on('customers')
-                ->onDelete('set null')->onUpdate('cascade');
         });
     }
 

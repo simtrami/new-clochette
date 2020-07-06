@@ -13,7 +13,7 @@ class PaymentMethodsRoutingTest extends TestCase
     /**
      * @return void
      */
-    public function testIndex()
+    public function testIndex(): void
     {
         factory(PaymentMethod::class, 2)->create();
 
@@ -40,7 +40,7 @@ class PaymentMethodsRoutingTest extends TestCase
             ]);
     }
 
-    public function testCreate()
+    public function testCreate(): void
     {
         $response = $this->postJson('/api/payment-methods', [
             'name' => 'PaymentMethod McTest',
@@ -61,7 +61,7 @@ class PaymentMethodsRoutingTest extends TestCase
             ]);
     }
 
-    public function testUpdate()
+    public function testUpdate(): void
     {
         $paymentMethod = factory(PaymentMethod::class)->create();
 
@@ -82,7 +82,7 @@ class PaymentMethodsRoutingTest extends TestCase
             ]]);
     }
 
-    public function testShow()
+    public function testShow(): void
     {
         $paymentMethod = factory(PaymentMethod::class)->create();
 
@@ -98,7 +98,7 @@ class PaymentMethodsRoutingTest extends TestCase
             ]]);
     }
 
-    public function testDestroy()
+    public function testDestroy(): void
     {
         $paymentMethod = factory(PaymentMethod::class)->create();
 

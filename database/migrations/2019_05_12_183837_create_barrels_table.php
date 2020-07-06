@@ -14,17 +14,15 @@ class CreateBarrelsTable extends Migration
     public function up()
     {
         Schema::create('barrels', function (Blueprint $table) {
-            $table->unsignedBigInteger('article_id')->primary();
+            $table->foreignId('id')->primary()->constrained('articles')
+                ->onDelete('cascade')->onUpdate('cascade');
             $table->unsignedDecimal('volume', 5, 2);
-            $table->string('withdrawal_type')->nullable();
+            $table->string('coupler')->nullable();
             $table->unsignedDecimal('abv', 4, 2)->nullable();
             $table->unsignedDecimal('ibu', 4, 1)->nullable();
             $table->string('variety')->nullable();
             $table->softDeletes();
             $table->timestamps();
-
-            $table->foreign('article_id')->references('item_id')->on('articles')
-                ->onDelete('cascade')->onUpdate('cascade');
         });
     }
 

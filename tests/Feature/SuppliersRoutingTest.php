@@ -13,7 +13,7 @@ class SuppliersRoutingTest extends TestCase
     /**
      * @return void
      */
-    public function testIndex()
+    public function testIndex(): void
     {
         factory(Supplier::class, 2)->create();
 
@@ -44,7 +44,7 @@ class SuppliersRoutingTest extends TestCase
             ]);
     }
 
-    public function testCreate()
+    public function testCreate(): void
     {
         $response = $this->postJson('/api/suppliers', [
             'name' => 'Supplier McTest',
@@ -69,7 +69,7 @@ class SuppliersRoutingTest extends TestCase
             ]);
     }
 
-    public function testUpdate()
+    public function testUpdate(): void
     {
         $supplier = factory(Supplier::class)->create();
 
@@ -97,7 +97,7 @@ class SuppliersRoutingTest extends TestCase
             ]);
     }
 
-    public function testShow()
+    public function testShow(): void
     {
         $supplier = factory(Supplier::class)->create();
 
@@ -118,7 +118,7 @@ class SuppliersRoutingTest extends TestCase
             ]);
     }
 
-    public function testDestroy()
+    public function testDestroy(): void
     {
         $supplier = factory(Supplier::class)->create();
 

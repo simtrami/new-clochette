@@ -18,7 +18,7 @@ class SuppliersController extends Controller
     /**
      * @return AnonymousResourceCollection
      */
-    public function index()
+    public function index(): AnonymousResourceCollection
     {
         return SupplierResource::collection(Supplier::paginate(10));
     }
@@ -27,7 +27,7 @@ class SuppliersController extends Controller
      * @param Supplier $supplier
      * @return SupplierResource
      */
-    public function show(Supplier $supplier)
+    public function show(Supplier $supplier): SupplierResource
     {
         return new SupplierResource($supplier->loadMissing('contacts'));
     }
@@ -36,7 +36,7 @@ class SuppliersController extends Controller
      * @param Request $request
      * @return SupplierResource
      */
-    public function store(Request $request)
+    public function store(Request $request): SupplierResource
     {
         $data = $request->validate([
             'name' => 'required|string|min:2|max:255|unique:suppliers',
@@ -59,7 +59,7 @@ class SuppliersController extends Controller
      * @param Request $request
      * @return SupplierResource
      */
-    public function update(Supplier $supplier, Request $request)
+    public function update(Supplier $supplier, Request $request): SupplierResource
     {
         $data = $request->validate([
             'name' => [

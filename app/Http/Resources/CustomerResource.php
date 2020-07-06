@@ -12,7 +12,6 @@ use Illuminate\Http\Resources\Json\JsonResource;
  * @property mixed nickname
  * @property mixed balance
  * @property mixed is_staff
- * @property mixed staff_nickname
  */
 class CustomerResource extends JsonResource
 {
@@ -31,7 +30,7 @@ class CustomerResource extends JsonResource
             'nickname' => $this->nickname,
             'balance' => $this->balance,
             'isStaff' => $this->is_staff,
-            'staffNickname' => $this->staff_nickname,
+            'user' => new UserResource($this->whenLoaded('user')),
         ];
     }
 }

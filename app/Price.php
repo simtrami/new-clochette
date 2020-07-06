@@ -42,7 +42,7 @@ class Price extends Model
     /**
      * @return BelongsTo
      */
-    public function item()
+    public function item(): BelongsTo
     {
         return $this->belongsTo(Item::class);
     }
@@ -54,7 +54,7 @@ class Price extends Model
     /**
      * @return void
      */
-    public function activate()
+    public function activate(): void
     {
         $this->isActive() ?: $this->update(['is_active' => true]);
     }
@@ -62,15 +62,15 @@ class Price extends Model
     /**
      * @return bool
      */
-    public function isActive()
+    public function isActive(): bool
     {
-        return boolval($this->is_active);
+        return (bool)$this->is_active;
     }
 
     /**
      * @return void
      */
-    public function deactivate()
+    public function deactivate(): void
     {
         !$this->isActive() ?: $this->update(['is_active' => false]);
     }

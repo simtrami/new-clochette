@@ -18,7 +18,7 @@ class PaymentMethodsController extends Controller
     /**
      * @return AnonymousResourceCollection
      */
-    public function index()
+    public function index(): AnonymousResourceCollection
     {
         return PaymentMethodResource::collection(PaymentMethod::paginate(10));
     }
@@ -27,7 +27,7 @@ class PaymentMethodsController extends Controller
      * @param PaymentMethod $paymentMethod
      * @return PaymentMethodResource
      */
-    public function show(PaymentMethod $paymentMethod)
+    public function show(PaymentMethod $paymentMethod): PaymentMethodResource
     {
         return new PaymentMethodResource($paymentMethod);
     }
@@ -36,7 +36,7 @@ class PaymentMethodsController extends Controller
      * @param Request $request
      * @return PaymentMethodResource
      */
-    public function store(Request $request)
+    public function store(Request $request): PaymentMethodResource
     {
         $data = $request->validate([
             'name' => 'required|string|min:2|max:255|unique:payment_methods',
@@ -60,7 +60,7 @@ class PaymentMethodsController extends Controller
      * @param Request $request
      * @return PaymentMethodResource
      */
-    public function update(PaymentMethod $paymentMethod, Request $request)
+    public function update(PaymentMethod $paymentMethod, Request $request): PaymentMethodResource
     {
         $data = $request->validate([
             'name' => [

@@ -18,7 +18,7 @@ class CustomersController extends Controller
     /**
      * @return AnonymousResourceCollection
      */
-    public function index()
+    public function index(): AnonymousResourceCollection
     {
         return CustomerResource::collection(Customer::paginate(10));
     }
@@ -27,7 +27,7 @@ class CustomersController extends Controller
      * @param Customer $customer
      * @return CustomerResource
      */
-    public function show(Customer $customer)
+    public function show(Customer $customer): CustomerResource
     {
         return new CustomerResource($customer);
     }
@@ -36,7 +36,7 @@ class CustomersController extends Controller
      * @param Request $request
      * @return CustomerResource
      */
-    public function store(Request $request)
+    public function store(Request $request): CustomerResource
     {
         $data = $request->validate([
             'first_name' => 'required|string',
@@ -44,7 +44,6 @@ class CustomersController extends Controller
             'nickname' => 'required|string|min:2|max:100|unique:customers',
             'balance' => 'required|numeric',
             'is_staff' => 'boolean',
-            'staff_nickname' => 'nullable|string|min:2|max:100|unique:customers',
         ]);
 
         $customer = new Customer($data);
@@ -59,7 +58,7 @@ class CustomersController extends Controller
      * @param Request $request
      * @return CustomerResource
      */
-    public function update(Customer $customer, Request $request)
+    public function update(Customer $customer, Request $request): CustomerResource
     {
         $data = $request->validate([
             'first_name' => 'string',
@@ -70,10 +69,6 @@ class CustomersController extends Controller
             ],
             'balance' => 'numeric',
             'is_staff' => 'boolean',
-            'staff_nickname' => [
-                'nullable', 'string', 'min:2', 'max:100',
-                Rule::unique('customers')->ignore($customer),
-            ],
         ]);
 
         $customer->update($data);

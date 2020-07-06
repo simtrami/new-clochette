@@ -20,7 +20,6 @@ class CreateCustomersTable extends Migration
             $table->string('nickname', 100)->unique();
             $table->decimal('balance', 8, 2)->default(0);
             $table->boolean('is_staff')->default(false);
-            $table->string('staff_nickname', 100)->unique()->nullable();
             $table->timestamps();
         });
     }

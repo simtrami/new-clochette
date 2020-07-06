@@ -19,7 +19,7 @@ class TransactionsRoutingTest extends TestCase
     /**
      * @return void
      */
-    public function testIndex()
+    public function testIndex(): void
     {
         $user = factory(User::class)->create();
         $payment_method = factory(PaymentMethod::class)->create();
@@ -57,7 +57,7 @@ class TransactionsRoutingTest extends TestCase
             ]);
     }
 
-    public function testCreate()
+    public function testCreate(): void
     {
         $user = factory(User::class)->create();
         $payment_method = factory(PaymentMethod::class)->create([
@@ -94,7 +94,7 @@ class TransactionsRoutingTest extends TestCase
             ]);
     }
 
-    public function testUpdate()
+    public function testUpdate(): void
     {
         $user_1 = factory(User::class)->create();
         $user_2 = factory(User::class)->create();
@@ -146,14 +146,13 @@ class TransactionsRoutingTest extends TestCase
                     'lastName' => $customer->last_name,
                     'nickname' => $customer->nickname,
                     'isStaff' => 1,
-                    'staffNickname' => $customer->staff_nickname,
                 ],
                 'paymentMethod' => [
                     'id' => $payment_method_2->id,
                     'name' => $payment_method_2->name,
                     'needsCashDrawer' => $payment_method_2->needs_cash_drawer ? 1 : 0,
                     'iconName' => 'attach_money',
-                    'parameters' => '{"requires_account":true}',
+                    'parameters' => '{"requires_account": true}',
                 ],
                 'items' => [
                     [
@@ -170,7 +169,7 @@ class TransactionsRoutingTest extends TestCase
             ]]);
     }
 
-    public function testShow()
+    public function testShow(): void
     {
         $user = factory(User::class)->create();
         $payment_method = factory(PaymentMethod::class)->create();
@@ -202,7 +201,7 @@ class TransactionsRoutingTest extends TestCase
             ]]);
     }
 
-    public function testDestroy()
+    public function testDestroy(): void
     {
         $transaction = factory(Transaction::class)->create();
 

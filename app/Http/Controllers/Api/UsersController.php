@@ -19,7 +19,7 @@ class UsersController extends Controller
     /**
      * @return AnonymousResourceCollection
      */
-    public function index()
+    public function index(): AnonymousResourceCollection
     {
         return UserResource::collection(User::paginate(10));
     }
@@ -28,20 +28,21 @@ class UsersController extends Controller
      * @param User $user
      * @return UserResource
      */
-    public function show(User $user)
+    public function show(User $user): UserResource
     {
-        return new UserResource($user);
+        return new UserResource($user->loadMissing('customer'));
     }
 
     /**
      * @param Request $request
      * @return UserResource
      */
-    public function store(Request $request)
+    public function store(Request $request): UserResource
     {
         $data = $request->validate([
             'name' => 'required|string',
             'username' => 'required|string|unique:users',
+            'customer_id' => 'nullable|exists:customers,id',
             'email' => 'required|email|unique:users',
             'password' => 'required|confirmed',
         ]);
@@ -52,7 +53,7 @@ class UsersController extends Controller
 
         $user->save();
 
-        return new UserResource($user);
+        return new UserResource($user->loadMissing('customer'));
     }
 
     /**
@@ -60,7 +61,7 @@ class UsersController extends Controller
      * @param Request $request
      * @return UserResource
      */
-    public function update(User $user, Request $request)
+    public function update(User $user, Request $request): UserResource
     {
         $data = $request->validate([
             'name' => 'string',
@@ -68,6 +69,7 @@ class UsersController extends Controller
                 'string',
                 Rule::unique('users')->ignore($user)
             ],
+            'customer_id' => 'nullable|exists:customers,id',
             'email' => [
                 'email',
                 Rule::unique('users')->ignore($user)
@@ -81,7 +83,7 @@ class UsersController extends Controller
 
         $user->update($data);
 
-        return new UserResource($user);
+        return new UserResource($user->loadMissing('customer'));
     }
 
     /**

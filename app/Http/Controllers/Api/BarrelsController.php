@@ -23,7 +23,7 @@ class BarrelsController extends Controller
     /**
      * @return AnonymousResourceCollection
      */
-    public function index()
+    public function index(): AnonymousResourceCollection
     {
         return ArticleCollectionResource::collection(Article::has('barrel')
             ->paginate(10));
@@ -33,17 +33,30 @@ class BarrelsController extends Controller
      * @param Barrel $barrel
      * @return BarrelResource
      */
-    public function show(Barrel $barrel)
+    public function show(Barrel $barrel): BarrelResource
     {
         $this->checkIfTrashed($barrel);
         return new BarrelResource($barrel);
     }
 
     /**
+     * @param Barrel $barrel
+     */
+    private function checkIfTrashed(Barrel $barrel): void
+    {
+        if ($barrel->trashed() ||
+            $barrel->article->trashed() ||
+            $barrel->article->item->trashed()) {
+            throw new NotFoundHttpException(
+                'Requested resource does not exist or has been deleted.');
+        }
+    }
+
+    /**
      * @param Request $request
      * @return BarrelResource
      */
-    public function store(Request $request)
+    public function store(Request $request): BarrelResource
     {
         $data = $request->validate([
             'name' => 'required|string|min:2|max:255',
@@ -53,7 +66,7 @@ class BarrelsController extends Controller
             'value' => 'required|numeric|min:0',
             'second_value' => 'nullable|numeric|min:0',
             'volume' => 'required|numeric|min:0',
-            'withdrawal_type' => 'nullable|string|min:1|max:255',
+            'coupler' => 'nullable|string|min:1|max:255',
             'abv' => 'nullable|numeric|min:0',
             'ibu' => 'nullable|numeric|min:0',
             'variety' => 'nullable|string|min:1|max:255',
@@ -83,7 +96,7 @@ class BarrelsController extends Controller
      * @param Request $request
      * @return BarrelResource
      */
-    public function update(Barrel $barrel, Request $request)
+    public function update(Barrel $barrel, Request $request): BarrelResource
     {
         $this->checkIfTrashed($barrel);
 
@@ -95,7 +108,7 @@ class BarrelsController extends Controller
             'value' => 'numeric|min:0',
             'second_value' => 'nullable|numeric|min:0',
             'volume' => 'numeric|min:0',
-            'withdrawal_type' => 'nullable|string|min:1|max:255',
+            'coupler' => 'nullable|string|min:1|max:255',
             'abv' => 'nullable|numeric|min:0',
             'ibu' => 'nullable|numeric|min:0',
             'variety' => 'nullable|string|min:1|max:255',
@@ -127,6 +140,22 @@ class BarrelsController extends Controller
 
     /**
      * @param Barrel $barrel
+     * @param Request $request
+     * @param array $data
+     */
+    private function updatePrice(Barrel $barrel, Request $request, array $data): void
+    {
+        if ($request->has(['value', 'second_value'])) {
+            $barrel->changePrices($data['value'], $data['second_value']);
+        } elseif ($request->has('value')) {
+            $barrel->changePrice($data['value']);
+        } elseif ($request->has('second_value')) {
+            $barrel->changeSecondPrice($data['second_value']);
+        }
+    }
+
+    /**
+     * @param Barrel $barrel
      * @return ResponseFactory|JsonResponse|Response
      * @throws Exception
      */
@@ -143,34 +172,5 @@ class BarrelsController extends Controller
         }
 
         return response(null, 204);
-    }
-
-    /**
-     * @param Barrel $barrel
-     * @param Request $request
-     * @param array $data
-     */
-    private function updatePrice(Barrel $barrel, Request $request, array $data)
-    {
-        if ($request->has(['value', 'second_value'])) {
-            $barrel->changePrices($data['value'], $data['second_value']);
-        } elseif ($request->has('value')) {
-            $barrel->changePrice($data['value']);
-        } elseif ($request->has('second_value')) {
-            $barrel->changeSecondPrice($data['second_value']);
-        }
-    }
-
-    /**
-     * @param Barrel $barrel
-     */
-    private function checkIfTrashed(Barrel $barrel)
-    {
-        if ($barrel->trashed() ||
-            $barrel->article->trashed() ||
-            $barrel->article->item->trashed()) {
-            throw new NotFoundHttpException(
-                "Requested resource does not exist or has been deleted.");
-        }
     }
 }

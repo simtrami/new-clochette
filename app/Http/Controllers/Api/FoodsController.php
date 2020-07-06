@@ -23,7 +23,7 @@ class FoodsController extends Controller
     /**
      * @return AnonymousResourceCollection
      */
-    public function index()
+    public function index(): AnonymousResourceCollection
     {
         return ArticleCollectionResource::collection(Article::has('food')
             ->paginate(10));
@@ -33,7 +33,7 @@ class FoodsController extends Controller
      * @param Food $food
      * @return FoodResource
      */
-    public function show(Food $food)
+    public function show(Food $food): FoodResource
     {
         $this->checkIfTrashed($food);
         return new FoodResource($food);
@@ -42,7 +42,7 @@ class FoodsController extends Controller
     /**
      * @param Food $food
      */
-    private function checkIfTrashed(Food $food)
+    private function checkIfTrashed(Food $food): void
     {
         if ($food->trashed() ||
             $food->article->trashed() ||
@@ -56,7 +56,7 @@ class FoodsController extends Controller
      * @param Request $request
      * @return FoodResource
      */
-    public function store(Request $request)
+    public function store(Request $request): FoodResource
     {
         $data = $request->validate([
             'name' => 'required|string|min:2|max:255',
@@ -92,7 +92,7 @@ class FoodsController extends Controller
      * @param Request $request
      * @return FoodResource
      */
-    public function update(Food $food, Request $request)
+    public function update(Food $food, Request $request): FoodResource
     {
         $this->checkIfTrashed($food);
 

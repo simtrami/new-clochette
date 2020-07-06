@@ -9,8 +9,8 @@ use Illuminate\Http\Resources\Json\JsonResource;
 /**
  * @property Article article
  * @property float volume
- * @property string withdrawal_type
- * @property mixed article_id
+ * @property string coupler
+ * @property mixed id
  * @property mixed abv
  * @property mixed ibu
  * @property mixed variety
@@ -30,7 +30,7 @@ class BarrelResource extends JsonResource
     public function toArray($request)
     {
         $ret = [
-            'id' => $this->article_id,
+            'id' => $this->id,
             'name' => $this->name(),
             'quantity' => $this->quantity(),
             'unitPrice' => $this->article->unit_price,
@@ -44,7 +44,7 @@ class BarrelResource extends JsonResource
         $ret = array_merge($ret, [
             'pricesHistory' => $this->pricesHistory(),
             'volume' => $this->volume,
-            'withdrawalType' => $this->withdrawal_type,
+            'coupler' => $this->coupler,
             'abv' => $this->abv,
             'ibu' => $this->ibu,
             'variety' => $this->variety,
@@ -65,11 +65,11 @@ class BarrelResource extends JsonResource
         if ($kits) {
             $ret['kits'] = [];
             foreach ($kits as $kit) {
-                array_push($ret['kits'], [
+                $ret['kits'][] = [
                     'id', $kit->id,
                     'name' => $kit->name,
                     'articleQuantity' => $kit->pivot->article_quantity,
-                ]);
+                ];
             }
         }
 

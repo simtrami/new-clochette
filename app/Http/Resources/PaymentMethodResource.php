@@ -5,6 +5,13 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * @property mixed parameters
+ * @property mixed icon_name
+ * @property mixed needs_cash_drawer
+ * @property mixed name
+ * @property mixed id
+ */
 class PaymentMethodResource extends JsonResource
 {
     /**

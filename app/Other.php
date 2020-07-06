@@ -13,7 +13,7 @@ use Illuminate\Support\Carbon;
 /**
  * App\Other
  *
- * @property int $article_id
+ * @property int $id
  * @property string|null $description
  * @property Carbon|null $deleted_at
  * @property Carbon|null $created_at
@@ -33,12 +33,11 @@ use Illuminate\Support\Carbon;
  * @method static Builder|Other withTrashed()
  * @method static Builder|Other withoutTrashed()
  * @mixin Eloquent
+ * @method static \Illuminate\Database\Eloquent\Builder|Other whereId($value)
  */
 class Other extends Model
 {
     use SoftDeletes;
-
-    protected $primaryKey = 'article_id';
 
     protected $fillable = ['description'];
 
@@ -49,9 +48,9 @@ class Other extends Model
     /**
      * @return BelongsTo
      */
-    public function article()
+    public function article(): BelongsTo
     {
-        return $this->belongsTo(Article::class, 'article_id', 'item_id');
+        return $this->belongsTo(Article::class, 'id');
     }
 
     ##
@@ -61,7 +60,7 @@ class Other extends Model
     /**
      * @param $value
      */
-    public function changePrice($value)
+    public function changePrice($value): void
     {
         $this->article->item->changePrice($value);
     }
@@ -74,7 +73,7 @@ class Other extends Model
     /**
      * @return Collection|null
      */
-    public function pricesHistory()
+    public function pricesHistory(): ?Collection
     {
         return $this->article->item->pricesHistory();
     }
@@ -82,7 +81,7 @@ class Other extends Model
     /**
      * @return Price|null
      */
-    public function price()
+    public function price(): ?Price
     {
         return $this->article->item->price();
     }
@@ -90,7 +89,7 @@ class Other extends Model
     /**
      * @return string
      */
-    public function name()
+    public function name(): string
     {
         return $this->article->item->name;
     }
@@ -98,7 +97,7 @@ class Other extends Model
     /**
      * @return float
      */
-    public function quantity()
+    public function quantity(): float
     {
         return $this->article->item->quantity;
     }

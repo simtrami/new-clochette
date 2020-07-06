@@ -17,19 +17,19 @@ class FoodsRoutingTest extends TestCase
     /**
      * @return void
      */
-    public function testIndex()
+    public function testIndex(): void
     {
         $supplier = factory(Supplier::class)->create();
 
         $item_1 = factory(Item::class)->create();
         factory(Price::class)->create(['item_id' => $item_1->id]);
-        factory(Article::class)->create(['item_id' => $item_1->id, 'supplier_id' => $supplier->id]);
-        factory(Food::class)->create(['article_id' => $item_1->id, 'is_bulk' => true, 'units_left' => 50]);
+        factory(Article::class)->create(['id' => $item_1->id, 'supplier_id' => $supplier->id]);
+        factory(Food::class)->create(['id' => $item_1->id, 'is_bulk' => true, 'units_left' => 50]);
 
         $item_2 = factory(Item::class)->create();
         factory(Price::class)->create(['item_id' => $item_2->id]);
-        factory(Article::class)->create(['item_id' => $item_2->id, 'supplier_id' => $supplier->id]);
-        factory(Food::class)->create(['article_id' => $item_2->id, 'is_bulk' => false, 'units_left' => null]);
+        factory(Article::class)->create(['id' => $item_2->id, 'supplier_id' => $supplier->id]);
+        factory(Food::class)->create(['id' => $item_2->id, 'is_bulk' => false, 'units_left' => null]);
 
         $response = $this->get('/api/foods');
 
@@ -61,7 +61,7 @@ class FoodsRoutingTest extends TestCase
             ]);
     }
 
-    public function testCreate()
+    public function testCreate(): void
     {
         $supplier = factory(Supplier::class)->create();
 
@@ -96,15 +96,15 @@ class FoodsRoutingTest extends TestCase
             ]);
     }
 
-    public function testUpdate()
+    public function testUpdate(): void
     {
 
         $supplier_1 = factory(Supplier::class)->create();
         $item = factory(Item::class)->create();
         $id = $item->id;
         $price = factory(Price::class)->create(['item_id' => $id]);
-        factory(Article::class)->create(['item_id' => $id, 'supplier_id' => $supplier_1->id]);
-        factory(Food::class)->create(['article_id' => $id, 'is_bulk' => false, 'units_left' => null]);
+        factory(Article::class)->create(['id' => $id, 'supplier_id' => $supplier_1->id]);
+        factory(Food::class)->create(['id' => $id, 'is_bulk' => false, 'units_left' => null]);
 
         $supplier_2 = factory(Supplier::class)->create();
 
@@ -145,14 +145,14 @@ class FoodsRoutingTest extends TestCase
             ]);
     }
 
-    public function testShow()
+    public function testShow(): void
     {
         $supplier = factory(Supplier::class)->create();
         $item = factory(Item::class)->create();
         $id = $item->id;
         factory(Price::class)->create(['item_id' => $id]);
-        factory(Article::class)->create(['item_id' => $id, 'supplier_id' => $supplier->id]);
-        factory(Food::class)->create(['article_id' => $id, 'is_bulk' => false, 'units_left' => null]);
+        factory(Article::class)->create(['id' => $id, 'supplier_id' => $supplier->id]);
+        factory(Food::class)->create(['id' => $id, 'is_bulk' => false, 'units_left' => null]);
 
         $response = $this->getJson('/api/foods/' . $id);
 
@@ -176,14 +176,14 @@ class FoodsRoutingTest extends TestCase
             ]);
     }
 
-    public function testDestroy()
+    public function testDestroy(): void
     {
         $supplier = factory(Supplier::class)->create();
         $item = factory(Item::class)->create();
         $id = $item->id;
         factory(Price::class)->create(['item_id' => $id]);
-        factory(Article::class)->create(['item_id' => $id, 'supplier_id' => $supplier->id]);
-        factory(Food::class)->create(['article_id' => $id]);
+        factory(Article::class)->create(['id' => $id, 'supplier_id' => $supplier->id]);
+        factory(Food::class)->create(['id' => $id]);
 
         $response = $this->deleteJson('/api/foods/' . $id);
         $response->assertStatus(204);

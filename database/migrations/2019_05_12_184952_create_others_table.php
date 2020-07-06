@@ -14,13 +14,11 @@ class CreateOthersTable extends Migration
     public function up()
     {
         Schema::create('others', function (Blueprint $table) {
-            $table->unsignedBigInteger('article_id')->primary();
+            $table->foreignId('id')->primary()->constrained('articles')
+                ->onDelete('cascade')->onUpdate('cascade');
             $table->string('description')->nullable();
             $table->softDeletes();
             $table->timestamps();
-
-            $table->foreign('article_id')->references('item_id')->on('articles')
-                ->onDelete('cascade')->onUpdate('cascade');
         });
     }
 

@@ -15,14 +15,12 @@ class CreatePricesTable extends Migration
     {
         Schema::create('prices', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedBigInteger('item_id');
+            $table->foreignId('item_id')->constrained()
+                ->onDelete('cascade')->onUpdate('cascade');
             $table->unsignedDecimal('value', 8, 2);
             $table->unsignedDecimal('second_value', 8, 2)->nullable();
             $table->boolean('is_active')->default(true);
             $table->timestamps();
-
-            $table->foreign('item_id')->references('id')->on('items')
-                ->onDelete('cascade')->onUpdate('cascade');
         });
     }
 

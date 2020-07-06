@@ -14,7 +14,7 @@ class ContactsRoutingTest extends TestCase
     /**
      * @return void
      */
-    public function testIndex()
+    public function testIndex(): void
     {
         $supplier = factory(Supplier::class)->create();
         factory(Contact::class, 2)->create(['supplier_id' => $supplier->id]);
@@ -46,7 +46,7 @@ class ContactsRoutingTest extends TestCase
             ]);
     }
 
-    public function testCreate()
+    public function testCreate(): void
     {
         $supplier = factory(Supplier::class)->create();
 
@@ -75,7 +75,7 @@ class ContactsRoutingTest extends TestCase
             ]);
     }
 
-    public function testUpdate()
+    public function testUpdate(): void
     {
         $supplier1 = factory(Supplier::class)->create();
         $contact = factory(Contact::class)->create(['supplier_id' => $supplier1->id]);
@@ -115,7 +115,7 @@ class ContactsRoutingTest extends TestCase
             ]);
     }
 
-    public function testShow()
+    public function testShow(): void
     {
         $supplier = factory(Supplier::class)->create();
         $contact = factory(Contact::class)->create(['supplier_id' => $supplier->id]);
@@ -137,7 +137,7 @@ class ContactsRoutingTest extends TestCase
             ]);
     }
 
-    public function testDestroy()
+    public function testDestroy(): void
     {
         $supplier = factory(Supplier::class)->create();
         $contact = factory(Contact::class)->create(['supplier_id' => $supplier->id]);

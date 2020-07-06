@@ -27,6 +27,7 @@ class UserResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'username' => $this->username,
+            'customer' => new CustomerResource($this->whenLoaded('customer')),
             'email' => $this->email,
             'roles' => $this->getRoleNames(),
             'permissions' => $this->getPermissionNames(),

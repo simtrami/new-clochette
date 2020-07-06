@@ -21,7 +21,7 @@ class KitsController extends Controller
     /**
      * @return AnonymousResourceCollection
      */
-    public function index()
+    public function index(): AnonymousResourceCollection
     {
         return KitCollectionResource::collection(Kit::paginate(10));
     }
@@ -30,7 +30,7 @@ class KitsController extends Controller
      * @param Kit $kit
      * @return KitResource
      */
-    public function show(Kit $kit)
+    public function show(Kit $kit): KitResource
     {
         $this->checkIfTrashed($kit);
         return new KitResource($kit->loadMissing('articles'));
@@ -39,7 +39,7 @@ class KitsController extends Controller
     /**
      * @param Kit $kit
      */
-    private function checkIfTrashed(Kit $kit)
+    private function checkIfTrashed(Kit $kit): void
     {
         if ($kit->trashed() || $kit->item->trashed()) {
             throw new NotFoundHttpException(
@@ -51,7 +51,7 @@ class KitsController extends Controller
      * @param Request $request
      * @return KitResource
      */
-    public function store(Request $request)
+    public function store(Request $request): KitResource
     {
         $data = $request->validate([
             'name' => 'required|string|min:2|max:255',
@@ -74,7 +74,7 @@ class KitsController extends Controller
      * @param Request $request
      * @return KitResource
      */
-    public function update(Kit $kit, Request $request)
+    public function update(Kit $kit, Request $request): KitResource
     {
         $this->checkIfTrashed($kit);
 
@@ -83,10 +83,10 @@ class KitsController extends Controller
             'quantity' => 'numeric|min:0',
             'value' => 'numeric|min:0',
             'articles' => 'array|min:1|bail',
-            'articles.*.article_id' => 'required_with:articles|exists:articles,item_id|distinct',
+            'articles.*.id' => 'required_with:articles|exists:articles,id|distinct',
             'articles.*.quantity' => 'required_with:articles|numeric|min:0',
             'detached_articles' => 'array|min:1',
-            'detached_articles.*' => 'required_with:detached_articles|exists:articles,item_id',
+            'detached_articles.*' => 'required_with:detached_articles|exists:articles,id',
         ]);
 
         $item = $kit->item;
@@ -102,14 +102,14 @@ class KitsController extends Controller
             $kit->articles()->detach($data['detached_articles']);
         }
         // Attach each articles to the kit with their respective quantities
-        // Articles are not of the Article type but one of its child types:
-        // articles' id is named article_id, not item_id
+        // Articles are not of the Article class but one of its children's class
         if ($request->has('articles')) {
             foreach ($data['articles'] as $selectedArticle) {
                 $kit->articles()
                     ->syncWithoutDetaching([
-                        $selectedArticle['article_id'] =>
-                            ['article_quantity' => $selectedArticle['quantity']]
+                        $selectedArticle['id'] => [
+                            'article_quantity' => $selectedArticle['quantity']
+                        ]
                     ]);
             }
         }

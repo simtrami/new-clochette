@@ -14,15 +14,12 @@ class CreateTransactionDetailsTable extends Migration
     public function up()
     {
         Schema::create('transaction_details', function (Blueprint $table) {
-            $table->unsignedBigInteger('transaction_id');
-            $table->unsignedBigInteger('item_id')->nullable()
+            $table->foreignId('transaction_id')->constrained()
+                ->onDelete('cascade')->onUpdate('cascade');
+            $table->foreignId('item_id')->nullable()->constrained()
+                ->onDelete('set null')->onUpdate('cascade')
                 ->comment('Will not remove the entry when the item is deleted.');
             $table->unsignedInteger('quantity')->default(1);
-
-            $table->foreign('transaction_id')->references('id')->on('transactions')
-                ->onDelete('cascade')->onUpdate('cascade');
-            $table->foreign('item_id')->references('id')->on('items')
-                ->onDelete('set null')->onUpdate('cascade');
         });
     }
 

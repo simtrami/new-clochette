@@ -6,6 +6,7 @@ use Eloquent;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Carbon;
@@ -13,7 +14,7 @@ use Illuminate\Support\Carbon;
 /**
  * App\Kit
  *
- * @property int $item_id
+ * @property int $id
  * @property Carbon|null $deleted_at
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
@@ -32,14 +33,12 @@ use Illuminate\Support\Carbon;
  * @method static Builder|Kit withTrashed()
  * @method static Builder|Kit withoutTrashed()
  * @mixin Eloquent
+ * @property-read int|null $articles_count
+ * @method static \Illuminate\Database\Eloquent\Builder|Kit whereId($value)
  */
 class Kit extends Model
 {
     use SoftDeletes;
-
-    protected $primaryKey = 'item_id';
-
-    protected $fillable = [];
 
     /**
      * The relationships that should always be loaded.
@@ -55,12 +54,12 @@ class Kit extends Model
     /**
      * @return BelongsTo
      */
-    public function item()
+    public function item(): BelongsTo
     {
-        return $this->belongsTo(Item::class);
+        return $this->belongsTo(Item::class, 'id');
     }
 
-    public function articles()
+    public function articles(): BelongsToMany
     {
         return $this
             ->belongsToMany(Article::class, 'kits_articles', 'kit_id',

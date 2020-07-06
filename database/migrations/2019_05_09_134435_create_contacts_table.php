@@ -15,17 +15,15 @@ class CreateContactsTable extends Migration
     {
         Schema::create('contacts', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedBigInteger('supplier_id');
+            $table->foreignId('supplier_id')->constrained()
+                ->onDelete('cascade')->onUpdate('cascade');
             $table->string('first_name');
             $table->string('last_name');
-            $table->string('phone');
-            $table->string('email');
+            $table->string('phone')->nullable();
+            $table->string('email')->nullable();
             $table->string('role');
-            $table->mediumText('notes');
+            $table->mediumText('notes')->nullable();
             $table->timestamps();
-
-            $table->foreign('supplier_id')->references('id')->on('suppliers')
-                ->onDelete('cascade')->onUpdate('cascade');
         });
     }
 

@@ -5,6 +5,11 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * @property mixed comments
+ * @property mixed value
+ * @property mixed id
+ */
 class TransactionResource extends JsonResource
 {
     /**

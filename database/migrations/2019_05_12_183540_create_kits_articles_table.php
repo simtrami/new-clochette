@@ -14,15 +14,12 @@ class CreateKitsArticlesTable extends Migration
     public function up()
     {
         Schema::create('kits_articles', function (Blueprint $table) {
-            $table->unsignedBigInteger('kit_id');
-            $table->unsignedBigInteger('article_id');
+            $table->foreignId('kit_id')->constrained()
+                ->onDelete('cascade')->onUpdate('cascade');
+            $table->foreignId('article_id')->constrained()
+                ->onDelete('cascade')->onUpdate('cascade');
             $table->unsignedInteger('article_quantity');
             $table->timestamps();
-
-            $table->foreign('kit_id')->references('item_id')->on('kits')
-                ->onDelete('cascade')->onUpdate('cascade');
-            $table->foreign('article_id')->references('item_id')->on('articles')
-                ->onDelete('cascade')->onUpdate('cascade');
         });
     }
 

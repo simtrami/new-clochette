@@ -13,9 +13,9 @@ use Illuminate\Support\Carbon;
 /**
  * App\Barrel
  *
- * @property int $article_id
+ * @property int $id
  * @property float $volume
- * @property string|null $withdrawal_type
+ * @property string|null $coupler
  * @property float|null $abv
  * @property float|null $ibu
  * @property string|null $variety
@@ -37,18 +37,17 @@ use Illuminate\Support\Carbon;
  * @method static \Illuminate\Database\Eloquent\Builder|Barrel whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Barrel whereVariety($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Barrel whereVolume($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Barrel whereWithdrawalType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Barrel whereCoupler($value)
  * @method static Builder|Barrel withTrashed()
  * @method static Builder|Barrel withoutTrashed()
  * @mixin Eloquent
+ * @method static \Illuminate\Database\Eloquent\Builder|Barrel whereId($value)
  */
 class Barrel extends Model
 {
     use SoftDeletes;
 
-    protected $primaryKey = 'article_id';
-
-    protected $fillable = ['volume', 'withdrawal_type', 'abv', 'ibu', 'variety'];
+    protected $fillable = ['id', 'volume', 'coupler', 'abv', 'ibu', 'variety'];
 
     /**
      * The relationships that should always be loaded.
@@ -64,9 +63,9 @@ class Barrel extends Model
     /**
      * @return BelongsTo
      */
-    public function article()
+    public function article(): BelongsTo
     {
-        return $this->belongsTo(Article::class, 'article_id', 'item_id');
+        return $this->belongsTo(Article::class, 'id');
     }
 
     ##
@@ -76,7 +75,7 @@ class Barrel extends Model
     /**
      * @param $value
      */
-    public function changePrice($value)
+    public function changePrice($value): void
     {
         $this->article->item->changePrice($value);
     }
@@ -84,7 +83,7 @@ class Barrel extends Model
     /**
      * @param $value
      */
-    public function changeSecondPrice($value)
+    public function changeSecondPrice($value): void
     {
         $this->article->item->changeSecondPrice($value);
     }
@@ -93,7 +92,7 @@ class Barrel extends Model
      * @param $first_value
      * @param null $second_value
      */
-    public function changePrices($first_value, $second_value = null)
+    public function changePrices($first_value, $second_value = null): void
     {
         $this->article->item->changePrices($first_value, $second_value);
     }
@@ -106,7 +105,7 @@ class Barrel extends Model
     /**
      * @return Collection|null
      */
-    public function pricesHistory()
+    public function pricesHistory(): ?Collection
     {
         return $this->article->item->pricesHistory();
     }
@@ -114,7 +113,7 @@ class Barrel extends Model
     /**
      * @return Price|null
      */
-    public function price()
+    public function price(): ?Price
     {
         return $this->article->item->price();
     }
@@ -122,7 +121,7 @@ class Barrel extends Model
     /**
      * @return string
      */
-    public function name()
+    public function name(): string
     {
         return $this->article->item->name;
     }
@@ -130,7 +129,7 @@ class Barrel extends Model
     /**
      * @return float
      */
-    public function quantity()
+    public function quantity(): float
     {
         return $this->article->item->quantity;
     }

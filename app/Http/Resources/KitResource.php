@@ -8,7 +8,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
  * @property Collection articles
- * @property mixed item_id
+ * @property mixed id
  * @property mixed item
  */
 class KitResource extends JsonResource
@@ -22,7 +22,7 @@ class KitResource extends JsonResource
     public function toArray($request)
     {
         $ret = [
-            'id' => $this->item_id,
+            'id' => $this->id,
             'name' => $this->item->name,
             'quantity' => $this->item->quantity,
             'pricesHistory' => $this->item->pricesHistory(),
@@ -36,7 +36,7 @@ class KitResource extends JsonResource
         foreach ($this->articles as $article) {
             $type = $article->type();
             $sub = [
-                'id' => $article->item_id,
+                'id' => $article->id,
                 'name' => $article->item->name,
                 'articleQuantity' => $article->pivot->article_quantity,
                 'price' => $article->item->price()->value,
@@ -52,7 +52,7 @@ class KitResource extends JsonResource
                 default:
                     break;
             }
-            array_push($ret['articles'], $sub);
+            $ret['articles'][] = $sub;
         }
 
         return $ret;

@@ -18,7 +18,7 @@ class CreatePaymentMethodsTable extends Migration
             $table->string('name')->unique();
             $table->boolean('needs_cash_drawer')->default(false);
             $table->string('icon_name', 100)->default('attach_money');
-            $table->json('parameters')->default(json_encode([]));
+            $table->json('parameters')->nullable();
             $table->timestamps();
         });
     }

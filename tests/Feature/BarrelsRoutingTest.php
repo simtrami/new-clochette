@@ -17,19 +17,19 @@ class BarrelsRoutingTest extends TestCase
     /**
      * @return void
      */
-    public function testIndex()
+    public function testIndex(): void
     {
         $supplier = factory(Supplier::class)->create();
 
         $item_1 = factory(Item::class)->create();
         factory(Price::class)->create(['item_id' => $item_1->id, 'second_value' => '4.2']);
-        factory(Article::class)->create(['item_id' => $item_1->id, 'supplier_id' => $supplier->id]);
-        factory(Barrel::class)->create(['article_id' => $item_1->id]);
+        factory(Article::class)->create(['id' => $item_1->id, 'supplier_id' => $supplier->id]);
+        factory(Barrel::class)->create(['id' => $item_1->id]);
 
         $item_2 = factory(Item::class)->create();
         factory(Price::class)->create(['item_id' => $item_2->id, 'second_value' => '2.4']);
-        factory(Article::class)->create(['item_id' => $item_2->id, 'supplier_id' => $supplier->id]);
-        factory(Barrel::class)->create(['article_id' => $item_2->id]);
+        factory(Article::class)->create(['id' => $item_2->id, 'supplier_id' => $supplier->id]);
+        factory(Barrel::class)->create(['id' => $item_2->id]);
 
         $response = $this->get('/api/barrels');
 
@@ -45,7 +45,7 @@ class BarrelsRoutingTest extends TestCase
                             'id', 'value', 'secondValue',
                         ],
                         'volume',
-                        'withdrawalType',
+                        'coupler',
                         'abv', 'ibu', 'variety',
                     ],
                     1 => [
@@ -57,14 +57,14 @@ class BarrelsRoutingTest extends TestCase
                             'id', 'value', 'secondValue',
                         ],
                         'volume',
-                        'withdrawalType',
+                        'coupler',
                         'abv', 'ibu', 'variety',
                     ]
                 ]
             ]);
     }
 
-    public function testCreate()
+    public function testCreate(): void
     {
         $supplier = factory(Supplier::class)->create();
 
@@ -76,7 +76,7 @@ class BarrelsRoutingTest extends TestCase
             'value' => '4.2',
             'second_value' => '2.6',
             'volume' => '30',
-            'withdrawal_type' => 'KeyKeg',
+            'coupler' => 'KeyKeg',
             'abv' => '4.5',
         ]);
 
@@ -92,7 +92,7 @@ class BarrelsRoutingTest extends TestCase
                     ],
                     'pricesHistory',
                     'volume',
-                    'withdrawalType',
+                    'coupler',
                     'abv', 'ibu', 'variety',
                     'supplier' => [
                         'id', 'name', 'description', 'address', 'phone', 'email', 'supplierSince',
@@ -101,14 +101,14 @@ class BarrelsRoutingTest extends TestCase
             ]);
     }
 
-    public function testUpdate()
+    public function testUpdate(): void
     {
         $supplier_1 = factory(Supplier::class)->create();
         $item = factory(Item::class)->create();
         $id = $item->id;
         $price = factory(Price::class)->create(['item_id' => $id, 'second_value' => '3.4']);
-        factory(Article::class)->create(['item_id' => $id, 'supplier_id' => $supplier_1->id]);
-        factory(Barrel::class)->create(['article_id' => $id]);
+        factory(Article::class)->create(['id' => $id, 'supplier_id' => $supplier_1->id]);
+        factory(Barrel::class)->create(['id' => $id]);
 
         $supplier_2 = factory(Supplier::class)->create();
 
@@ -120,7 +120,7 @@ class BarrelsRoutingTest extends TestCase
             'value' => '4.2',
             'second_value' => '2.6',
             'volume' => '30',
-            'withdrawal_type' => 'KeyKeg',
+            'coupler' => 'KeyKeg',
             'abv' => '4.5',
         ]);
 
@@ -138,7 +138,7 @@ class BarrelsRoutingTest extends TestCase
                     ],
 //                    'pricesHistory' is present but will need to be defined later, will return true anyway
                     'volume' => '30',
-                    'withdrawalType' => 'KeyKeg',
+                    'coupler' => 'KeyKeg',
                     'abv' => '4.50',
                     'ibu' => null,
                     'variety' => null,
@@ -155,14 +155,14 @@ class BarrelsRoutingTest extends TestCase
             ]);
     }
 
-    public function testShow()
+    public function testShow(): void
     {
         $supplier = factory(Supplier::class)->create();
         $item = factory(Item::class)->create();
         $id = $item->id;
         factory(Price::class)->create(['item_id' => $id, 'second_value' => '3.4']);
-        factory(Article::class)->create(['item_id' => $id, 'supplier_id' => $supplier->id]);
-        factory(Barrel::class)->create(['article_id' => $id]);
+        factory(Article::class)->create(['id' => $id, 'supplier_id' => $supplier->id]);
+        factory(Barrel::class)->create(['id' => $id]);
 
         $response = $this->getJson('/api/barrels/' . $id);
 
@@ -178,7 +178,7 @@ class BarrelsRoutingTest extends TestCase
                     ],
                     'pricesHistory',
                     'volume',
-                    'withdrawalType',
+                    'coupler',
                     'abv', 'ibu', 'variety',
                     'supplier' => [
                         'id', 'name', 'description', 'address', 'phone', 'email', 'supplierSince',
@@ -187,14 +187,14 @@ class BarrelsRoutingTest extends TestCase
             ]);
     }
 
-    public function testDestroy()
+    public function testDestroy(): void
     {
         $supplier = factory(Supplier::class)->create();
         $item = factory(Item::class)->create();
         $id = $item->id;
         factory(Price::class)->create(['item_id' => $id, 'second_value' => '3.4']);
-        factory(Article::class)->create(['item_id' => $id, 'supplier_id' => $supplier->id]);
-        factory(Barrel::class)->create(['article_id' => $id]);
+        factory(Article::class)->create(['id' => $id, 'supplier_id' => $supplier->id]);
+        factory(Barrel::class)->create(['id' => $id]);
 
         $response = $this->deleteJson('/api/barrels/' . $id);
         $response->assertStatus(204);

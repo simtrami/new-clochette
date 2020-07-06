@@ -13,7 +13,7 @@ class CustomersRoutingTest extends TestCase
     /**
      * @return void
      */
-    public function testIndex()
+    public function testIndex(): void
     {
         factory(Customer::class, 2)->create();
 
@@ -28,8 +28,7 @@ class CustomersRoutingTest extends TestCase
                         'lastName',
                         'nickname',
                         'balance',
-                        'isStaff',
-                        'staffNickname'
+                        'isStaff'
                     ],
                     1 => [
                         'id',
@@ -37,22 +36,20 @@ class CustomersRoutingTest extends TestCase
                         'lastName',
                         'nickname',
                         'balance',
-                        'isStaff',
-                        'staffNickname'
+                        'isStaff'
                     ]
                 ]
             ]);
     }
 
-    public function testCreate()
+    public function testCreate(): void
     {
         $response = $this->postJson('/api/customers', [
             'first_name' => 'Customer',
             'last_name' => 'McTest',
             'nickname' => 'customer.mctest',
             'balance' => 10.2,
-            'is_staff' => true,
-            'staff_nickname' => 'customermctest'
+            'is_staff' => true
         ]);
 
         $response->assertStatus(201)
@@ -63,13 +60,12 @@ class CustomersRoutingTest extends TestCase
                     'lastName',
                     'nickname',
                     'balance',
-                    'isStaff',
-                    'staffNickname'
+                    'isStaff'
                 ]
             ]);
     }
 
-    public function testUpdate()
+    public function testUpdate(): void
     {
         $customer = factory(Customer::class)->create();
 
@@ -78,8 +74,7 @@ class CustomersRoutingTest extends TestCase
             'last_name' => 'McTest',
             'nickname' => 'customer.mctest',
             'balance' => 0,
-            'is_staff' => 1,
-            'staff_nickname' => 'customermctest'
+            'is_staff' => 1
         ]);
 
         $response->assertStatus(200)
@@ -89,12 +84,11 @@ class CustomersRoutingTest extends TestCase
                 'lastName' => 'McTest',
                 'nickname' => 'customer.mctest',
                 'balance' => 0,
-                'isStaff' => 1,
-                'staffNickname' => 'customermctest'
+                'isStaff' => 1
             ]]);
     }
 
-    public function testShow()
+    public function testShow(): void
     {
         $customer = factory(Customer::class)->create();
 
@@ -108,13 +102,12 @@ class CustomersRoutingTest extends TestCase
                     'lastName',
                     'nickname',
                     'balance',
-                    'isStaff',
-                    'staffNickname'
+                    'isStaff'
                 ]
             ]);
     }
 
-    public function testDestroy()
+    public function testDestroy(): void
     {
         $customer = factory(Customer::class)->create();
 

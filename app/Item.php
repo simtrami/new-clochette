@@ -6,6 +6,7 @@ use Eloquent;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -40,6 +41,8 @@ use Illuminate\Support\Carbon;
  * @method static Builder|Item withoutTrashed()
  * @mixin Eloquent
  * @property-read Collection|Transaction[] $transactions
+ * @property-read int|null $prices_count
+ * @property-read int|null $transactions_count
  */
 class Item extends Model
 {
@@ -54,28 +57,28 @@ class Item extends Model
     /**
      * @return HasOne
      */
-    public function article()
+    public function article(): HasOne
     {
-        return $this->hasOne(Article::class);
+        return $this->hasOne(Article::class, 'id');
     }
 
     /**
      * @return HasOne
      */
-    public function kit()
+    public function kit(): HasOne
     {
-        return $this->hasOne(Kit::class);
+        return $this->hasOne(Kit::class, 'id');
     }
 
     /**
      * @return Collection|null
      */
-    public function inactivePrices()
+    public function inactivePrices(): ?Collection
     {
         return $this->prices->where('is_active', false);
     }
 
-    public function transactions()
+    public function transactions(): BelongsToMany
     {
         return $this->belongsToMany(Transaction::class, 'transaction_details',
             'item_id', 'transaction_id')
@@ -107,7 +110,7 @@ class Item extends Model
     /**
      * @return HasMany
      */
-    public function prices()
+    public function prices(): HasMany
     {
         return $this->hasMany(Price::class);
     }
@@ -115,7 +118,7 @@ class Item extends Model
     /**
      * @return Collection|null
      */
-    public function pricesHistory()
+    public function pricesHistory(): ?Collection
     {
         return $this->prices->sortByDesc('updated_at');
     }
@@ -127,7 +130,7 @@ class Item extends Model
     /**
      * @param Price $price
      */
-    public function switchActivePrice(Price $price)
+    public function switchActivePrice(Price $price): void
     {
         // Given price has to be one of the item's prices
         if (!$this->prices->contains('id', $price->id)) {
@@ -147,15 +150,16 @@ class Item extends Model
      * @param $first_value
      * @param $second_value = null
      */
-    public function changePrices($first_value, $second_value = null)
+    public function changePrices($first_value, $second_value = null): void
     {
+        // TODO: optimize?
         if ($this->prices()->where(['value' => $first_value, 'second_value' => $second_value])->doesntExist()) {
             $activePrice = $this->activePrice();
 
             // First value is the same, second value is null and has to be set
             // Active price is updated in this case only
             if ($activePrice) {
-                if ($activePrice->value == $first_value && !$activePrice->second_value && $second_value) {
+                if ($activePrice->value === $first_value && !$activePrice->second_value && $second_value) {
                     $activePrice->update(['second_value' => $second_value]);
                     return;
                 }
@@ -184,7 +188,7 @@ class Item extends Model
     /**
      * @param $value
      */
-    public function changePrice($value)
+    public function changePrice($value): void
     {
         $this->changePrices($value);
     }
@@ -192,7 +196,7 @@ class Item extends Model
     /**
      * @param $value
      */
-    public function changeSecondPrice($value)
+    public function changeSecondPrice($value): void
     {
         if (!$this->activePrice()) {
             throw new ModelNotFoundException(

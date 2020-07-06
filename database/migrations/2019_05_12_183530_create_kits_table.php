@@ -14,12 +14,10 @@ class CreateKitsTable extends Migration
     public function up()
     {
         Schema::create('kits', function (Blueprint $table) {
-            $table->unsignedBigInteger('item_id')->primary();
+            $table->foreignId('id')->primary()->constrained('items')
+                ->onDelete('cascade')->onUpdate('cascade');
             $table->softDeletes();
             $table->timestamps();
-
-            $table->foreign('item_id')->references('id')->on('items')
-                ->onDelete('cascade')->onUpdate('cascade');
         });
     }
 

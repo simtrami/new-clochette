@@ -5,6 +5,8 @@ namespace App;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticable;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Notifications\DatabaseNotificationCollection;
@@ -50,6 +52,15 @@ use Spatie\Permission\Traits\HasRoles;
  * @method static Builder|User whereUsername($value)
  * @mixin Eloquent
  * @property-read Collection|Transaction[] $transactions
+ * @property int|null $customer_id
+ * @property-read int|null $clients_count
+ * @property-read Customer|null $customer
+ * @property-read int|null $notifications_count
+ * @property-read int|null $permissions_count
+ * @property-read int|null $roles_count
+ * @property-read int|null $tokens_count
+ * @property-read int|null $transactions_count
+ * @method static Builder|User whereCustomerId($value)
  */
 class User extends Authenticable
 {
@@ -61,7 +72,7 @@ class User extends Authenticable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'username', 'password',
+        'name', 'email', 'username', 'password', 'customer_id',
     ];
 
     /**
@@ -86,8 +97,13 @@ class User extends Authenticable
     # Relationships
     ##
 
-    public function transactions()
+    public function transactions(): HasMany
     {
         return $this->hasMany(Transaction::class);
+    }
+
+    public function customer(): BelongsTo
+    {
+        return $this->belongsTo(Customer::class);
     }
 }

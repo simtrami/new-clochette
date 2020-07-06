@@ -10,15 +10,16 @@
     "license": "MIT",
     "require": {
         "php": "^7.2.5",
+        "ext-json": "*",
         "fideloper/proxy": "^4.3",
         "fruitcake/laravel-cors": "^1.0",
         "guzzlehttp/guzzle": "^6.5",
         "laravel/framework": "^7.14",
         "laravel/passport": "^8.5",
         "laravel/tinker": "^2.4",
+        "laravel/ui": "^2.1",
         "spatie/laravel-permission": "^3.13",
-        "spatie/laravel-tags": "^2.6",
-        "ext-json": "*"
+        "spatie/laravel-tags": "^2.6"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^2.7",

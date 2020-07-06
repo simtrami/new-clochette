@@ -4,6 +4,7 @@ namespace App;
 
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
 /**
@@ -32,12 +33,12 @@ class TransactionDetail extends Pivot
     # Relationships
     ##
 
-    public function transaction()
+    public function transaction(): BelongsTo
     {
         return $this->belongsTo(Transaction::class);
     }
 
-    public function item()
+    public function item(): BelongsTo
     {
         return $this->belongsTo(Item::class);
     }
@@ -47,7 +48,7 @@ class TransactionDetail extends Pivot
     # Must be called with parenthesis
     ##
 
-    public function itemName()
+    public function itemName(): string
     {
         return $this->item->name;
     }

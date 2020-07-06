@@ -22,7 +22,7 @@ class TransactionsController extends Controller
     /**
      * @return AnonymousResourceCollection
      */
-    public function index()
+    public function index(): AnonymousResourceCollection
     {
         return TransactionResource::collection(Transaction::with('customer')->paginate(10));
     }
@@ -31,7 +31,7 @@ class TransactionsController extends Controller
      * @param Transaction $transaction
      * @return TransactionResource
      */
-    public function show(Transaction $transaction)
+    public function show(Transaction $transaction): TransactionResource
     {
         return new TransactionResource($transaction->loadMissing('customer'));
     }
@@ -40,7 +40,7 @@ class TransactionsController extends Controller
      * @param Request $request
      * @return TransactionResource
      */
-    public function store(Request $request)
+    public function store(Request $request): TransactionResource
     {
         $data = $request->validate([
             'value' => 'required|numeric',
@@ -81,7 +81,7 @@ class TransactionsController extends Controller
      * @param Request $request
      * @return TransactionResource
      */
-    public function update(Transaction $transaction, Request $request)
+    public function update(Transaction $transaction, Request $request): TransactionResource
     {
         $data = $request->validate([
             'value' => 'numeric',

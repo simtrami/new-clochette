@@ -13,7 +13,7 @@ use Illuminate\Support\Carbon;
 /**
  * App\Food
  *
- * @property int $article_id
+ * @property int $id
  * @property int $is_bulk
  * @property int|null $units_left
  * @property Carbon|null $deleted_at
@@ -35,14 +35,13 @@ use Illuminate\Support\Carbon;
  * @method static Builder|Food withTrashed()
  * @method static Builder|Food withoutTrashed()
  * @mixin Eloquent
+ * @method static \Illuminate\Database\Eloquent\Builder|Food whereId($value)
  */
 class Food extends Model
 {
     use SoftDeletes;
 
-    protected $table = 'foods';
-
-    protected $primaryKey = 'article_id';
+    protected $table = 'food';
 
     protected $fillable = ['is_bulk', 'units_left'];
 
@@ -53,9 +52,9 @@ class Food extends Model
     /**
      * @return BelongsTo
      */
-    public function article()
+    public function article(): BelongsTo
     {
-        return $this->belongsTo(Article::class, 'article_id', 'item_id');
+        return $this->belongsTo(Article::class, 'id');
     }
 
     ##
@@ -65,7 +64,7 @@ class Food extends Model
     /**
      * @param $value
      */
-    public function changePrice($value)
+    public function changePrice($value): void
     {
         $this->article->item->changePrice($value);
     }
@@ -78,7 +77,7 @@ class Food extends Model
     /**
      * @return Collection|null
      */
-    public function pricesHistory()
+    public function pricesHistory(): ?Collection
     {
         return $this->article->item->pricesHistory();
     }
@@ -86,7 +85,7 @@ class Food extends Model
     /**
      * @return Price|null
      */
-    public function price()
+    public function price(): ?Price
     {
         return $this->article->item->price();
     }
@@ -94,7 +93,7 @@ class Food extends Model
     /**
      * @return string
      */
-    public function name()
+    public function name(): string
     {
         return $this->article->item->name;
     }
@@ -102,7 +101,7 @@ class Food extends Model
     /**
      * @return float
      */
-    public function quantity()
+    public function quantity(): float
     {
         return $this->article->item->quantity;
     }

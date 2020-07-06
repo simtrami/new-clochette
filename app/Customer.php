@@ -6,6 +6,8 @@ use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Carbon;
 
 /**
@@ -17,7 +19,6 @@ use Illuminate\Support\Carbon;
  * @property string $nickname
  * @property float $balance
  * @property int $is_staff
- * @property string|null $staff_nickname
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @method static Builder|Customer newModelQuery()
@@ -30,24 +31,29 @@ use Illuminate\Support\Carbon;
  * @method static Builder|Customer whereIsStaff($value)
  * @method static Builder|Customer whereLastName($value)
  * @method static Builder|Customer whereNickname($value)
- * @method static Builder|Customer whereStaffNickname($value)
  * @method static Builder|Customer whereUpdatedAt($value)
  * @mixin Eloquent
  * @property-read Collection|Transaction[] $transactions
+ * @property-read int|null $transactions_count
+ * @property-read User|null $user
  */
 class Customer extends Model
 {
     protected $fillable = [
-        'first_name', 'last_name', 'nickname', 'balance',
-        'is_staff', 'staff_nickname',
+        'first_name', 'last_name', 'nickname', 'balance', 'is_staff',
     ];
 
     ##
     # Relationships
     ##
 
-    public function transactions()
+    public function transactions(): HasMany
     {
         return $this->hasMany(Transaction::class);
+    }
+
+    public function user(): HasOne
+    {
+        return $this->hasOne(User::class);
     }
 }

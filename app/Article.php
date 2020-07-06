@@ -15,7 +15,7 @@ use Illuminate\Support\Carbon;
 /**
  * App\Article
  *
- * @property int $item_id
+ * @property int $id
  * @property int|null $supplier_id
  * @property float $unit_price
  * @property Carbon|null $deleted_at
@@ -43,14 +43,14 @@ use Illuminate\Support\Carbon;
  * @method static Builder|Article withTrashed()
  * @method static Builder|Article withoutTrashed()
  * @mixin Eloquent
+ * @property-read int|null $kits_count
+ * @method static \Illuminate\Database\Eloquent\Builder|Article whereId($value)
  */
 class Article extends Model
 {
     use SoftDeletes;
 
-    protected $primaryKey = 'item_id';
-
-    protected $fillable = ['unit_price'];
+    protected $fillable = ['id', 'unit_price'];
 
     /**
      * The relationships that should always be loaded.
@@ -66,15 +66,15 @@ class Article extends Model
     /**
      * @return BelongsTo
      */
-    public function item()
+    public function item(): BelongsTo
     {
-        return $this->belongsTo(Item::class);
+        return $this->belongsTo(Item::class, 'id');
     }
 
     /**
      * @return BelongsTo
      */
-    public function supplier()
+    public function supplier(): BelongsTo
     {
         return $this->belongsTo(Supplier::class);
     }
@@ -82,7 +82,7 @@ class Article extends Model
     /**
      * @return BelongsToMany
      */
-    public function kits()
+    public function kits(): BelongsToMany
     {
         return $this
             ->belongsToMany(Kit::class, 'kits_articles', 'article_id', 'kit_id')
@@ -92,33 +92,33 @@ class Article extends Model
     /**
      * @return HasOne
      */
-    public function barrel()
+    public function barrel(): HasOne
     {
-        return $this->hasOne(Barrel::class, 'article_id', 'item_id');
+        return $this->hasOne(Barrel::class, 'id');
     }
 
     /**
      * @return HasOne
      */
-    public function bottle()
+    public function bottle(): HasOne
     {
-        return $this->hasOne(Bottle::class, 'article_id', 'item_id');
+        return $this->hasOne(Bottle::class, 'id');
     }
 
     /**
      * @return HasOne
      */
-    public function food()
+    public function food(): HasOne
     {
-        return $this->hasOne(Food::class, 'article_id', 'item_id');
+        return $this->hasOne(Food::class, 'id');
     }
 
     /**
      * @return HasOne
      */
-    public function other()
+    public function other(): HasOne
     {
-        return $this->hasOne(Other::class, 'article_id', 'item_id');
+        return $this->hasOne(Other::class, 'id');
     }
 
     ##
@@ -137,18 +137,24 @@ class Article extends Model
     /**
      * @return string|null
      */
-    public function type()
+    public function type(): ?string
     {
+        if ($this->bottle) {
+            return 'bottle';
+        }
+
         if ($this->barrel) {
             return 'barrel';
-        } elseif ($this->bottle) {
-            return 'bottle';
-        } elseif ($this->food) {
-            return 'food';
-        } elseif ($this->other) {
-            return 'other';
-        } else {
-            return null;
         }
+
+        if ($this->food) {
+            return 'food';
+        }
+
+        if ($this->other) {
+            return 'other';
+        }
+
+        return null;
     }
 }

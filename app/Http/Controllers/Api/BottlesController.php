@@ -23,7 +23,7 @@ class BottlesController extends Controller
     /**
      * @return AnonymousResourceCollection
      */
-    public function index()
+    public function index(): AnonymousResourceCollection
     {
         return ArticleCollectionResource::collection(Article::has('bottle')
             ->paginate(10));
@@ -33,7 +33,7 @@ class BottlesController extends Controller
      * @param Bottle $bottle
      * @return BottleResource
      */
-    public function show(Bottle $bottle)
+    public function show(Bottle $bottle): BottleResource
     {
         $this->checkIfTrashed($bottle);
         return new BottleResource($bottle);
@@ -42,7 +42,7 @@ class BottlesController extends Controller
     /**
      * @param Bottle $bottle
      */
-    private function checkIfTrashed(Bottle $bottle)
+    private function checkIfTrashed(Bottle $bottle): void
     {
         if ($bottle->trashed() ||
             $bottle->article->trashed() ||
@@ -56,7 +56,7 @@ class BottlesController extends Controller
      * @param Request $request
      * @return BottleResource
      */
-    public function store(Request $request)
+    public function store(Request $request): BottleResource
     {
         $data = $request->validate([
             'name' => 'required|string|min:2|max:255',
@@ -95,7 +95,7 @@ class BottlesController extends Controller
      * @param Request $request
      * @return BottleResource
      */
-    public function update(Bottle $bottle, Request $request)
+    public function update(Bottle $bottle, Request $request): BottleResource
     {
         $this->checkIfTrashed($bottle);
 

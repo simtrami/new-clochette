@@ -23,7 +23,7 @@ class OthersController extends Controller
     /**
      * @return AnonymousResourceCollection
      */
-    public function index()
+    public function index(): AnonymousResourceCollection
     {
         return ArticleCollectionResource::collection(Article::has('other')
             ->paginate(10));
@@ -33,7 +33,7 @@ class OthersController extends Controller
      * @param Other $other
      * @return OtherResource
      */
-    public function show(Other $other)
+    public function show(Other $other): OtherResource
     {
         $this->checkIfTrashed($other);
         return new OtherResource($other);
@@ -42,7 +42,7 @@ class OthersController extends Controller
     /**
      * @param Other $other
      */
-    private function checkIfTrashed(Other $other)
+    private function checkIfTrashed(Other $other): void
     {
         if ($other->trashed() ||
             $other->article->trashed() ||
@@ -56,7 +56,7 @@ class OthersController extends Controller
      * @param Request $request
      * @return OtherResource
      */
-    public function store(Request $request)
+    public function store(Request $request): OtherResource
     {
         $data = $request->validate([
             'name' => 'required|string|min:2|max:255',
@@ -91,7 +91,7 @@ class OthersController extends Controller
      * @param Request $request
      * @return OtherResource
      */
-    public function update(Other $other, Request $request)
+    public function update(Other $other, Request $request): OtherResource
     {
         $this->checkIfTrashed($other);
 
