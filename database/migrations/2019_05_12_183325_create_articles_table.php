@@ -14,12 +14,12 @@ class CreateArticlesTable extends Migration
     public function up()
     {
         Schema::create('articles', function (Blueprint $table) {
-            $table->foreignId('id')->primary()->constrained('items')
-                ->onDelete('cascade')->onUpdate('cascade');
+            $table->bigIncrements('id');
+            $table->string('name');
+            $table->unsignedInteger('quantity');
             $table->foreignId('supplier_id')->nullable()->constrained()
                 ->onDelete('set null')->onUpdate('cascade');
             $table->unsignedDecimal('unit_price', 9, 3);
-            $table->softDeletes();
             $table->timestamps();
         });
     }

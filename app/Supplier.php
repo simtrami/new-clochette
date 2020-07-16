@@ -22,6 +22,7 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property-read Collection|Contact[] $contacts
+ * @property-read int|null $contacts_count
  * @method static Builder|Supplier newModelQuery()
  * @method static Builder|Supplier newQuery()
  * @method static Builder|Supplier query()
@@ -35,7 +36,6 @@ use Illuminate\Support\Carbon;
  * @method static Builder|Supplier whereSupplierSince($value)
  * @method static Builder|Supplier whereUpdatedAt($value)
  * @mixin Eloquent
- * @property-read int|null $contacts_count
  */
 class Supplier extends Model
 {

@@ -9,7 +9,6 @@ use Illuminate\Http\Resources\Json\JsonResource;
 /**
  * @property Collection articles
  * @property mixed item_id
- * @property mixed item
  */
 class KitCollectionResource extends JsonResource
 {
@@ -22,11 +21,11 @@ class KitCollectionResource extends JsonResource
     public function toArray($request)
     {
         $ret = [
-            'id' => $this->item_id,
-            'name' => $this->item->name,
-            'quantity' => $this->item->quantity,
+            'id' => $this->id,
+            'name' => $this->name,
+            'quantity' => $this->quantity,
         ];
-        $price = $this->item->price();
+        $price = $this->price();
         $ret['price'] = [
             'id' => $price->id,
             'value' => $price->value,

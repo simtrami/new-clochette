@@ -15,11 +15,12 @@ use Illuminate\Support\Carbon;
  * @property int $id
  * @property string $name
  * @property int $needs_cash_drawer
- * @property string $icon_name
- * @property string $parameters
+ * @property string|null $icon_name
+ * @property mixed|null $parameters
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property-read Collection|Transaction[] $transactions
+ * @property-read int|null $transactions_count
  * @method static Builder|PaymentMethod newModelQuery()
  * @method static Builder|PaymentMethod newQuery()
  * @method static Builder|PaymentMethod query()
@@ -31,7 +32,6 @@ use Illuminate\Support\Carbon;
  * @method static Builder|PaymentMethod whereParameters($value)
  * @method static Builder|PaymentMethod whereUpdatedAt($value)
  * @mixin Eloquent
- * @property-read int|null $transactions_count
  */
 class PaymentMethod extends Model
 {

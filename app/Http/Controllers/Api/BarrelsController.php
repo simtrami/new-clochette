@@ -7,7 +7,6 @@ use App\Barrel;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ArticleCollectionResource;
 use App\Http\Resources\BarrelResource;
-use App\Item;
 use App\Price;
 use App\Supplier;
 use Exception;
@@ -16,7 +15,6 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
 use Illuminate\Routing\ResponseFactory;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class BarrelsController extends Controller
 {
@@ -35,21 +33,7 @@ class BarrelsController extends Controller
      */
     public function show(Barrel $barrel): BarrelResource
     {
-        $this->checkIfTrashed($barrel);
         return new BarrelResource($barrel);
-    }
-
-    /**
-     * @param Barrel $barrel
-     */
-    private function checkIfTrashed(Barrel $barrel): void
-    {
-        if ($barrel->trashed() ||
-            $barrel->article->trashed() ||
-            $barrel->article->item->trashed()) {
-            throw new NotFoundHttpException(
-                'Requested resource does not exist or has been deleted.');
-        }
     }
 
     /**
@@ -72,21 +56,15 @@ class BarrelsController extends Controller
             'variety' => 'nullable|string|min:1|max:255',
         ]);
 
-        $item = new Item($data);
-        $item->save();
-        $item->prices()->save(new Price($data));
-
-        $article = new Article($data);
+        $article = Article::create($data);
+        $article->prices()->save(new Price($data));
         if ($request->has('supplier_id')) {
             $article->supplier()
                 ->associate(Supplier::find($data['supplier_id']));
         }
-        $article->item()->associate(Item::find($item->id));
-        $article->save();
-
         $barrel = new Barrel($data);
-        $barrel->article()->associate(Article::find($item->id));
-        $barrel->save();
+        $barrel->article()->associate($article);
+        $barrel->push();
 
         return new BarrelResource($barrel);
     }
@@ -98,8 +76,6 @@ class BarrelsController extends Controller
      */
     public function update(Barrel $barrel, Request $request): BarrelResource
     {
-        $this->checkIfTrashed($barrel);
-
         $data = $request->validate([
             'name' => 'string|min:2|max:255',
             'quantity' => 'numeric|min:0',
@@ -114,21 +90,16 @@ class BarrelsController extends Controller
             'variety' => 'nullable|string|min:1|max:255',
         ]);
 
-        $item = $barrel->article->item;
-        // Update item's fields
-        $item->update($data);
-
-        // Update price / create a new one
-        $this->updatePrice($barrel, $request, $data);
-
         $article = $barrel->article;
         // Update article's fields
         $article->update($data);
 
+        // Update price / create a new one
+        $this->updatePrice($barrel, $request, $data);
+
         // Update supplier
         if ($request->has('supplier_id')) {
-            $article->supplier()
-                ->associate(Supplier::find($data['supplier_id']));
+            $article->supplier()->associate(Supplier::find($data['supplier_id']));
             $article->update();
         }
 
@@ -136,6 +107,22 @@ class BarrelsController extends Controller
         $barrel->update($data);
 
         return new BarrelResource($barrel);
+    }
+
+    /**
+     * @param Barrel $barrel
+     * @return ResponseFactory|JsonResponse|Response
+     * @throws Exception
+     */
+    public function destroy(Barrel $barrel)
+    {
+        try {
+            $barrel->delete();
+        } catch (Exception $err) {
+            return response()->json($err, 500);
+        }
+
+        return response(null, 204);
     }
 
     /**
@@ -152,25 +139,5 @@ class BarrelsController extends Controller
         } elseif ($request->has('second_value')) {
             $barrel->changeSecondPrice($data['second_value']);
         }
-    }
-
-    /**
-     * @param Barrel $barrel
-     * @return ResponseFactory|JsonResponse|Response
-     * @throws Exception
-     */
-    public function destroy(Barrel $barrel)
-    {
-        $this->checkIfTrashed($barrel);
-
-        try {
-            $barrel->article->item->delete();
-            $barrel->article->delete();
-            $barrel->delete();
-        } catch (Exception $err) {
-            return response()->json($err, 500);
-        }
-
-        return response(null, 204);
     }
 }

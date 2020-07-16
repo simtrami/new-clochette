@@ -176,6 +176,12 @@ class UsersRoutingTest extends TestCase
 
     public function testUpdate2(): void
     {
+        $response = $this->putJson('/api/users/0');
+        $response->assertStatus(404);
+    }
+
+    public function testUpdate3(): void
+    {
         $customer = factory(Customer::class)->create();
         $user = factory(User::class)->create();
 
@@ -200,7 +206,7 @@ class UsersRoutingTest extends TestCase
             ]);
     }
 
-    public function testUpdate3(): void
+    public function testUpdate4(): void
     {
         $customer = factory(Customer::class)->create();
         $user = factory(User::class)->create(['customer_id' => $customer->id]);
@@ -239,7 +245,7 @@ class UsersRoutingTest extends TestCase
                     'customer',
                     'email',
                     'roles',
-                    'permissions'
+                    'permissions',
                 ]
             ])
             ->assertJsonFragment([
@@ -248,6 +254,12 @@ class UsersRoutingTest extends TestCase
     }
 
     public function testShow2(): void
+    {
+        $response = $this->getJson('/api/users/0');
+        $response->assertStatus(404);
+    }
+
+    public function testShow3(): void
     {
         $customer = factory(Customer::class)->create();
         $user = factory(User::class)->create(['customer_id' => $customer->id]);
@@ -265,7 +277,15 @@ class UsersRoutingTest extends TestCase
         $user = factory(User::class)->create();
 
         $response = $this->deleteJson('/api/users/' . $user->id);
-
         $response->assertStatus(204);
+        // Check whether the resource is unreachable
+        $response = $this->deleteJson('/api/users/' . $user->id);
+        $response->assertStatus(404);
+        $response = $this->putJson('/api/users/' . $user->id);
+        $response->assertStatus(404);
+        $response = $this->getJson('/api/users/' . $user->id);
+        $response->assertStatus(404);
+        // Check the destruction in database
+        self::assertNull(User::find($user->id));
     }
 }

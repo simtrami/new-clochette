@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\PaymentMethod;
+use App\Transaction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -61,7 +62,7 @@ class PaymentMethodsRoutingTest extends TestCase
             ]);
     }
 
-    public function testUpdate(): void
+    public function testUpdate1(): void
     {
         $paymentMethod = factory(PaymentMethod::class)->create();
 
@@ -82,7 +83,13 @@ class PaymentMethodsRoutingTest extends TestCase
             ]]);
     }
 
-    public function testShow(): void
+    public function testUpdate2(): void
+    {
+        $response = $this->putJson('/api/payment-methods/0');
+        $response->assertStatus(404);
+    }
+
+    public function testShow1(): void
     {
         $paymentMethod = factory(PaymentMethod::class)->create();
 
@@ -98,14 +105,40 @@ class PaymentMethodsRoutingTest extends TestCase
             ]]);
     }
 
-    public function testDestroy(): void
+    public function testShow2(): void
+    {
+        $response = $this->getJson('/api/payment-methods/0');
+        $response->assertStatus(404);
+    }
+
+    public function testDestroy1(): void
     {
         $paymentMethod = factory(PaymentMethod::class)->create();
 
         $response = $this->deleteJson('/api/payment-methods/' . $paymentMethod->id);
         $response->assertStatus(204);
-
+        // Check whether the resource is unreachable
+        $response = $this->deleteJson('/api/payment-methods/' . $paymentMethod->id);
+        $response->assertStatus(404);
+        $response = $this->putJson('/api/payment-methods/' . $paymentMethod->id);
+        $response->assertStatus(404);
         $response = $this->getJson('/api/payment-methods/' . $paymentMethod->id);
         $response->assertStatus(404);
+        // Check the destruction in database
+        self::assertNull(PaymentMethod::find($paymentMethod->id));
+    }
+
+    public function testDestroy2(): void
+    {
+        $paymentMethod = factory(PaymentMethod::class)->create();
+        $transaction = factory(Transaction::class)->create(['payment_method_id' => $paymentMethod->id]);
+
+        self::assertEquals(1, Transaction::wherePaymentMethodId($paymentMethod->id)->count());
+
+        $response = $this->deleteJson('/api/payment-methods/' . $paymentMethod->id);
+        $response->assertStatus(204);
+        // Check the 'ON DELETE SET NULL' behaviour of article's supplier_id
+        self::assertEquals(0, Transaction::wherePaymentMethodId($paymentMethod->id)->count());
+        self::assertNull(Transaction::find($transaction->id)->payment_method_id);
     }
 }

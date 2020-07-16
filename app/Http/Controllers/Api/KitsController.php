@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\KitCollectionResource;
 use App\Http\Resources\KitResource;
-use App\Item;
 use App\Kit;
 use App\Price;
 use Exception;
@@ -14,7 +13,6 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
 use Illuminate\Routing\ResponseFactory;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class KitsController extends Controller
 {
@@ -32,19 +30,7 @@ class KitsController extends Controller
      */
     public function show(Kit $kit): KitResource
     {
-        $this->checkIfTrashed($kit);
         return new KitResource($kit->loadMissing('articles'));
-    }
-
-    /**
-     * @param Kit $kit
-     */
-    private function checkIfTrashed(Kit $kit): void
-    {
-        if ($kit->trashed() || $kit->item->trashed()) {
-            throw new NotFoundHttpException(
-                "Requested resource does not exist or has been deleted.");
-        }
     }
 
     /**
@@ -59,12 +45,9 @@ class KitsController extends Controller
             'value' => 'required|numeric|min:0',
         ]);
 
-        $item = Item::create($data);
-        $item->prices()->save(new Price($data));
-
-        $kit = new Kit;
-        $kit->item()->associate($item);
-        $kit->save();
+        $kit = Kit::create($data);
+        $kit->prices()->save(new Price($data));
+        $kit->push();
 
         return new KitResource($kit);
     }
@@ -76,8 +59,6 @@ class KitsController extends Controller
      */
     public function update(Kit $kit, Request $request): KitResource
     {
-        $this->checkIfTrashed($kit);
-
         $data = $request->validate([
             'name' => 'string|min:2|max:255',
             'quantity' => 'numeric|min:0',
@@ -89,12 +70,10 @@ class KitsController extends Controller
             'detached_articles.*' => 'required_with:detached_articles|exists:articles,id',
         ]);
 
-        $item = $kit->item;
-        // Update item's fields
-        $item->update($data);
+        $kit->update($data);
         // Update price / create a new one
         if ($request->has('value')) {
-            $item->changePrice($data['value']);
+            $kit->changePrice($data['value']);
         }
 
         // Detach articles from the kit
@@ -124,10 +103,7 @@ class KitsController extends Controller
      */
     public function destroy(Kit $kit)
     {
-        $this->checkIfTrashed($kit);
-
         try {
-            $kit->item->delete();
             $kit->delete();
         } catch (Exception $err) {
             return response()->json($err, 500);

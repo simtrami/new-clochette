@@ -3,73 +3,53 @@
 namespace App;
 
 use Eloquent;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Carbon;
 
 /**
  * App\Article
  *
  * @property int $id
+ * @property string $name
+ * @property int $quantity
  * @property int|null $supplier_id
  * @property float $unit_price
- * @property Carbon|null $deleted_at
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property-read Barrel $barrel
- * @property-read Bottle $bottle
- * @property-read Food $food
- * @property-read Item $item
+ * @property-read Barrel|null $barrel
+ * @property-read Bottle|null $bottle
+ * @property-read Food|null $food
  * @property-read Collection|Kit[] $kits
- * @property-read Other $other
- * @property-read Supplier|null $supplier
- * @method static bool|null forceDelete()
- * @method static \Illuminate\Database\Eloquent\Builder|Article newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Article newQuery()
- * @method static Builder|Article onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|Article query()
- * @method static bool|null restore()
- * @method static \Illuminate\Database\Eloquent\Builder|Article whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Article whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Article whereItemId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Article whereSupplierId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Article whereUnitPrice($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Article whereUpdatedAt($value)
- * @method static Builder|Article withTrashed()
- * @method static Builder|Article withoutTrashed()
- * @mixin Eloquent
  * @property-read int|null $kits_count
- * @method static \Illuminate\Database\Eloquent\Builder|Article whereId($value)
+ * @property-read Other|null $other
+ * @property-read Collection|Price[] $prices
+ * @property-read int|null $prices_count
+ * @property-read Supplier|null $supplier
+ * @property-read Collection|Transaction[] $transactions
+ * @property-read int|null $transactions_count
+ * @method static Builder|Article newModelQuery()
+ * @method static Builder|Article newQuery()
+ * @method static Builder|Article query()
+ * @method static Builder|Article whereCreatedAt($value)
+ * @method static Builder|Article whereId($value)
+ * @method static Builder|Article whereName($value)
+ * @method static Builder|Article whereQuantity($value)
+ * @method static Builder|Article whereSupplierId($value)
+ * @method static Builder|Article whereUnitPrice($value)
+ * @method static Builder|Article whereUpdatedAt($value)
+ * @mixin Eloquent
  */
-class Article extends Model
+class Article extends Item
 {
-    use SoftDeletes;
-
-    protected $fillable = ['id', 'unit_price'];
-
-    /**
-     * The relationships that should always be loaded.
-     *
-     * @var array
-     */
-    protected $with = ['item'];
+    protected $fillable = ['id', 'unit_price', 'name', 'quantity'];
 
     ##
     # Relationships
     ##
-
-    /**
-     * @return BelongsTo
-     */
-    public function item(): BelongsTo
-    {
-        return $this->belongsTo(Item::class, 'id');
-    }
 
     /**
      * @return BelongsTo

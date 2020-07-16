@@ -23,17 +23,15 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property-read Article $article
- * @method static bool|null forceDelete()
  * @method static \Illuminate\Database\Eloquent\Builder|Bottle newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Bottle newQuery()
  * @method static Builder|Bottle onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|Bottle query()
- * @method static bool|null restore()
  * @method static \Illuminate\Database\Eloquent\Builder|Bottle whereAbv($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Bottle whereArticleId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Bottle whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Bottle whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Bottle whereIbu($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Bottle whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Bottle whereIsReturnable($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Bottle whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Bottle whereVariety($value)
@@ -41,7 +39,6 @@ use Illuminate\Support\Carbon;
  * @method static Builder|Bottle withTrashed()
  * @method static Builder|Bottle withoutTrashed()
  * @mixin Eloquent
- * @method static \Illuminate\Database\Eloquent\Builder|Bottle whereId($value)
  */
 class Bottle extends Model
 {
@@ -77,7 +74,7 @@ class Bottle extends Model
      */
     public function changePrice($value): void
     {
-        $this->article->item->changePrice($value);
+        $this->article->changePrice($value);
     }
 
     ##
@@ -90,7 +87,7 @@ class Bottle extends Model
      */
     public function pricesHistory(): ?Collection
     {
-        return $this->article->item->pricesHistory();
+        return $this->article->pricesHistory();
     }
 
     /**
@@ -98,7 +95,7 @@ class Bottle extends Model
      */
     public function price(): ?Price
     {
-        return $this->article->item->price();
+        return $this->article->price();
     }
 
     /**
@@ -106,7 +103,7 @@ class Bottle extends Model
      */
     public function name(): string
     {
-        return $this->article->item->name;
+        return $this->article->name;
     }
 
     /**
@@ -114,6 +111,6 @@ class Bottle extends Model
      */
     public function quantity(): float
     {
-        return $this->article->item->quantity;
+        return $this->article->quantity;
     }
 }

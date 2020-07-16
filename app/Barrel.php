@@ -23,31 +23,28 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property-read Article $article
- * @method static bool|null forceDelete()
  * @method static \Illuminate\Database\Eloquent\Builder|Barrel newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Barrel newQuery()
  * @method static Builder|Barrel onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|Barrel query()
- * @method static bool|null restore()
  * @method static \Illuminate\Database\Eloquent\Builder|Barrel whereAbv($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Barrel whereArticleId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Barrel whereCoupler($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Barrel whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Barrel whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Barrel whereIbu($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Barrel whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Barrel whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Barrel whereVariety($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Barrel whereVolume($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Barrel whereCoupler($value)
  * @method static Builder|Barrel withTrashed()
  * @method static Builder|Barrel withoutTrashed()
  * @mixin Eloquent
- * @method static \Illuminate\Database\Eloquent\Builder|Barrel whereId($value)
  */
 class Barrel extends Model
 {
     use SoftDeletes;
 
-    protected $fillable = ['id', 'volume', 'coupler', 'abv', 'ibu', 'variety'];
+    protected $fillable = ['volume', 'coupler', 'abv', 'ibu', 'variety'];
 
     /**
      * The relationships that should always be loaded.
@@ -77,7 +74,7 @@ class Barrel extends Model
      */
     public function changePrice($value): void
     {
-        $this->article->item->changePrice($value);
+        $this->article->changePrice($value);
     }
 
     /**
@@ -85,7 +82,7 @@ class Barrel extends Model
      */
     public function changeSecondPrice($value): void
     {
-        $this->article->item->changeSecondPrice($value);
+        $this->article->changeSecondPrice($value);
     }
 
     /**
@@ -94,7 +91,7 @@ class Barrel extends Model
      */
     public function changePrices($first_value, $second_value = null): void
     {
-        $this->article->item->changePrices($first_value, $second_value);
+        $this->article->changePrices($first_value, $second_value);
     }
 
     ##
@@ -107,7 +104,7 @@ class Barrel extends Model
      */
     public function pricesHistory(): ?Collection
     {
-        return $this->article->item->pricesHistory();
+        return $this->article->pricesHistory();
     }
 
     /**
@@ -115,7 +112,7 @@ class Barrel extends Model
      */
     public function price(): ?Price
     {
-        return $this->article->item->price();
+        return $this->article->price();
     }
 
     /**
@@ -123,7 +120,7 @@ class Barrel extends Model
      */
     public function name(): string
     {
-        return $this->article->item->name;
+        return $this->article->name;
     }
 
     /**
@@ -131,6 +128,6 @@ class Barrel extends Model
      */
     public function quantity(): float
     {
-        return $this->article->item->quantity;
+        return $this->article->quantity;
     }
 }

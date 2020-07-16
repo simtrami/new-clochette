@@ -40,8 +40,9 @@ class FoodResource extends JsonResource
             'pricesHistory' => $this->pricesHistory(),
 //            'kits' => KitResource::collection($this->whenLoaded('kits')),
             'isBulk' => $this->is_bulk,
+            'unitsLeft' => $this->units_left,
         ]);
-        $this->is_bulk == 0 ?: $ret['unitsLeft'] = $this->units_left;
+//        $this->is_bulk == 0 ?: $ret['unitsLeft'] = $this->units_left;
         $supplier = $this->article->supplier;
         if ($supplier) {
             $ret['supplier'] = [

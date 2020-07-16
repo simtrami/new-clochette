@@ -21,6 +21,9 @@ use Illuminate\Support\Carbon;
  * @property int $is_staff
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
+ * @property-read Collection|Transaction[] $transactions
+ * @property-read int|null $transactions_count
+ * @property-read User|null $user
  * @method static Builder|Customer newModelQuery()
  * @method static Builder|Customer newQuery()
  * @method static Builder|Customer query()
@@ -33,9 +36,6 @@ use Illuminate\Support\Carbon;
  * @method static Builder|Customer whereNickname($value)
  * @method static Builder|Customer whereUpdatedAt($value)
  * @mixin Eloquent
- * @property-read Collection|Transaction[] $transactions
- * @property-read int|null $transactions_count
- * @property-read User|null $user
  */
 class Customer extends Model
 {

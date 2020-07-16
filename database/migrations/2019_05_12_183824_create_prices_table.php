@@ -15,8 +15,8 @@ class CreatePricesTable extends Migration
     {
         Schema::create('prices', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->foreignId('item_id')->constrained()
-                ->onDelete('cascade')->onUpdate('cascade');
+            $table->foreignId('item_id');
+            $table->string('item_type');
             $table->unsignedDecimal('value', 8, 2);
             $table->unsignedDecimal('second_value', 8, 2)->nullable();
             $table->boolean('is_active')->default(true);

@@ -5,7 +5,7 @@ namespace App;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Carbon;
 
 /**
@@ -13,12 +13,13 @@ use Illuminate\Support\Carbon;
  *
  * @property int $id
  * @property int $item_id
+ * @property string $item_type
  * @property float $value
  * @property float|null $second_value
  * @property int $is_active
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property-read Item $item
+ * @property-read Model|Eloquent $item
  * @method static Builder|Price newModelQuery()
  * @method static Builder|Price newQuery()
  * @method static Builder|Price query()
@@ -26,6 +27,7 @@ use Illuminate\Support\Carbon;
  * @method static Builder|Price whereId($value)
  * @method static Builder|Price whereIsActive($value)
  * @method static Builder|Price whereItemId($value)
+ * @method static Builder|Price whereItemType($value)
  * @method static Builder|Price whereSecondValue($value)
  * @method static Builder|Price whereUpdatedAt($value)
  * @method static Builder|Price whereValue($value)
@@ -40,11 +42,11 @@ class Price extends Model
     ##
 
     /**
-     * @return BelongsTo
+     * @return MorphTo
      */
-    public function item(): BelongsTo
+    public function item(): MorphTo
     {
-        return $this->belongsTo(Item::class);
+        return $this->morphTo(Item::class);
     }
 
     ##

@@ -23,11 +23,11 @@ class KitResource extends JsonResource
     {
         $ret = [
             'id' => $this->id,
-            'name' => $this->item->name,
-            'quantity' => $this->item->quantity,
-            'pricesHistory' => $this->item->pricesHistory(),
+            'name' => $this->name,
+            'quantity' => $this->quantity,
+            'pricesHistory' => $this->pricesHistory(),
         ];
-        $price = $this->item->price();
+        $price = $this->price();
         $ret['price'] = [
             'id' => $price->id,
             'value' => $price->value,
@@ -37,9 +37,9 @@ class KitResource extends JsonResource
             $type = $article->type();
             $sub = [
                 'id' => $article->id,
-                'name' => $article->item->name,
+                'name' => $article->name,
                 'articleQuantity' => $article->pivot->article_quantity,
-                'price' => $article->item->price()->value,
+                'price' => $article->price()->value,
                 'type' => $type,
             ];
             switch ($type) {

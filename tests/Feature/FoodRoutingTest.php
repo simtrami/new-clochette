@@ -3,13 +3,13 @@
 namespace Tests\Feature;
 
 use App\Article;
-use App\Other;
+use App\Food;
 use App\Price;
 use App\Supplier;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-class OthersRoutingTest extends TestCase
+class FoodRoutingTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -24,10 +24,11 @@ class OthersRoutingTest extends TestCase
             ->create(['supplier_id' => $supplier->id])
             ->each(function ($article) {
                 $article->prices()->save(factory(Price::class)->make());
-                $article->other()->save(factory(Other::class)->make());
             });
+        $articles[0]->food()->save(factory(Food::class)->make(['is_bulk' => true, 'units_left' => 1]));
+        $articles[1]->food()->save(factory(Food::class)->make(['is_bulk' => false]));
 
-        $response = $this->get('/api/others');
+        $response = $this->get('/api/food');
 
         $response->assertStatus(200)
             ->assertJsonStructure([
@@ -40,7 +41,8 @@ class OthersRoutingTest extends TestCase
                         'price' => [
                             'id', 'value',
                         ],
-                        'description',
+                        'isBulk',
+                        'unitsLeft',
                     ],
                     1 => [
                         'id',
@@ -50,7 +52,7 @@ class OthersRoutingTest extends TestCase
                         'price' => [
                             'id', 'value',
                         ],
-                        'description',
+                        'isBulk',
                     ]
                 ]
             ]);
@@ -60,13 +62,14 @@ class OthersRoutingTest extends TestCase
     {
         $supplier = factory(Supplier::class)->create();
 
-        $response = $this->postJson('/api/others', [
-            'name' => 'Other',
+        $response = $this->postJson('/api/food', [
+            'name' => 'Food',
             'quantity' => '42',
             'supplier_id' => $supplier->id,
             'unit_price' => '142.42',
             'value' => '4.2',
-            'description' => 'I am another thing you can buy.',
+            'is_bulk' => '1',
+            'units_left' => '30',
         ]);
 
         $response->assertStatus(201)
@@ -80,7 +83,8 @@ class OthersRoutingTest extends TestCase
                         'id', 'value',
                     ],
                     'pricesHistory',
-                    'description',
+                    'isBulk',
+                    'unitsLeft',
                     'supplier' => [
                         'id', 'name', 'description',
                         'address', 'phone', 'email', 'supplierSince',
@@ -89,15 +93,16 @@ class OthersRoutingTest extends TestCase
             ])
             ->assertJson([
                 'data' => [
-                    'name' => 'Other',
-                    'quantity' => '42',
-                    'unitPrice' => '142.42',
+                    'name' => 'Food',
+                    'quantity' => 42,
+                    'unitPrice' => 142.42,
+                    'isBulk' => 1,
+                    'unitsLeft' => 30,
                     'price' => [
                         'value' => 4.2,
                     ],
                     // TODO: implement pricesHistory in app
                     'pricesHistory' => [/*array of prices (raw)*/],
-                    'description' => 'I am another thing you can buy.',
                     'supplier' => [
                         'id' => $supplier->id,
                         'name' => $supplier->name,
@@ -120,22 +125,24 @@ class OthersRoutingTest extends TestCase
         $id = $article->id;
         $price = factory(Price::class)->make();
         $article->prices()->save($price);
-        $article->other()->save(factory(Other::class)->make());
+        $article->food()->save(factory(Food::class)->make(['is_bulk' => false, 'units_left' => null]));
 
-        $response = $this->putJson('/api/others/' . $id, [
-            'name' => 'Other',
+
+        $response = $this->putJson('/api/food/' . $id, [
+            'name' => 'Food',
             'quantity' => '42',
             'supplier_id' => $supplier_2->id,
             'unit_price' => '142.42',
             'value' => '4.2',
-            'description' => 'I am another thing you can buy.',
+            'is_bulk' => '1',
+            'units_left' => '30',
         ]);
 
         $response->assertStatus(200)
             ->assertJson([
                 'data' => [
                     'id' => $id,
-                    'name' => 'Other',
+                    'name' => 'Food',
                     'quantity' => '42',
                     'unitPrice' => '142.42',
                     'price' => [
@@ -143,7 +150,8 @@ class OthersRoutingTest extends TestCase
                         'value' => '4.20',
                     ],
                     // TODO: 'pricesHistory' is present but will need to be defined later, will return true anyway
-                    'description' => 'I am another thing you can buy.',
+                    'isBulk' => '1',
+                    'unitsLeft' => '30',
                     'supplier' => [
                         'id' => $supplier_2->id,
                         'name' => $supplier_2->name,
@@ -159,7 +167,7 @@ class OthersRoutingTest extends TestCase
 
     public function testUpdate2(): void
     {
-        $response = $this->putJson('/api/others/0');
+        $response = $this->putJson('/api/food/0');
         $response->assertStatus(404);
     }
 
@@ -171,9 +179,9 @@ class OthersRoutingTest extends TestCase
         $id = $article->id;
         $price = factory(Price::class)->make();
         $article->prices()->save($price);
-        $article->other()->save(factory(Other::class)->make());
+        $article->food()->save(factory(Food::class)->make(['is_bulk' => false]));
 
-        $response = $this->getJson('/api/others/' . $id);
+        $response = $this->getJson('/api/food/' . $id);
 
         $response->assertStatus(200)
             ->assertJsonStructure([
@@ -186,7 +194,7 @@ class OthersRoutingTest extends TestCase
                         'id', 'value',
                     ],
                     'pricesHistory',
-                    'description',
+                    'isBulk',
                     'supplier' => [
                         'id', 'name', 'description',
                         'address', 'phone', 'email', 'supplierSince',
@@ -205,7 +213,7 @@ class OthersRoutingTest extends TestCase
                     ],
                     // TODO: implement pricesHistory in app
                     'pricesHistory' => [/*array of prices (raw)*/],
-                    'description' => $article->other->description,
+                    'isBulk' => false,
                     'supplier' => [
                         'id' => $supplier->id,
                         'name' => $supplier->name,
@@ -221,7 +229,7 @@ class OthersRoutingTest extends TestCase
 
     public function testShow2(): void
     {
-        $response = $this->getJson('/api/others/0');
+        $response = $this->getJson('/api/food/0');
         $response->assertStatus(404);
     }
 
@@ -231,18 +239,18 @@ class OthersRoutingTest extends TestCase
         $article = factory(Article::class)->create(['supplier_id' => $supplier->id]);
         $id = $article->id;
         $article->prices()->save(factory(Price::class)->make());
-        $article->other()->save(factory(Other::class)->make());
+        $article->food()->save(factory(Food::class)->make());
 
-        $response = $this->deleteJson('/api/others/' . $id);
+        $response = $this->deleteJson('/api/food/' . $id);
         $response->assertStatus(204);
         // Check whether the resource is unreachable
-        $response = $this->deleteJson('/api/others/' . $id);
+        $response = $this->deleteJson('/api/food/' . $id);
         $response->assertStatus(404);
-        $response = $this->putJson('/api/others/' . $id);
+        $response = $this->putJson('/api/food/' . $id);
         $response->assertStatus(404);
-        $response = $this->getJson('/api/others/' . $id);
+        $response = $this->getJson('/api/food/' . $id);
         $response->assertStatus(404);
         // Check the soft delete success
-        self::assertNotNull(Other::onlyTrashed()->find($id));
+        self::assertNotNull(Food::onlyTrashed()->find($id));
     }
 }

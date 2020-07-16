@@ -3,85 +3,46 @@
 namespace App;
 
 use Eloquent;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Query\Builder;
-use Illuminate\Support\Carbon;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
 /**
  * App\Item
  *
- * @property int $id
- * @property string $name
- * @property int $quantity
- * @property Carbon|null $deleted_at
- * @property Carbon|null $created_at
- * @property Carbon|null $updated_at
- * @property-read Article $article
- * @property-read Kit $kit
  * @property-read Collection|Price[] $prices
- * @method static bool|null forceDelete()
- * @method static \Illuminate\Database\Eloquent\Builder|Item newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Item newQuery()
- * @method static Builder|Item onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|Item query()
- * @method static bool|null restore()
- * @method static \Illuminate\Database\Eloquent\Builder|Item whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Item whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Item whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Item whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Item whereQuantity($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Item whereUpdatedAt($value)
- * @method static Builder|Item withTrashed()
- * @method static Builder|Item withoutTrashed()
- * @mixin Eloquent
- * @property-read Collection|Transaction[] $transactions
  * @property-read int|null $prices_count
+ * @property-read Collection|Transaction[] $transactions
  * @property-read int|null $transactions_count
+ * @method static Builder|Item newModelQuery()
+ * @method static Builder|Item newQuery()
+ * @method static Builder|Item query()
+ * @mixin Eloquent
  */
 class Item extends Model
 {
-    use SoftDeletes;
-
-    protected $fillable = ['name', 'quantity'];
-
     ##
     # Relationships
     ##
 
     /**
-     * @return HasOne
+     * @return MorphMany
      */
-    public function article(): HasOne
+    public function prices(): MorphMany
     {
-        return $this->hasOne(Article::class, 'id');
+        return $this->morphMany(Price::class, 'item');
     }
 
     /**
-     * @return HasOne
+     * @return MorphToMany
      */
-    public function kit(): HasOne
+    public function transactions(): MorphToMany
     {
-        return $this->hasOne(Kit::class, 'id');
-    }
-
-    /**
-     * @return Collection|null
-     */
-    public function inactivePrices(): ?Collection
-    {
-        return $this->prices->where('is_active', false);
-    }
-
-    public function transactions(): BelongsToMany
-    {
-        return $this->belongsToMany(Transaction::class, 'transaction_details',
-            'item_id', 'transaction_id')
+        return $this->morphToMany(Transaction::class, 'item', 'transaction_details')
             ->using(TransactionDetail::class)
             ->withPivot('quantity');
     }
@@ -108,11 +69,11 @@ class Item extends Model
     }
 
     /**
-     * @return HasMany
+     * @return Collection|null
      */
-    public function prices(): HasMany
+    public function inactivePrices(): ?Collection
     {
-        return $this->hasMany(Price::class);
+        return $this->prices->where('is_active', false);
     }
 
     /**

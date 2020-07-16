@@ -6,7 +6,6 @@ use App\Article;
 use App\Barrel;
 use App\Bottle;
 use App\Food;
-use App\Item;
 use App\Kit;
 use App\Price;
 use Exception;
@@ -23,26 +22,25 @@ class KitsRoutingTest extends TestCase
      */
     public function testIndex(): void
     {
-        $item_1 = factory(Item::class)->create();
-        factory(Price::class)->create(['item_id' => $item_1->id]);
-        factory(Article::class)->create(['id' => $item_1->id]);
-        factory(Barrel::class)->create(['id' => $item_1->id]);
+        $articles = factory(Article::class, 2)
+            ->create()
+            ->each(function ($article) {
+                $article->prices()->save(factory(Price::class)->make());
+                $article->barrel()->save(factory(Barrel::class)->make());
+            });
 
-        $item_2 = factory(Item::class)->create();
-        factory(Price::class)->create(['item_id' => $item_2->id]);
-        factory(Article::class)->create(['id' => $item_2->id]);
-        factory(Bottle::class)->create(['id' => $item_2->id]);
+        $kits = factory(Kit::class, 2)
+            ->create()
+            ->each(function ($kit) {
+                $kit->prices()->save(factory(Price::class)->make());
+            });
 
-        $item_3 = factory(Item::class)->create();
-        factory(Price::class)->create(['item_id' => $item_3->id]);
-        factory(Kit::class)->create(['id' => $item_3->id]);
-        Kit::find($item_3->id)->articles()->attach($item_1->id, ['article_quantity' => random_int(1, 10)]);
+        Kit::find($kits[0]->id)->articles()->attach($articles[0]->id, ['article_quantity' => random_int(1, 10)]);
 
-        $item_4 = factory(Item::class)->create();
-        factory(Price::class)->create(['item_id' => $item_4->id]);
-        factory(Kit::class)->create(['id' => $item_4->id]);
-        Kit::find($item_4->id)->articles()->attach($item_1->id, ['article_quantity' => random_int(1, 10)]);
-        Kit::find($item_4->id)->articles()->attach($item_2->id, ['article_quantity' => random_int(1, 10)]);
+        Kit::find($kits[1]->id)->articles()->attach([
+            $articles[0]->id => ['article_quantity' => random_int(1, 10)],
+            $articles[1]->id => ['article_quantity' => random_int(1, 10)],
+        ]);
 
         $response = $this->get('/api/kits');
 
@@ -94,34 +92,26 @@ class KitsRoutingTest extends TestCase
             ]);
     }
 
-    public function testUpdate(): void
+    public function testUpdate1(): void
     {
-        $item_1 = factory(Item::class)->create();
-        factory(Price::class)->create(['item_id' => $item_1->id, 'value' => 10.6]);
-        factory(Article::class)->create(['id' => $item_1->id]);
-        factory(Barrel::class)->create(['id' => $item_1->id, 'volume' => 24]);
+        $articles[] = factory(Article::class)->create();
+        $articles[0]->prices()->save(factory(Price::class)->make(['value' => 10.6]));
+        $articles[0]->barrel()->save(factory(Barrel::class)->make(['volume' => 24]));
 
-        $item_2 = factory(Item::class)->create();
-        factory(Price::class)->create(['item_id' => $item_2->id, 'value' => 12.26]);
-        factory(Article::class)->create(['id' => $item_2->id]);
-        factory(Bottle::class)->create(['id' => $item_2->id, 'volume' => 2]);
+        $articles[] = factory(Article::class)->create();
+        $articles[1]->prices()->save(factory(Price::class)->make(['value' => 12.26]));
+        $articles[1]->bottle()->save(factory(Bottle::class)->make(['volume' => 2]));
 
-        $item_3 = factory(Item::class)->create();
-        factory(Price::class)->create(['item_id' => $item_3->id]);
-        factory(Article::class)->create(['id' => $item_3->id]);
-        factory(Food::class)->create(['id' => $item_3->id]);
+        $articles[] = factory(Article::class)->create();
+        $articles[2]->prices()->save(factory(Price::class)->make());
+        $articles[2]->bottle()->save(factory(Food::class)->make());
 
-        $item_4 = factory(Item::class)->create();
-        $price = factory(Price::class)->create(['item_id' => $item_4->id]);
-        factory(Kit::class)->create(['id' => $item_4->id]);
+        $kit = factory(Kit::class)->create();
+        $price = factory(Price::class)->make();
+        $kit->prices()->save($price);
+        $id = $kit->id;
 
-        try {
-            Kit::find($item_4->id)->articles()->attach($item_3->id, ['article_quantity' => 1]);
-        } catch (Exception $e) {
-            throwException($e);
-        }
-
-        $id = $item_4->id;
+        Kit::find($id)->articles()->attach($articles[2]->id, ['article_quantity' => 1]);
 
         $response = $this->putJson('/api/kits/' . $id, [
             'name' => 'Kit',
@@ -129,15 +119,15 @@ class KitsRoutingTest extends TestCase
             'value' => '4.2',
             'articles' => [
                 0 => [
-                    'id' => $item_1->id,
+                    'id' => $articles[0]->id,
                     'quantity' => 4,
                 ],
                 1 => [
-                    'id' => $item_2->id,
+                    'id' => $articles[1]->id,
                     'quantity' => 2,
                 ],
             ],
-            'detached_articles' => [$item_3->id],
+            'detached_articles' => [$articles[2]->id],
         ]);
 
         $response->assertStatus(200)
@@ -153,16 +143,16 @@ class KitsRoutingTest extends TestCase
                     ],
                     'articles' => [
                         0 => [
-                            'id' => $item_1->id,
-                            'name' => $item_1->name,
+                            'id' => $articles[0]->id,
+                            'name' => $articles[0]->name,
                             'articleQuantity' => 4,
                             'price' => '10.60',
                             'type' => 'barrel',
                             'volume' => '24.00',
                         ],
                         1 => [
-                            'id' => $item_2->id,
-                            'name' => $item_2->name,
+                            'id' => $articles[1]->id,
+                            'name' => $articles[1]->name,
                             'articleQuantity' => 2,
                             'price' => '12.26',
                             'type' => 'bottle',
@@ -173,33 +163,31 @@ class KitsRoutingTest extends TestCase
             ]);
     }
 
-    public function testShow(): void
+    public function testUpdate2(): void
     {
-        $item_1 = factory(Item::class)->create();
-        factory(Price::class)->create(['item_id' => $item_1->id]);
-        factory(Article::class)->create(['id' => $item_1->id]);
-        factory(Barrel::class)->create(['id' => $item_1->id]);
+        $response = $this->putJson('/api/kits/0');
+        $response->assertStatus(404);
+    }
 
-        $item_2 = factory(Item::class)->create();
-        factory(Price::class)->create(['item_id' => $item_2->id]);
-        factory(Article::class)->create(['id' => $item_2->id]);
-        factory(Bottle::class)->create(['id' => $item_2->id]);
+    public function testShow1(): void
+    {
+        $article_1 = factory(Article::class)->create();
+        $article_1->prices()->save(factory(Price::class)->make());
+        $article_1->barrel()->save(factory(Barrel::class)->make());
 
-        $item_3 = factory(Item::class)->create();
-        factory(Price::class)->create(['item_id' => $item_3->id]);
-        factory(Kit::class)->create(['id' => $item_3->id]);
-        try {
-            Kit::find($item_3->id)->articles()->attach($item_1->id, ['article_quantity' => random_int(1, 10)]);
-        } catch (Exception $e) {
-            throwException($e);
-        }
-        try {
-            Kit::find($item_3->id)->articles()->attach($item_2->id, ['article_quantity' => random_int(1, 10)]);
-        } catch (Exception $e) {
-            throwException($e);
-        }
+        $article_2 = factory(Article::class)->create();
+        $article_2->prices()->save(factory(Price::class)->make());
+        $article_2->bottle()->save(factory(Bottle::class)->make());
 
-        $response = $this->getJson('/api/kits/' . $item_3->id);
+        $kit = factory(Kit::class)->create();
+        $kit->prices()->save(factory(Price::class)->make());
+
+        $kit->articles()->attach([
+            $article_1->id => ['article_quantity' => random_int(1, 10)],
+            $article_2->id => ['article_quantity' => random_int(1, 10)],
+        ]);
+
+        $response = $this->getJson('/api/kits/' . $kit->id);
 
         $response->assertStatus(200)
             ->assertJsonStructure([
@@ -223,18 +211,27 @@ class KitsRoutingTest extends TestCase
             ]);
     }
 
+    public function testShow2(): void
+    {
+        $response = $this->getJson('/api/kits/0');
+        $response->assertStatus(404);
+    }
+
     public function testDestroy(): void
     {
-        $item = factory(Item::class)->create();
-        $id = $item->id;
-        factory(Price::class)->create(['item_id' => $id]);
-        factory(Kit::class)->create(['id' => $id]);
+        $kit = factory(Kit::class)->create();
+        $kit->prices()->save(factory(Price::class)->make());
 
-        $response = $this->deleteJson('/api/kits/' . $id);
+        $response = $this->deleteJson('/api/kits/' . $kit->id);
         $response->assertStatus(204);
-
-        // Testing soft delete
-        $response = $this->deleteJson('/api/kits/' . $id);
+        // Check whether the resource is unreachable
+        $response = $this->deleteJson('/api/kits/' . $kit->id);
         $response->assertStatus(404);
+        $response = $this->putJson('/api/kits/' . $kit->id);
+        $response->assertStatus(404);
+        $response = $this->getJson('/api/kits/' . $kit->id);
+        $response->assertStatus(404);
+        // Check the soft delete success
+        self::assertNotNull(Kit::onlyTrashed()->find($kit->id));
     }
 }

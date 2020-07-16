@@ -75,7 +75,7 @@ class ContactsRoutingTest extends TestCase
             ]);
     }
 
-    public function testUpdate(): void
+    public function testUpdate1(): void
     {
         $supplier1 = factory(Supplier::class)->create();
         $contact = factory(Contact::class)->create(['supplier_id' => $supplier1->id]);
@@ -115,7 +115,13 @@ class ContactsRoutingTest extends TestCase
             ]);
     }
 
-    public function testShow(): void
+    public function testUpdate2(): void
+    {
+        $response = $this->putJson('/api/contacts/0');
+        $response->assertStatus(404);
+    }
+
+    public function testShow1(): void
     {
         $supplier = factory(Supplier::class)->create();
         $contact = factory(Contact::class)->create(['supplier_id' => $supplier->id]);
@@ -137,13 +143,27 @@ class ContactsRoutingTest extends TestCase
             ]);
     }
 
+    public function testShow2(): void
+    {
+        $response = $this->getJson('/api/contacts/0');
+        $response->assertStatus(404);
+    }
+
     public function testDestroy(): void
     {
         $supplier = factory(Supplier::class)->create();
         $contact = factory(Contact::class)->create(['supplier_id' => $supplier->id]);
 
         $response = $this->deleteJson('/api/contacts/' . $contact->id);
-
         $response->assertStatus(204);
+        // Check whether the resource is unreachable
+        $response = $this->deleteJson('/api/contacts/' . $contact->id);
+        $response->assertStatus(404);
+        $response = $this->putJson('/api/contacts/' . $contact->id);
+        $response->assertStatus(404);
+        $response = $this->getJson('/api/contacts/' . $contact->id);
+        $response->assertStatus(404);
+        // Check the destruction in database
+        self::assertNull(Contact::find($contact->id));
     }
 }

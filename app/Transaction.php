@@ -7,8 +7,8 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Support\Carbon;
 
 /**
@@ -22,9 +22,13 @@ use Illuminate\Support\Carbon;
  * @property string|null $comments
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
+ * @property-read Collection|Article[] $articles
+ * @property-read int|null $articles_count
  * @property-read Customer|null $customer
  * @property-read Collection|TransactionDetail[] $details
- * @property-read Collection|Item[] $items
+ * @property-read int|null $details_count
+ * @property-read Collection|Kit[] $kits
+ * @property-read int|null $kits_count
  * @property-read PaymentMethod|null $paymentMethod
  * @property-read User|null $user
  * @method static Builder|Transaction newModelQuery()
@@ -39,19 +43,18 @@ use Illuminate\Support\Carbon;
  * @method static Builder|Transaction whereUserId($value)
  * @method static Builder|Transaction whereValue($value)
  * @mixin Eloquent
- * @property-read int|null $details_count
- * @property-read int|null $items_count
  */
 class Transaction extends Model
 {
-    protected $fillable = ['value', 'comments'];
+    protected $fillable = ['user_id', 'customer_id', 'payment_method_id', 'value', 'comments'];
 
     /**
      * The relationships that should always be loaded.
+     * Only loading relations for which the model has the foreign key (belongs_to)
      *
      * @var array
      */
-    protected $with = ['user', 'paymentMethod', 'details'];
+    protected $with = ['user', 'customer', 'paymentMethod'];
 
     ##
     # Relationships
@@ -77,10 +80,16 @@ class Transaction extends Model
         return $this->hasMany(TransactionDetail::class);
     }
 
-    public function items(): BelongsToMany
+    public function articles(): MorphToMany
     {
-        return $this->belongsToMany(Item::class, 'transaction_details',
-            'transaction_id', 'item_id')
+        return $this->morphedByMany(Article::class, 'item', 'transaction_details')
+            ->using(TransactionDetail::class)
+            ->withPivot('quantity');
+    }
+
+    public function kits(): MorphToMany
+    {
+        return $this->morphedByMany(Kit::class, 'item', 'transaction_details')
             ->using(TransactionDetail::class)
             ->withPivot('quantity');
     }

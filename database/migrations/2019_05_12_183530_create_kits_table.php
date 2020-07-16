@@ -14,8 +14,9 @@ class CreateKitsTable extends Migration
     public function up()
     {
         Schema::create('kits', function (Blueprint $table) {
-            $table->foreignId('id')->primary()->constrained('items')
-                ->onDelete('cascade')->onUpdate('cascade');
+            $table->bigIncrements('id');
+            $table->string('name');
+            $table->unsignedInteger('quantity');
             $table->softDeletes();
             $table->timestamps();
         });

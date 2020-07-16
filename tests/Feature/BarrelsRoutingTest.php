@@ -4,7 +4,6 @@ namespace Tests\Feature;
 
 use App\Article;
 use App\Barrel;
-use App\Item;
 use App\Price;
 use App\Supplier;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -21,15 +20,13 @@ class BarrelsRoutingTest extends TestCase
     {
         $supplier = factory(Supplier::class)->create();
 
-        $item_1 = factory(Item::class)->create();
-        factory(Price::class)->create(['item_id' => $item_1->id, 'second_value' => '4.2']);
-        factory(Article::class)->create(['id' => $item_1->id, 'supplier_id' => $supplier->id]);
-        factory(Barrel::class)->create(['id' => $item_1->id]);
+        $article_1 = factory(Article::class)->create(['supplier_id' => $supplier->id]);
+        $article_1->prices()->save(factory(Price::class)->make(['second_value' => '4.2']));
+        $article_1->barrel()->save(factory(Barrel::class)->make());
 
-        $item_2 = factory(Item::class)->create();
-        factory(Price::class)->create(['item_id' => $item_2->id, 'second_value' => '2.4']);
-        factory(Article::class)->create(['id' => $item_2->id, 'supplier_id' => $supplier->id]);
-        factory(Barrel::class)->create(['id' => $item_2->id]);
+        $article_2 = factory(Article::class)->create(['supplier_id' => $supplier->id]);
+        $article_2->prices()->save(factory(Price::class)->make());
+        $article_2->barrel()->save(factory(Barrel::class)->make());
 
         $response = $this->get('/api/barrels');
 
@@ -101,16 +98,17 @@ class BarrelsRoutingTest extends TestCase
             ]);
     }
 
-    public function testUpdate(): void
+    public function testUpdate1(): void
     {
         $supplier_1 = factory(Supplier::class)->create();
-        $item = factory(Item::class)->create();
-        $id = $item->id;
-        $price = factory(Price::class)->create(['item_id' => $id, 'second_value' => '3.4']);
-        factory(Article::class)->create(['id' => $id, 'supplier_id' => $supplier_1->id]);
-        factory(Barrel::class)->create(['id' => $id]);
-
         $supplier_2 = factory(Supplier::class)->create();
+
+        $article = factory(Article::class)->create(['supplier_id' => $supplier_1->id]);
+        $id = $article->id;
+        $price = factory(Price::class)->make(['second_value' => '3.4']);
+        $article->prices()->save($price);
+        $article->barrel()->save(factory(Barrel::class)->make());
+
 
         $response = $this->putJson('/api/barrels/' . $id, [
             'name' => 'Barrel',
@@ -136,7 +134,7 @@ class BarrelsRoutingTest extends TestCase
                         'value' => '4.20',
                         'secondValue' => '2.60',
                     ],
-//                    'pricesHistory' is present but will need to be defined later, will return true anyway
+                    // TODO: 'pricesHistory' is present but will need to be defined later, will return true anyway
                     'volume' => '30',
                     'coupler' => 'KeyKeg',
                     'abv' => '4.50',
@@ -155,14 +153,20 @@ class BarrelsRoutingTest extends TestCase
             ]);
     }
 
-    public function testShow(): void
+    public function testUpdate2(): void
+    {
+        $response = $this->putJson('/api/barrels/0');
+        $response->assertStatus(404);
+    }
+
+    public function testShow1(): void
     {
         $supplier = factory(Supplier::class)->create();
-        $item = factory(Item::class)->create();
-        $id = $item->id;
-        factory(Price::class)->create(['item_id' => $id, 'second_value' => '3.4']);
-        factory(Article::class)->create(['id' => $id, 'supplier_id' => $supplier->id]);
-        factory(Barrel::class)->create(['id' => $id]);
+        $article = factory(Article::class)->create(['supplier_id' => $supplier->id]);
+        $id = $article->id;
+        $price = factory(Price::class)->make(['second_value' => '3.4']);
+        $article->prices()->save($price);
+        $article->barrel()->save(factory(Barrel::class)->make());
 
         $response = $this->getJson('/api/barrels/' . $id);
 
@@ -184,23 +188,62 @@ class BarrelsRoutingTest extends TestCase
                         'id', 'name', 'description', 'address', 'phone', 'email', 'supplierSince',
                     ],
                 ]
+            ])
+            ->assertJson([
+                'data' => [
+                    'id' => $id,
+                    'name' => $article->name,
+                    'quantity' => $article->quantity,
+                    'unitPrice' => $article->unit_price,
+                    'price' => [
+                        'id' => $price->id,
+                        'value' => $price->value,
+                        'secondValue' => $price->second_value,
+                    ],
+                    // TODO: implement pricesHistory in app
+                    'pricesHistory' => [/*array of prices (raw)*/],
+                    'volume' => $article->barrel->volume,
+                    'coupler' => $article->barrel->coupler,
+                    'abv' => $article->barrel->abv,
+                    'ibu' => $article->barrel->ibu,
+                    'variety' => $article->barrel->variety,
+                    'supplier' => [
+                        'id' => $supplier->id,
+                        'name' => $supplier->name,
+                        'description' => $supplier->description,
+                        'address' => $supplier->address,
+                        'phone' => $supplier->phone,
+                        'email' => $supplier->email,
+                        'supplierSince' => $supplier->supplier_since,
+                    ],
+                ]
             ]);
+    }
+
+    public function testShow2(): void
+    {
+        $response = $this->getJson('/api/barrels/0');
+        $response->assertStatus(404);
     }
 
     public function testDestroy(): void
     {
         $supplier = factory(Supplier::class)->create();
-        $item = factory(Item::class)->create();
-        $id = $item->id;
-        factory(Price::class)->create(['item_id' => $id, 'second_value' => '3.4']);
-        factory(Article::class)->create(['id' => $id, 'supplier_id' => $supplier->id]);
-        factory(Barrel::class)->create(['id' => $id]);
+        $article = factory(Article::class)->create(['supplier_id' => $supplier->id]);
+        $id = $article->id;
+        $article->prices()->save(factory(Price::class)->make(['second_value' => '3.4']));
+        $article->barrel()->save(factory(Barrel::class)->make());
 
         $response = $this->deleteJson('/api/barrels/' . $id);
         $response->assertStatus(204);
-
-        // Testing soft delete
+        // Check whether the resource is unreachable
         $response = $this->deleteJson('/api/barrels/' . $id);
         $response->assertStatus(404);
+        $response = $this->putJson('/api/barrels/' . $id);
+        $response->assertStatus(404);
+        $response = $this->getJson('/api/barrels/' . $id);
+        $response->assertStatus(404);
+        // Check the soft delete success
+        self::assertNotNull(Barrel::onlyTrashed()->find($id));
     }
 }

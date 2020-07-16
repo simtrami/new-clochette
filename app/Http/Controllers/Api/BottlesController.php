@@ -7,7 +7,6 @@ use App\Bottle;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ArticleCollectionResource;
 use App\Http\Resources\BottleResource;
-use App\Item;
 use App\Price;
 use App\Supplier;
 use Exception;
@@ -16,7 +15,6 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
 use Illuminate\Routing\ResponseFactory;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class BottlesController extends Controller
 {
@@ -35,21 +33,7 @@ class BottlesController extends Controller
      */
     public function show(Bottle $bottle): BottleResource
     {
-        $this->checkIfTrashed($bottle);
         return new BottleResource($bottle);
-    }
-
-    /**
-     * @param Bottle $bottle
-     */
-    private function checkIfTrashed(Bottle $bottle): void
-    {
-        if ($bottle->trashed() ||
-            $bottle->article->trashed() ||
-            $bottle->article->item->trashed()) {
-            throw new NotFoundHttpException(
-                "Requested resource does not exist or has been deleted.");
-        }
     }
 
     /**
@@ -71,21 +55,14 @@ class BottlesController extends Controller
             'variety' => 'nullable|string|min:1|max:255',
         ]);
 
-        $item = new Item($data);
-        $item->save();
-        $item->prices()->save(new Price($data));
-
-        $article = new Article($data);
-        if ($request->has('supplier_id')) {
-            $article->supplier()
-                ->associate(Supplier::find($data['supplier_id']));
+        $article = Article::create($data);
+        $article->prices()->save(new Price($data));
+        if (array_key_exists('supplier_id', $data)) {
+            $article->supplier()->associate(Supplier::find($data['supplier_id']));
         }
-        $article->item()->associate(Item::find($item->id));
-        $article->save();
-
         $bottle = new Bottle($data);
-        $bottle->article()->associate(Article::find($item->id));
-        $bottle->save();
+        $bottle->article()->associate($article);
+        $bottle->push();
 
         return new BottleResource($bottle);
     }
@@ -97,8 +74,6 @@ class BottlesController extends Controller
      */
     public function update(Bottle $bottle, Request $request): BottleResource
     {
-        $this->checkIfTrashed($bottle);
-
         $data = $request->validate([
             'name' => 'string|min:2|max:255',
             'quantity' => 'numeric|min:0',
@@ -112,25 +87,17 @@ class BottlesController extends Controller
             'variety' => 'nullable|string|min:1|max:255',
         ]);
 
-        $item = $bottle->article->item;
-        // Update item's fields
-        $item->update($data);
-
-        // Update price / create a new one
-        if ($request->has('value')) {
-            $item->changePrice($data['value']);
-        }
-
         $article = $bottle->article;
-        // Update article's fields
-        $article->update($data);
 
         // Update supplier
-        if ($request->has('supplier_id')) {
-            $article->supplier()
-                ->associate(Supplier::find($data['supplier_id']));
-            $article->update();
+        if (array_key_exists('supplier_id', $data)) {
+            $article->supplier()->associate(Supplier::find($data['supplier_id']));
         }
+        // Update price / create a new one
+        if (array_key_exists('value', $data)) {
+            $article->changePrice($data['value']);
+        }
+        $article->update($data);
 
         // Update bottle's fields
         $bottle->update($data);
@@ -145,11 +112,7 @@ class BottlesController extends Controller
      */
     public function destroy(Bottle $bottle)
     {
-        $this->checkIfTrashed($bottle);
-
         try {
-            $bottle->article->item->delete();
-            $bottle->article->delete();
             $bottle->delete();
         } catch (Exception $err) {
             return response()->json($err, 500);

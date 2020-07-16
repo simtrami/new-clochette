@@ -2,6 +2,8 @@
 
 namespace Tests\Feature;
 
+use App\Article;
+use App\Contact;
 use App\Supplier;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -69,7 +71,7 @@ class SuppliersRoutingTest extends TestCase
             ]);
     }
 
-    public function testUpdate(): void
+    public function testUpdate1(): void
     {
         $supplier = factory(Supplier::class)->create();
 
@@ -97,7 +99,13 @@ class SuppliersRoutingTest extends TestCase
             ]);
     }
 
-    public function testShow(): void
+    public function testUpdate2(): void
+    {
+        $response = $this->putJson('/api/suppliers/0');
+        $response->assertStatus(404);
+    }
+
+    public function testShow1(): void
     {
         $supplier = factory(Supplier::class)->create();
 
@@ -118,12 +126,54 @@ class SuppliersRoutingTest extends TestCase
             ]);
     }
 
-    public function testDestroy(): void
+    public function testShow2(): void
+    {
+        $response = $this->getJson('/api/suppliers/0');
+        $response->assertStatus(404);
+    }
+
+    public function testDestroy1(): void
     {
         $supplier = factory(Supplier::class)->create();
 
         $response = $this->deleteJson('/api/suppliers/' . $supplier->id);
-
         $response->assertStatus(204);
+        // Check whether the resource is unreachable
+        $response = $this->deleteJson('/api/suppliers/' . $supplier->id);
+        $response->assertStatus(404);
+        $response = $this->putJson('/api/suppliers/' . $supplier->id);
+        $response->assertStatus(404);
+        $response = $this->getJson('/api/suppliers/' . $supplier->id);
+        $response->assertStatus(404);
+        // Check the destruction in database
+        self::assertNull(Supplier::find($supplier->id));
+    }
+
+    public function testDestroy2(): void
+    {
+        $supplier = factory(Supplier::class)->create();
+        $contact = factory(Contact::class)->create(['supplier_id' => $supplier->id]);
+
+        self::assertEquals(1, Contact::whereSupplierId($supplier->id)->count());
+
+        $response = $this->deleteJson('/api/suppliers/' . $supplier->id);
+        $response->assertStatus(204);
+        // Check the 'ON DELETE CASCADE' behaviour of contacts
+        self::assertEquals(0, Contact::whereSupplierId($supplier->id)->count());
+        self::assertNull(Contact::find($contact->id));
+    }
+
+    public function testDestroy3(): void
+    {
+        $supplier = factory(Supplier::class)->create();
+        $article = factory(Article::class)->create(['supplier_id' => $supplier->id]);
+
+        self::assertEquals(1, Article::whereSupplierId($supplier->id)->count());
+
+        $response = $this->deleteJson('/api/suppliers/' . $supplier->id);
+        $response->assertStatus(204);
+        // Check the 'ON DELETE SET NULL' behaviour of article's supplier_id
+        self::assertEquals(0, Article::whereSupplierId($supplier->id)->count());
+        self::assertNull(Article::find($article->id)->supplier_id);
     }
 }

@@ -32,11 +32,11 @@ class ArticleCollectionResource extends JsonResource
     {
         $ret = [
             'id' => $this->id,
-            'name' => $this->item->name,
-            'quantity' => $this->item->quantity,
+            'name' => $this->name,
+            'quantity' => $this->quantity,
             'unitPrice' => $this->unit_price,
         ];
-        $price = $this->item->price();
+        $price = $this->price();
         $ret['price'] = [
             'id' => $price->id,
             'value' => $price->value,

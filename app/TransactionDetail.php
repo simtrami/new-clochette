@@ -4,52 +4,39 @@ namespace App;
 
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\Pivot;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphPivot;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 /**
  * App\TransactionDetail
  *
  * @property int $transaction_id
- * @property int|null $item_id Will not remove the entry when the item is deleted.
+ * @property int $item_id
+ * @property string $item_type
  * @property int $quantity
- * @property-read Item|null $item
- * @property-read Transaction $transaction
+ * @property-read Model|Eloquent $item
  * @method static Builder|TransactionDetail newModelQuery()
  * @method static Builder|TransactionDetail newQuery()
  * @method static Builder|TransactionDetail query()
  * @method static Builder|TransactionDetail whereItemId($value)
+ * @method static Builder|TransactionDetail whereItemType($value)
  * @method static Builder|TransactionDetail whereQuantity($value)
  * @method static Builder|TransactionDetail whereTransactionId($value)
  * @mixin Eloquent
  */
-class TransactionDetail extends Pivot
+class TransactionDetail extends MorphPivot
 {
     public $timestamps = false;
     protected $table = 'transaction_details';
-    protected $fillable = ['quantity'];
+    protected $with = ['item'];
 
     ##
     # Relationships
     ##
 
-    public function transaction(): BelongsTo
+    public function item(): MorphTo
     {
-        return $this->belongsTo(Transaction::class);
-    }
-
-    public function item(): BelongsTo
-    {
-        return $this->belongsTo(Item::class);
-    }
-
-    ##
-    # Extended Properties
-    # Must be called with parenthesis
-    ##
-
-    public function itemName(): string
-    {
-        return $this->item->name;
+        return $this->morphTo();
     }
 }

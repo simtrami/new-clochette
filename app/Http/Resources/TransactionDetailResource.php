@@ -9,6 +9,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  * @method itemName()
  * @property mixed quantity
  * @property mixed item_id
+ * @property mixed item_type
  */
 class TransactionDetailResource extends JsonResource
 {
@@ -22,8 +23,9 @@ class TransactionDetailResource extends JsonResource
     {
         return [
             'transaction' => $this->whenLoaded('transaction'),
-            'itemId' => $this->item_id,
-            'itemName' => $this->itemName(),
+            'id' => $this->item_id,
+            'type' => $this->item_type,
+            'name' => $this->item->name,
             'quantity' => $this->quantity,
         ];
     }

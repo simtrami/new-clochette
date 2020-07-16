@@ -16,9 +16,8 @@ class CreateTransactionDetailsTable extends Migration
         Schema::create('transaction_details', function (Blueprint $table) {
             $table->foreignId('transaction_id')->constrained()
                 ->onDelete('cascade')->onUpdate('cascade');
-            $table->foreignId('item_id')->nullable()->constrained()
-                ->onDelete('set null')->onUpdate('cascade')
-                ->comment('Will not remove the entry when the item is deleted.');
+            $table->foreignId('item_id');
+            $table->string('item_type');
             $table->unsignedInteger('quantity')->default(1);
         });
     }

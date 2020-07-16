@@ -15,10 +15,10 @@ use Illuminate\Support\Carbon;
  * @property int $supplier_id
  * @property string $first_name
  * @property string $last_name
- * @property string $phone
- * @property string $email
+ * @property string|null $phone
+ * @property string|null $email
  * @property string $role
- * @property string $notes
+ * @property string|null $notes
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property-read Supplier $supplier

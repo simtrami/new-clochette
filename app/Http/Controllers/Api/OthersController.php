@@ -6,7 +6,6 @@ use App\Article;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ArticleCollectionResource;
 use App\Http\Resources\OtherResource;
-use App\Item;
 use App\Other;
 use App\Price;
 use App\Supplier;
@@ -16,7 +15,6 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
 use Illuminate\Routing\ResponseFactory;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class OthersController extends Controller
 {
@@ -35,21 +33,7 @@ class OthersController extends Controller
      */
     public function show(Other $other): OtherResource
     {
-        $this->checkIfTrashed($other);
         return new OtherResource($other);
-    }
-
-    /**
-     * @param Other $other
-     */
-    private function checkIfTrashed(Other $other): void
-    {
-        if ($other->trashed() ||
-            $other->article->trashed() ||
-            $other->article->item->trashed()) {
-            throw new NotFoundHttpException(
-                "Requested resource does not exist or has been deleted.");
-        }
     }
 
     /**
@@ -67,21 +51,16 @@ class OthersController extends Controller
             'description' => 'required|string|min:10|max:500',
         ]);
 
-        $item = new Item($data);
-        $item->save();
-        $item->prices()->save(new Price($data));
-
-        $article = new Article($data);
+        $article = Article::create($data);
+        $article->prices()->save(new Price($data));
         if ($request->has('supplier_id')) {
             $article->supplier()
                 ->associate(Supplier::find($data['supplier_id']));
         }
-        $article->item()->associate(Item::find($item->id));
-        $article->save();
 
         $other = new Other($data);
-        $other->article()->associate(Article::find($item->id));
-        $other->save();
+        $other->article()->associate($article);
+        $other->push();
 
         return new OtherResource($other);
     }
@@ -93,8 +72,6 @@ class OthersController extends Controller
      */
     public function update(Other $other, Request $request): OtherResource
     {
-        $this->checkIfTrashed($other);
-
         $data = $request->validate([
             'name' => 'string|min:2|max:255',
             'quantity' => 'numeric|min:0',
@@ -104,18 +81,14 @@ class OthersController extends Controller
             'description' => 'string|min:10|max:500',
         ]);
 
-        $item = $other->article->item;
-        // Update item's fields
-        $item->update($data);
-
-        // Update price / create a new one
-        if ($request->has('value')) {
-            $item->changePrice($data['value']);
-        }
-
         $article = $other->article;
         // Update article's fields
         $article->update($data);
+
+        // Update price / create a new one
+        if ($request->has('value')) {
+            $article->changePrice($data['value']);
+        }
 
         // Update supplier
         if ($request->has('supplier_id')) {
@@ -124,7 +97,7 @@ class OthersController extends Controller
             $article->update();
         }
 
-        // Update other's fields
+        // Update food's fields
         $other->update($data);
 
         return new OtherResource($other);
@@ -137,11 +110,7 @@ class OthersController extends Controller
      */
     public function destroy(Other $other)
     {
-        $this->checkIfTrashed($other);
-
         try {
-            $other->article->item->delete();
-            $other->article->delete();
             $other->delete();
         } catch (Exception $err) {
             return response()->json($err, 500);

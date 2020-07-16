@@ -10,5 +10,6 @@ $factory->define(PaymentMethod::class, function (Faker $faker) {
     return [
         'name' => $faker->unique()->monthName,
         'needs_cash_drawer' => $faker->boolean,
+        'icon_name' => $faker->word,
     ];
 });

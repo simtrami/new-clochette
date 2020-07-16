@@ -4,7 +4,6 @@ namespace Tests\Feature;
 
 use App\Article;
 use App\Bottle;
-use App\Item;
 use App\Price;
 use App\Supplier;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -21,15 +20,12 @@ class BottlesRoutingTest extends TestCase
     {
         $supplier = factory(Supplier::class)->create();
 
-        $item_1 = factory(Item::class)->create();
-        factory(Price::class)->create(['item_id' => $item_1->id]);
-        factory(Article::class)->create(['id' => $item_1->id, 'supplier_id' => $supplier->id]);
-        factory(Bottle::class)->create(['id' => $item_1->id]);
-
-        $item_2 = factory(Item::class)->create();
-        factory(Price::class)->create(['item_id' => $item_2->id]);
-        factory(Article::class)->create(['id' => $item_2->id, 'supplier_id' => $supplier->id]);
-        factory(Bottle::class)->create(['id' => $item_2->id]);
+        factory(Article::class, 2)
+            ->create(['supplier_id' => $supplier->id])
+            ->each(function ($article) {
+                $article->prices()->save(factory(Price::class)->make());
+                $article->bottle()->save(factory(Bottle::class)->make());
+            });
 
         $response = $this->get('/api/bottles');
 
@@ -98,20 +94,45 @@ class BottlesRoutingTest extends TestCase
                         'address', 'phone', 'email', 'supplierSince',
                     ],
                 ]
+            ])
+            ->assertJson([
+                'data' => [
+                    'name' => 'Bottle',
+                    'quantity' => 42,
+                    'unitPrice' => 142.42,
+                    'price' => [
+                        'value' => 4.20,
+                    ],
+                    'volume' => 30,
+                    'isReturnable' => 1,
+                    'abv' => 3.4,
+                    // TODO: implement pricesHistory in app
+                    'pricesHistory' => [/*array of prices (raw)*/],
+                    'supplier' => [
+                        'id' => $supplier->id,
+                        'name' => $supplier->name,
+                        'description' => $supplier->description,
+                        'address' => $supplier->address,
+                        'phone' => $supplier->phone,
+                        'email' => $supplier->email,
+                        'supplierSince' => $supplier->supplier_since,
+                    ],
+                ]
             ]);
     }
 
-    public function testUpdate(): void
+    public function testUpdate1(): void
     {
 
         $supplier_1 = factory(Supplier::class)->create();
-        $item = factory(Item::class)->create();
-        $id = $item->id;
-        $price = factory(Price::class)->create(['item_id' => $id]);
-        factory(Article::class)->create(['id' => $id, 'supplier_id' => $supplier_1->id]);
-        factory(Bottle::class)->create(['id' => $id, 'is_returnable' => false]);
-
         $supplier_2 = factory(Supplier::class)->create();
+
+        $article = factory(Article::class)->create(['supplier_id' => $supplier_1->id]);
+        $id = $article->id;
+        $price = factory(Price::class)->make();
+        $article->prices()->save($price);
+        $article->bottle()->save(factory(Bottle::class)->make(['is_returnable' => false]));
+
 
         $response = $this->putJson('/api/bottles/' . $id, [
             'name' => 'Bottle',
@@ -135,7 +156,7 @@ class BottlesRoutingTest extends TestCase
                         'id' => $price->id + 1,
                         'value' => '4.20',
                     ],
-//                    'pricesHistory' is present but will need to be defined later, will return true anyway
+                    // TODO: 'pricesHistory' is present but will need to be defined later, will return true anyway
                     'volume' => '30',
                     'isReturnable' => '1',
                     'abv' => '3.40',
@@ -154,14 +175,21 @@ class BottlesRoutingTest extends TestCase
             ]);
     }
 
-    public function testShow(): void
+    public function testUpdate2(): void
+    {
+        $response = $this->putJson('/api/bottles/0');
+        $response->assertStatus(404);
+    }
+
+    public function testShow1(): void
     {
         $supplier = factory(Supplier::class)->create();
-        $item = factory(Item::class)->create();
-        $id = $item->id;
-        factory(Price::class)->create(['item_id' => $id]);
-        factory(Article::class)->create(['id' => $id, 'supplier_id' => $supplier->id]);
-        factory(Bottle::class)->create(['id' => $id, 'is_returnable' => false]);
+
+        $article = factory(Article::class)->create(['supplier_id' => $supplier->id]);
+        $id = $article->id;
+        $price = factory(Price::class)->make();
+        $article->prices()->save($price);
+        $article->bottle()->save(factory(Bottle::class)->make(['is_returnable' => false]));
 
         $response = $this->getJson('/api/bottles/' . $id);
 
@@ -184,23 +212,61 @@ class BottlesRoutingTest extends TestCase
                         'address', 'phone', 'email', 'supplierSince',
                     ],
                 ]
+            ])
+            ->assertJson([
+                'data' => [
+                    'id' => $id,
+                    'name' => $article->name,
+                    'quantity' => $article->quantity,
+                    'unitPrice' => $article->unit_price,
+                    'price' => [
+                        'id' => $price->id,
+                        'value' => $price->value,
+                    ],
+                    // TODO: implement pricesHistory in app
+                    'pricesHistory' => [/*array of prices (raw)*/],
+                    'volume' => $article->bottle->volume,
+                    'isReturnable' => false,
+                    'abv' => $article->bottle->abv,
+                    'ibu' => $article->bottle->ibu,
+                    'variety' => $article->bottle->variety,
+                    'supplier' => [
+                        'id' => $supplier->id,
+                        'name' => $supplier->name,
+                        'description' => $supplier->description,
+                        'address' => $supplier->address,
+                        'phone' => $supplier->phone,
+                        'email' => $supplier->email,
+                        'supplierSince' => $supplier->supplier_since,
+                    ],
+                ]
             ]);
+    }
+
+    public function testShow2(): void
+    {
+        $response = $this->getJson('/api/bottles/0');
+        $response->assertStatus(404);
     }
 
     public function testDestroy(): void
     {
         $supplier = factory(Supplier::class)->create();
-        $item = factory(Item::class)->create();
-        $id = $item->id;
-        factory(Price::class)->create(['item_id' => $id]);
-        factory(Article::class)->create(['id' => $id, 'supplier_id' => $supplier->id]);
-        factory(Bottle::class)->create(['id' => $id]);
+        $article = factory(Article::class)->create(['supplier_id' => $supplier->id]);
+        $id = $article->id;
+        $article->prices()->save(factory(Price::class)->make());
+        $article->bottle()->save(factory(Bottle::class)->make());
 
         $response = $this->deleteJson('/api/bottles/' . $id);
         $response->assertStatus(204);
-
-        // Testing soft delete
+        // Check whether the resource is unreachable
         $response = $this->deleteJson('/api/bottles/' . $id);
         $response->assertStatus(404);
+        $response = $this->putJson('/api/bottles/' . $id);
+        $response->assertStatus(404);
+        $response = $this->getJson('/api/bottles/' . $id);
+        $response->assertStatus(404);
+        // Check the soft delete success
+        self::assertNotNull(Bottle::onlyTrashed()->find($id));
     }
 }

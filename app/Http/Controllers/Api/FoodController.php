@@ -7,7 +7,6 @@ use App\Food;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ArticleCollectionResource;
 use App\Http\Resources\FoodResource;
-use App\Item;
 use App\Price;
 use App\Supplier;
 use Exception;
@@ -16,9 +15,8 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
 use Illuminate\Routing\ResponseFactory;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-class FoodsController extends Controller
+class FoodController extends Controller
 {
     /**
      * @return AnonymousResourceCollection
@@ -35,21 +33,7 @@ class FoodsController extends Controller
      */
     public function show(Food $food): FoodResource
     {
-        $this->checkIfTrashed($food);
         return new FoodResource($food);
-    }
-
-    /**
-     * @param Food $food
-     */
-    private function checkIfTrashed(Food $food): void
-    {
-        if ($food->trashed() ||
-            $food->article->trashed() ||
-            $food->article->item->trashed()) {
-            throw new NotFoundHttpException(
-                "Requested resource does not exist or has been deleted.");
-        }
     }
 
     /**
@@ -68,21 +52,16 @@ class FoodsController extends Controller
             'units_left' => 'required_if:is_bulk,true|numeric|min:0',
         ]);
 
-        $item = new Item($data);
-        $item->save();
-        $item->prices()->save(new Price($data));
-
-        $article = new Article($data);
+        $article = Article::create($data);
+        $article->prices()->save(new Price($data));
         if ($request->has('supplier_id')) {
             $article->supplier()
                 ->associate(Supplier::find($data['supplier_id']));
         }
-        $article->item()->associate(Item::find($item->id));
-        $article->save();
 
         $food = new Food($data);
-        $food->article()->associate(Article::find($item->id));
-        $food->save();
+        $food->article()->associate($article);
+        $food->push();
 
         return new FoodResource($food);
     }
@@ -94,8 +73,6 @@ class FoodsController extends Controller
      */
     public function update(Food $food, Request $request): FoodResource
     {
-        $this->checkIfTrashed($food);
-
         $data = $request->validate([
             'name' => 'string|min:2|max:255',
             'quantity' => 'numeric|min:0',
@@ -106,18 +83,14 @@ class FoodsController extends Controller
             'units_left' => 'required_with:is_bulk|numeric|min:0',
         ]);
 
-        $item = $food->article->item;
-        // Update item's fields
-        $item->update($data);
-
-        // Update price / create a new one
-        if ($request->has('value')) {
-            $item->changePrice($data['value']);
-        }
-
         $article = $food->article;
         // Update article's fields
         $article->update($data);
+
+        // Update price / create a new one
+        if ($request->has('value')) {
+            $article->changePrice($data['value']);
+        }
 
         // Update supplier
         if ($request->has('supplier_id')) {
@@ -139,11 +112,7 @@ class FoodsController extends Controller
      */
     public function destroy(Food $food)
     {
-        $this->checkIfTrashed($food);
-
         try {
-            $food->article->item->delete();
-            $food->article->delete();
             $food->delete();
         } catch (Exception $err) {
             return response()->json($err, 500);
