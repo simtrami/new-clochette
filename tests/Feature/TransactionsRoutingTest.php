@@ -62,7 +62,7 @@ class TransactionsRoutingTest extends TestCase
     {
         $user = factory(User::class)->create();
         $payment_method = factory(PaymentMethod::class)->create([
-            'parameters' => json_encode(['requires_account' => true])
+            'parameters' => json_encode(['requires_account'])
         ]);
         $customer = factory(Customer::class)->create();
 
@@ -124,7 +124,7 @@ class TransactionsRoutingTest extends TestCase
                         'name' => $payment_method->name,
                         'needsCashDrawer' => $payment_method->needs_cash_drawer,
                         'iconName' => $payment_method->icon_name,
-                        'parameters' => '{"requires_account": true}',
+                        'parameters' => json_encode(['requires_account']),
                     ],
                     'items' => [
                         [
@@ -190,7 +190,7 @@ class TransactionsRoutingTest extends TestCase
         $user_2 = factory(User::class)->create();
         $payment_method_1 = factory(PaymentMethod::class)->create();
         $payment_method_2 = factory(PaymentMethod::class)->create([
-            'parameters' => json_encode(['requires_account' => true])
+            'parameters' => json_encode(['requires_account'])
         ]);
         $customer = factory(Customer::class)->create(['is_staff' => true]);
 
@@ -255,7 +255,7 @@ class TransactionsRoutingTest extends TestCase
                         'name' => $payment_method_2->name,
                         'needsCashDrawer' => $payment_method_2->needs_cash_drawer,
                         'iconName' => $payment_method_2->icon_name,
-                        'parameters' => '{"requires_account": true}',
+                        'parameters' => json_encode(['requires_account']),
                     ],
                     'items' => [
                         [
