@@ -5,6 +5,8 @@ namespace App;
 use Eloquent;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Carbon;
@@ -37,6 +39,14 @@ use Illuminate\Support\Carbon;
  * @method static Builder|Bundle withTrashed()
  * @method static Builder|Bundle withoutTrashed()
  * @mixin Eloquent
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Barrel[] $barrels
+ * @property-read int|null $barrels_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Bottle[] $bottles
+ * @property-read int|null $bottles_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Food[] $food
+ * @property-read int|null $food_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Other[] $others
+ * @property-read int|null $others_count
  */
 class Bundle extends Item
 {
@@ -48,10 +58,36 @@ class Bundle extends Item
     # Relationships
     ##
 
-    public function articles(): BelongsToMany
+    public function articles(): HasMany
     {
-        return $this->belongsToMany(Article::class, 'bundles_articles',
-            'bundle_id', 'article_id')
-            ->using(BundleArticle::class)->withPivot('article_quantity')->withTimestamps();
+        return $this->hasMany(BundleArticle::class);
+    }
+
+    public function barrels(): MorphToMany
+    {
+        return $this->morphedByMany(Barrel::class, 'article', 'bundles_articles')
+            ->using(BundleArticle::class)
+            ->withPivot('quantity');
+    }
+
+    public function bottles(): MorphToMany
+    {
+        return $this->morphedByMany(Bottle::class, 'article', 'bundles_articles')
+            ->using(BundleArticle::class)
+            ->withPivot('quantity');
+    }
+
+    public function food(): MorphToMany
+    {
+        return $this->morphedByMany(Food::class, 'article', 'bundles_articles')
+            ->using(BundleArticle::class)
+            ->withPivot('quantity');
+    }
+
+    public function others(): MorphToMany
+    {
+        return $this->morphedByMany(Other::class, 'article', 'bundles_articles')
+            ->using(BundleArticle::class)
+            ->withPivot('quantity');
     }
 }

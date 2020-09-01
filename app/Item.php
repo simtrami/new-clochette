@@ -65,7 +65,7 @@ class Item extends Model
      */
     public function activePrice()
     {
-        return $this->prices()->where('is_active', true)->latest()->first();
+        return $this->prices()->where('is_active', '=', true)->latest()->first();
     }
 
     /**
@@ -73,13 +73,13 @@ class Item extends Model
      */
     public function inactivePrices(): ?Collection
     {
-        return $this->prices->where('is_active', false);
+        return $this->prices->where('is_active', '=', false);
     }
 
     /**
      * @return Collection|null
      */
-    public function pricesHistory(): ?Collection
+    public function priceHistory(): ?Collection
     {
         return $this->prices->sortByDesc('updated_at');
     }
@@ -91,7 +91,7 @@ class Item extends Model
     /**
      * @param Price $price
      */
-    public function switchActivePrice(Price $price): void
+    private function switchActivePrice(Price $price): void
     {
         // Given price has to be one of the item's prices
         if (!$this->prices->contains('id', $price->id)) {
@@ -152,17 +152,5 @@ class Item extends Model
     public function changePrice($value): void
     {
         $this->changePrices($value);
-    }
-
-    /**
-     * @param $value
-     */
-    public function changeSecondPrice($value): void
-    {
-        if (!$this->activePrice()) {
-            throw new ModelNotFoundException(
-                "Item does not have an active price.");
-        }
-        $this->changePrices($this->activePrice()->value, $value);
     }
 }

@@ -18,7 +18,6 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $deleted_at
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property-read Article $article
  * @method static \Illuminate\Database\Eloquent\Builder|Food newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Food newQuery()
  * @method static Builder|Food onlyTrashed()
@@ -32,73 +31,42 @@ use Illuminate\Support\Carbon;
  * @method static Builder|Food withTrashed()
  * @method static Builder|Food withoutTrashed()
  * @mixin Eloquent
+ * @property int|null $supplier_id
+ * @property string $name
+ * @property int $quantity
+ * @property float $unit_price
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Bundle[] $bundles
+ * @property-read int|null $bundles_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Price[] $prices
+ * @property-read int|null $prices_count
+ * @property-read \App\Supplier|null $supplier
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Transaction[] $transactions
+ * @property-read int|null $transactions_count
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Food whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Food whereQuantity($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Food whereSupplierId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Food whereUnitPrice($value)
  */
-class Food extends Model
+class Food extends Article
 {
-    use SoftDeletes;
-
     protected $table = 'food';
 
-    protected $fillable = ['is_bulk'];
+    protected $fillable = ['name', 'unit_price', 'quantity', 'is_bulk'];
+
+    protected $casts = [
+        'is_bulk' => 'boolean',
+    ];
 
     ##
     # Relationships
     ##
 
-    /**
-     * @return BelongsTo
-     */
-    public function article(): BelongsTo
-    {
-        return $this->belongsTo(Article::class, 'id');
-    }
-
     ##
     # Functions
     ##
-
-    /**
-     * @param $value
-     */
-    public function changePrice($value): void
-    {
-        $this->article->changePrice($value);
-    }
 
     ##
     # Extended Properties
     # Must be called with parenthesis
     ##
-
-    /**
-     * @return Collection|null
-     */
-    public function pricesHistory(): ?Collection
-    {
-        return $this->article->pricesHistory();
-    }
-
-    /**
-     * @return Price|null
-     */
-    public function price(): ?Price
-    {
-        return $this->article->price();
-    }
-
-    /**
-     * @return string
-     */
-    public function name(): string
-    {
-        return $this->article->name;
-    }
-
-    /**
-     * @return float
-     */
-    public function quantity(): float
-    {
-        return $this->article->quantity;
-    }
 }

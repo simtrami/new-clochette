@@ -16,7 +16,7 @@ class CreatePaymentMethodsTable extends Migration
         Schema::create('payment_methods', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('name')->unique();
-            $table->boolean('needs_cash_drawer')->default(false);
+            $table->boolean('debit_customer')->default(false);
             $table->string('icon_name', 100)->nullable();
             $table->json('parameters')->nullable();
             $table->timestamps();

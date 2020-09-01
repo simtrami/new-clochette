@@ -2,7 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Article;
 use App\Food;
 use App\Price;
 use App\Supplier;
@@ -20,11 +19,9 @@ class FoodRoutingTest extends TestCase
     {
         $supplier = factory(Supplier::class)->create();
 
-        $articles = factory(Article::class, 2)
-            ->create(['supplier_id' => $supplier->id])
-            ->each(function ($article) {
-                $article->prices()->save(factory(Price::class)->make());
-                $article->food()->save(factory(Food::class)->make());
+        factory(Food::class, 2)->create(['supplier_id' => $supplier->id])
+            ->each(function ($food) {
+                $food->prices()->save(factory(Price::class)->make());
             });
 
         $response = $this->get('/api/food');
@@ -37,20 +34,20 @@ class FoodRoutingTest extends TestCase
                         'name',
                         'quantity',
                         'unitPrice',
+                        'isBulk',
                         'price' => [
                             'id', 'value',
                         ],
-                        'isBulk',
                     ],
                     1 => [
                         'id',
                         'name',
                         'quantity',
                         'unitPrice',
+                        'isBulk',
                         'price' => [
                             'id', 'value',
                         ],
-                        'isBulk',
                     ]
                 ]
             ]);
@@ -62,11 +59,11 @@ class FoodRoutingTest extends TestCase
 
         $response = $this->postJson('/api/food', [
             'name' => 'Food',
-            'quantity' => '42',
+            'quantity' => 42,
             'supplier_id' => $supplier->id,
-            'unit_price' => '142.42',
-            'value' => '4.2',
-            'is_bulk' => '1',
+            'unit_price' => 142.42,
+            'value' => 4.2,
+            'is_bulk' => 1,
         ]);
 
         $response->assertStatus(201)
@@ -76,11 +73,10 @@ class FoodRoutingTest extends TestCase
                     'name',
                     'quantity',
                     'unitPrice',
+                    'isBulk',
                     'price' => [
                         'id', 'value',
                     ],
-                    'pricesHistory',
-                    'isBulk',
                     'supplier' => [
                         'id', 'name', 'description',
                         'address', 'phone', 'email', 'supplierSince',
@@ -96,8 +92,6 @@ class FoodRoutingTest extends TestCase
                     'price' => [
                         'value' => 4.2,
                     ],
-                    // TODO: implement pricesHistory in app
-                    'pricesHistory' => [/*array of prices (raw)*/],
                     'supplier' => [
                         'id' => $supplier->id,
                         'name' => $supplier->name,
@@ -105,7 +99,7 @@ class FoodRoutingTest extends TestCase
                         'address' => $supplier->address,
                         'phone' => $supplier->phone,
                         'email' => $supplier->email,
-                        'supplierSince' => $supplier->supplier_since,
+                        'supplierSince' => $supplier->supplier_since->toISOString(),
                     ],
                 ]
             ]);
@@ -116,20 +110,19 @@ class FoodRoutingTest extends TestCase
         $supplier_1 = factory(Supplier::class)->create();
         $supplier_2 = factory(Supplier::class)->create();
 
-        $article = factory(Article::class)->create(['supplier_id' => $supplier_1->id]);
-        $id = $article->id;
+        $food = factory(Food::class)->create(['supplier_id' => $supplier_1->id, 'is_bulk' => false]);
+        $id = $food->id;
         $price = factory(Price::class)->make();
-        $article->prices()->save($price);
-        $article->food()->save(factory(Food::class)->make(['is_bulk' => false]));
+        $food->prices()->save($price);
 
 
         $response = $this->putJson('/api/food/' . $id, [
             'name' => 'Food',
-            'quantity' => '42',
+            'quantity' => 42,
             'supplier_id' => $supplier_2->id,
-            'unit_price' => '142.42',
-            'value' => '4.2',
-            'is_bulk' => '1',
+            'unit_price' => 142.42,
+            'value' => 4.2,
+            'is_bulk' => 1,
         ]);
 
         $response->assertStatus(200)
@@ -137,14 +130,27 @@ class FoodRoutingTest extends TestCase
                 'data' => [
                     'id' => $id,
                     'name' => 'Food',
-                    'quantity' => '42',
-                    'unitPrice' => '142.42',
+                    'quantity' => 42,
+                    'unitPrice' => 142.42,
+                    'isBulk' => true,
                     'price' => [
                         'id' => $price->id + 1,
-                        'value' => '4.20',
+                        'value' => 4.2,
                     ],
-                    // TODO: 'pricesHistory' is present but will need to be defined later, will return true anyway
-                    'isBulk' => '1',
+                    'priceHistory' => [
+                        [
+                            'id' => $price->id,
+                            'value' => $price->value,
+                            'isActive' => false,
+                            'createdAt' => $price->created_at->toISOString(),
+                        ],
+                        [
+                            'id' => $price->id + 1,
+                            'value' => 4.2,
+                            'isActive' => true,
+                            'createdAt' => $price->created_at->toISOString(),
+                        ],
+                    ],
                     'supplier' => [
                         'id' => $supplier_2->id,
                         'name' => $supplier_2->name,
@@ -152,7 +158,7 @@ class FoodRoutingTest extends TestCase
                         'address' => $supplier_2->address,
                         'phone' => $supplier_2->phone,
                         'email' => $supplier_2->email,
-                        'supplierSince' => $supplier_2->supplier_since,
+                        'supplierSince' => $supplier_2->supplier_since->toISOString(),
                     ],
                 ]
             ]);
@@ -168,11 +174,10 @@ class FoodRoutingTest extends TestCase
     {
         $supplier = factory(Supplier::class)->create();
 
-        $article = factory(Article::class)->create(['supplier_id' => $supplier->id]);
-        $id = $article->id;
+        $food = factory(Food::class)->create(['supplier_id' => $supplier->id, 'is_bulk' => false]);
+        $id = $food->id;
         $price = factory(Price::class)->make();
-        $article->prices()->save($price);
-        $article->food()->save(factory(Food::class)->make(['is_bulk' => false]));
+        $food->prices()->save($price);
 
         $response = $this->getJson('/api/food/' . $id);
 
@@ -183,11 +188,11 @@ class FoodRoutingTest extends TestCase
                     'name',
                     'quantity',
                     'unitPrice',
+                    'isBulk',
                     'price' => [
                         'id', 'value',
                     ],
-                    'pricesHistory',
-                    'isBulk',
+                    'priceHistory',
                     'supplier' => [
                         'id', 'name', 'description',
                         'address', 'phone', 'email', 'supplierSince',
@@ -197,16 +202,22 @@ class FoodRoutingTest extends TestCase
             ->assertJson([
                 'data' => [
                     'id' => $id,
-                    'name' => $article->name,
-                    'quantity' => $article->quantity,
-                    'unitPrice' => $article->unit_price,
+                    'name' => $food->name,
+                    'quantity' => $food->quantity,
+                    'unitPrice' => $food->unit_price,
+                    'isBulk' => false,
                     'price' => [
                         'id' => $price->id,
                         'value' => $price->value,
                     ],
-                    // TODO: implement pricesHistory in app
-                    'pricesHistory' => [/*array of prices (raw)*/],
-                    'isBulk' => false,
+                    'priceHistory' => [
+                        [
+                            'id' => $price->id,
+                            'value' => $price->value,
+                            'isActive' => true,
+                            'createdAt' => $price->created_at->toISOString(),
+                        ],
+                    ],
                     'supplier' => [
                         'id' => $supplier->id,
                         'name' => $supplier->name,
@@ -214,7 +225,7 @@ class FoodRoutingTest extends TestCase
                         'address' => $supplier->address,
                         'phone' => $supplier->phone,
                         'email' => $supplier->email,
-                        'supplierSince' => $supplier->supplier_since,
+                        'supplierSince' => $supplier->supplier_since->toISOString(),
                     ],
                 ]
             ]);
@@ -229,10 +240,9 @@ class FoodRoutingTest extends TestCase
     public function testDestroy(): void
     {
         $supplier = factory(Supplier::class)->create();
-        $article = factory(Article::class)->create(['supplier_id' => $supplier->id]);
-        $id = $article->id;
-        $article->prices()->save(factory(Price::class)->make());
-        $article->food()->save(factory(Food::class)->make());
+        $food = factory(Food::class)->create(['supplier_id' => $supplier->id]);
+        $id = $food->id;
+        $food->prices()->save(factory(Price::class)->make());
 
         $response = $this->deleteJson('/api/food/' . $id);
         $response->assertStatus(204);

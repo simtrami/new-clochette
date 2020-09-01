@@ -14,7 +14,7 @@ use Illuminate\Support\Carbon;
  *
  * @property int $id
  * @property string $name
- * @property int $needs_cash_drawer
+ * @property int $debit_customer
  * @property string|null $icon_name
  * @property mixed|null $parameters
  * @property Carbon|null $created_at
@@ -28,14 +28,18 @@ use Illuminate\Support\Carbon;
  * @method static Builder|PaymentMethod whereIconName($value)
  * @method static Builder|PaymentMethod whereId($value)
  * @method static Builder|PaymentMethod whereName($value)
- * @method static Builder|PaymentMethod whereNeedsCashDrawer($value)
+ * @method static Builder|PaymentMethod wheredebitCustomer($value)
  * @method static Builder|PaymentMethod whereParameters($value)
  * @method static Builder|PaymentMethod whereUpdatedAt($value)
  * @mixin Eloquent
  */
 class PaymentMethod extends Model
 {
-    protected $fillable = ['name', 'needs_cash_drawer', 'icon_name', 'parameters'];
+    protected $fillable = ['name', 'debit_customer', 'icon_name', 'parameters'];
+
+    protected $casts = [
+        'debit_customer' => 'boolean',
+    ];
 
     ##
     # Relationships

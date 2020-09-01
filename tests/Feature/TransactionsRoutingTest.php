@@ -2,9 +2,12 @@
 
 namespace Tests\Feature;
 
-use App\Article;
+use App\Barrel;
+use App\Bottle;
 use App\Customer;
 use App\Bundle;
+use App\Food;
+use App\Other;
 use App\PaymentMethod;
 use App\Price;
 use App\Transaction;
@@ -61,15 +64,13 @@ class TransactionsRoutingTest extends TestCase
     public function testCreate(): void
     {
         $user = factory(User::class)->create();
-        $payment_method = factory(PaymentMethod::class)->create([
-            'parameters' => json_encode(['requires_account'])
-        ]);
+        $payment_method = factory(PaymentMethod::class)->create(['debit_customer' => true]);
         $customer = factory(Customer::class)->create();
 
-        $article_1 = factory(Article::class)->create();
-        $article_1->prices()->save(factory(Price::class)->make(['value' => 4]));
-        $article_2 = factory(Article::class)->create();
-        $article_2->prices()->save(factory(Price::class)->make(['value' => 3.5]));
+        $barrel = factory(Barrel::class)->create();
+        $barrel->prices()->save(factory(Price::class)->make(['value' => 4]));
+        $food = factory(Food::class)->create();
+        $food->prices()->save(factory(Price::class)->make(['value' => 3.5]));
         $bundle = factory(Bundle::class)->create();
         $bundle->prices()->save(factory(Price::class)->make(['value' => 3]));
 
@@ -81,8 +82,24 @@ class TransactionsRoutingTest extends TestCase
             'user_id' => $user->id,
             'payment_method_id' => $payment_method->id,
             'customer_id' => $customer->id,
-            'articles' => [$article_1->id, $article_2->id, $article_2->id],
-            'bundles' => [$bundle->id],
+            'barrels' => [
+                [
+                    'id' => $barrel->id,
+                    'quantity' => 1,
+                ],
+            ],
+            'food' => [
+                [
+                    'id' => $food->id,
+                    'quantity' => 2,
+                ],
+            ],
+            'bundles' => [
+                [
+                    'id' => $bundle->id,
+                    'quantity' => 1,
+                ],
+            ],
         ]);
 
         $response->assertStatus(201)
@@ -95,8 +112,6 @@ class TransactionsRoutingTest extends TestCase
                     'customer',
                     'paymentMethod',
                     'items',
-//                    'articles',
-//                    'bundles',
                 ]
             ])
             ->assertJson([
@@ -122,64 +137,30 @@ class TransactionsRoutingTest extends TestCase
                     'paymentMethod' => [
                         'id' => $payment_method->id,
                         'name' => $payment_method->name,
-                        'needsCashDrawer' => $payment_method->needs_cash_drawer,
+                        'debitCustomer' => $payment_method->debit_customer,
                         'iconName' => $payment_method->icon_name,
-                        'parameters' => json_encode(['requires_account']),
+                        'parameters' => null,
                     ],
                     'items' => [
+                        [
+                            'id' => $barrel->id,
+                            'type' => 'App\Barrel',
+                            'name' => $barrel->name,
+                            'quantity' => 1,
+                        ],
+                        [
+                            'id' => $food->id,
+                            'type' => 'App\Food',
+                            'name' => $food->name,
+                            'quantity' => 2,
+                        ],
                         [
                             'id' => $bundle->id,
                             'type' => 'App\Bundle',
                             'name' => $bundle->name,
                             'quantity' => 1,
                         ],
-                        [
-                            'id' => $article_1->id,
-                            'type' => 'App\Article',
-                            'name' => $article_1->name,
-                            'quantity' => 1,
-                        ],
-                        [
-                            'id' => $article_2->id,
-                            'type' => 'App\Article',
-                            'name' => $article_2->name,
-                            'quantity' => 2,
-                        ],
                     ],
-//                    'articles' => [
-//                        [
-//                            'id' => $article_1->id,
-//                            'name' => $article_1->name,
-//                            'quantity' => $article_1->quantity,
-//                            'unitPrice' => $article_1->unit_price,
-//                            'price' => [
-//                                'id' => $article_1->price()->id,
-//                                'value' => 4,
-//                            ]
-//                        ],
-//                        [
-//                            'id' => $article_2->id,
-//                            'name' => $article_2->name,
-//                            'quantity' => $article_2->quantity,
-//                            'unitPrice' => $article_2->unit_price,
-//                            'price' => [
-//                                'id' => $article_2->price()->id,
-//                                'value' => 3.50,
-//                            ]
-//                        ],
-//                    ],
-//                    'bundles' => [
-//                        [
-//                            'id' => $bundle->id,
-//                            'name' => $bundle->name,
-//                            'quantity' => $bundle->quantity,
-//                            'price' => [
-//                                'id' => $bundle->price()->id,
-//                                'value' => 3.00,
-//                            ],
-//                            'nbArticles' => 0,
-//                        ],
-//                    ],
                 ]
             ]);
     }
@@ -189,21 +170,22 @@ class TransactionsRoutingTest extends TestCase
         $user_1 = factory(User::class)->create();
         $user_2 = factory(User::class)->create();
         $payment_method_1 = factory(PaymentMethod::class)->create();
-        $payment_method_2 = factory(PaymentMethod::class)->create([
-            'parameters' => json_encode(['requires_account'])
-        ]);
+        $payment_method_2 = factory(PaymentMethod::class)->create(['debit_customer' => true]);
         $customer = factory(Customer::class)->create(['is_staff' => true]);
 
-        $article_1 = factory(Article::class)->create();
-        $article_1->prices()->save(factory(Price::class)->make(['value' => 4]));
+        $barrel = factory(Barrel::class)->create();
+        $barrel->prices()->save(factory(Price::class)->make(['value' => 4]));
+        $food = factory(Food::class)->create();
+        $food->prices()->save(factory(Price::class)->make(['value' => 6]));
 
         $transaction = factory(Transaction::class)->create([
             'user_id' => $user_1->id, 'payment_method_id' => $payment_method_1->id,
         ]);
-        $transaction->articles()->attach($article_1->id, ['quantity' => 2]);
+        $transaction->barrels()->attach($barrel->id, ['quantity' => 2]);
+        $transaction->food()->attach($food->id, ['quantity' => 1]);
 
-        $article_2 = factory(Article::class)->create();
-        $article_2->prices()->save(factory(Price::class)->make(['value' => 3.5]));
+        $bottle = factory(Bottle::class)->create();
+        $bottle->prices()->save(factory(Price::class)->make(['value' => 3.5]));
         $bundle = factory(Bundle::class)->create();
         $bundle->prices()->save(factory(Price::class)->make(['value' => 1.5]));
 
@@ -213,9 +195,25 @@ class TransactionsRoutingTest extends TestCase
             'user_id' => $user_2->id,
             'payment_method_id' => $payment_method_2->id,
             'customer_id' => $customer->id,
-            'articles' => [$article_2->id, $article_2->id],
-            'bundles' => [$bundle->id],
-            'detached_articles' => [$article_1->id],
+            'barrels' => [
+                [
+                    'id' => $barrel->id,
+                    'quantity' => 1,
+                ],
+            ],
+            'bottles' => [
+                [
+                    'id' => $bottle->id,
+                    'quantity' => 2,
+                ],
+            ],
+            'bundles' => [
+                [
+                    'id' => $bundle->id,
+                    'quantity' => 1,
+                ],
+            ],
+            'detached_food' => [$food->id],
         ]);
 
         $response->assertStatus(200)
@@ -228,8 +226,6 @@ class TransactionsRoutingTest extends TestCase
                     'customer',
                     'paymentMethod',
                     'items',
-//                    'articles',
-//                    'bundles',
                 ]
             ])
             ->assertJson([
@@ -253,22 +249,28 @@ class TransactionsRoutingTest extends TestCase
                     'paymentMethod' => [
                         'id' => $payment_method_2->id,
                         'name' => $payment_method_2->name,
-                        'needsCashDrawer' => $payment_method_2->needs_cash_drawer,
+                        'debitCustomer' => $payment_method_2->debit_customer,
                         'iconName' => $payment_method_2->icon_name,
-                        'parameters' => json_encode(['requires_account']),
+                        'parameters' => null,
                     ],
                     'items' => [
+                        [
+                            'id' => $barrel->id,
+                            'type' => 'App\Barrel',
+                            'name' => $barrel->name,
+                            'quantity' => 1,
+                        ],
+                        [
+                            'id' => $bottle->id,
+                            'type' => 'App\Bottle',
+                            'name' => $bottle->name,
+                            'quantity' => 2,
+                        ],
                         [
                             'id' => $bundle->id,
                             'type' => 'App\Bundle',
                             'name' => $bundle->name,
                             'quantity' => 1,
-                        ],
-                        [
-                            'id' => $article_2->id,
-                            'type' => 'App\Article',
-                            'name' => $article_2->name,
-                            'quantity' => 2,
                         ],
                     ],
                 ]]);
@@ -286,14 +288,14 @@ class TransactionsRoutingTest extends TestCase
         $payment_method = factory(PaymentMethod::class)->create();
         $customer = factory(Customer::class)->create();
 
-        $article = factory(Article::class)->create();
-        $article->prices()->save(factory(Price::class)->make(['value' => 4]));
+        $other = factory(Other::class)->create();
+        $other->prices()->save(factory(Price::class)->make(['value' => 4]));
 
         $transaction = factory(Transaction::class)->create([
             'user_id' => $user->id, 'payment_method_id' => $payment_method->id,
             'customer_id' => $customer->id,
         ]);
-        $transaction->articles()->attach($article->id, ['quantity' => 2]);
+        $transaction->others()->attach($other->id, ['quantity' => 2]);
 
         $response = $this->getJson('/api/transactions/' . $transaction->id);
 
@@ -329,15 +331,15 @@ class TransactionsRoutingTest extends TestCase
                     'paymentMethod' => [
                         'id' => $payment_method->id,
                         'name' => $payment_method->name,
-                        'needsCashDrawer' => $payment_method->needs_cash_drawer,
+                        'debitCustomer' => $payment_method->debit_customer,
                         'iconName' => $payment_method->icon_name,
                         'parameters' => $payment_method->parameters,
                     ],
                     'items' => [
                         [
-                            'id' => $article->id,
-                            'type' => 'App\Article',
-                            'name' => $article->name,
+                            'id' => $other->id,
+                            'type' => 'App\Other',
+                            'name' => $other->name,
                             'quantity' => 2,
                         ],
                     ],
@@ -380,14 +382,14 @@ class TransactionsRoutingTest extends TestCase
         $payment_method = factory(PaymentMethod::class)->create();
         $customer = factory(Customer::class)->create();
 
-        $article = factory(Article::class)->create();
-        $article->prices()->save(factory(Price::class)->make(['value' => 4]));
+        $food = factory(Food::class)->create();
+        $food->prices()->save(factory(Price::class)->make(['value' => 4]));
 
         $transaction = factory(Transaction::class)->create([
             'user_id' => $user->id, 'payment_method_id' => $payment_method->id,
             'customer_id' => $customer->id,
         ]);
-        $transaction->articles()->attach($article->id, ['quantity' => 2]);
+        $transaction->food()->attach($food->id, ['quantity' => 2]);
 
         self::assertEquals(1, TransactionDetail::whereTransactionId($transaction->id)->count());
 

@@ -8,6 +8,9 @@ use Illuminate\Database\Eloquent\Factory;
 
 $factory->define(Food::class, function (Faker $faker) {
     return [
-        'is_bulk' => $faker->boolean
+        'name' => $faker->colorName,
+        'quantity' => $faker->numberBetween(0, 100),
+        'unit_price' => $faker->randomFloat(3, 0, 150.999),
+        'is_bulk' => $faker->boolean,
     ];
 });

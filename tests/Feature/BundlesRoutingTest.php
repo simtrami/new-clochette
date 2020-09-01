@@ -2,7 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Article;
 use App\Barrel;
 use App\Bottle;
 use App\Food;
@@ -22,24 +21,23 @@ class BundlesRoutingTest extends TestCase
      */
     public function testIndex(): void
     {
-        $articles = factory(Article::class, 2)
-            ->create()
-            ->each(function ($article) {
-                $article->prices()->save(factory(Price::class)->make());
-                $article->barrel()->save(factory(Barrel::class)->make());
+        $barrels = factory(Barrel::class, 2)->create()
+            ->each(function ($barrel) {
+                $barrel->prices()->save(factory(Price::class)->make());
             });
 
-        $bundles = factory(Bundle::class, 2)
-            ->create()
+        $bundles = factory(Bundle::class, 2)->create()
             ->each(function ($bundle) {
                 $bundle->prices()->save(factory(Price::class)->make());
             });
 
-        Bundle::find($bundles[0]->id)->articles()->attach($articles[0]->id, ['article_quantity' => random_int(1, 10)]);
+//        Bundle::find($bundles[0]->id)->barrels()->attach($barrels[0]->id, ['quantity' => random_int(1, 10)]);
+        $bundles[0]->barrels()->attach($barrels[0]->id, ['quantity' => random_int(1, 10)]);
 
-        Bundle::find($bundles[1]->id)->articles()->attach([
-            $articles[0]->id => ['article_quantity' => random_int(1, 10)],
-            $articles[1]->id => ['article_quantity' => random_int(1, 10)],
+//        Bundle::find($bundles[1]->id)->barrels()->attach([
+        $bundles[1]->barrels()->attach([
+            $barrels[0]->id => ['quantity' => random_int(1, 10)],
+            $barrels[1]->id => ['quantity' => random_int(1, 10)],
         ]);
 
         $response = $this->get('/api/bundles');
@@ -54,7 +52,6 @@ class BundlesRoutingTest extends TestCase
                         'price' => [
                             'id', 'value',
                         ],
-                        'nbArticles',
                     ],
                     1 => [
                         'id',
@@ -63,7 +60,6 @@ class BundlesRoutingTest extends TestCase
                         'price' => [
                             'id', 'value',
                         ],
-                        'nbArticles',
                     ]
                 ]
             ]);
@@ -71,10 +67,27 @@ class BundlesRoutingTest extends TestCase
 
     public function testCreate(): void
     {
+        $barrel = factory(Barrel::class)->create();
+        $barrel->prices()->save(factory(Price::class)->make(['value' => 4]));
+        $food = factory(Food::class)->create();
+        $food->prices()->save(factory(Price::class)->make(['value' => 3.5]));
+
         $response = $this->postJson('/api/bundles', [
             'name' => 'Bundle',
-            'quantity' => '42',
-            'value' => '14.2',
+            'quantity' => 42,
+            'value' => 14.2,
+            'barrels' => [
+                [
+                    'id' => $barrel->id,
+                    'quantity' => 1,
+                ],
+            ],
+            'food' => [
+                [
+                    'id' => $food->id,
+                    'quantity' => 2,
+                ],
+            ],
         ]);
 
         $response->assertStatus(201)
@@ -86,81 +99,124 @@ class BundlesRoutingTest extends TestCase
                     'price' => [
                         'id', 'value',
                     ],
-                    'pricesHistory',
                     'articles',
+                ]
+            ])
+            ->assertJson([
+                'data' => [
+                    'name' => 'Bundle',
+                    'quantity' => 42,
+                    'price' => [
+                        'value' => 14.2,
+                    ],
+                    'articles' => [
+                        [
+                            'id' => $barrel->id,
+                            'type' => 'App\Barrel',
+                            'name' => $barrel->name,
+                            'quantity' => 1,
+                        ],
+                        [
+                            'id' => $food->id,
+                            'type' => 'App\Food',
+                            'name' => $food->name,
+                            'quantity' => 2,
+                        ],
+                    ],
                 ]
             ]);
     }
 
     public function testUpdate1(): void
     {
-        $articles[] = factory(Article::class)->create();
-        $articles[0]->prices()->save(factory(Price::class)->make(['value' => 10.6]));
-        $articles[0]->barrel()->save(factory(Barrel::class)->make(['volume' => 24]));
+        $barrel = factory(Barrel::class)->create();
+        $barrel->prices()->save(factory(Price::class)->make(['value' => 4]));
+        $food = factory(Food::class)->create();
+        $food->prices()->save(factory(Price::class)->make(['value' => 6]));
 
-        $articles[] = factory(Article::class)->create();
-        $articles[1]->prices()->save(factory(Price::class)->make(['value' => 12.26]));
-        $articles[1]->bottle()->save(factory(Bottle::class)->make(['volume' => 2]));
-
-        $articles[] = factory(Article::class)->create();
-        $articles[2]->prices()->save(factory(Price::class)->make());
-        $articles[2]->bottle()->save(factory(Food::class)->make());
+        $bottle = factory(Bottle::class)->create();
+        $bottle->prices()->save(factory(Price::class)->make(['value' => 3.5]));
 
         $bundle = factory(Bundle::class)->create();
         $price = factory(Price::class)->make();
         $bundle->prices()->save($price);
-        $id = $bundle->id;
+        $bundle->barrels()->attach($barrel->id, ['quantity' => 2]);
+        $bundle->food()->attach($food->id, ['quantity' => 1]);
 
-        Bundle::find($id)->articles()->attach($articles[2]->id, ['article_quantity' => 1]);
 
-        $response = $this->putJson('/api/bundles/' . $id, [
+        $response = $this->putJson('/api/bundles/' . $bundle->id, [
             'name' => 'Bundle',
-            'quantity' => '42',
-            'value' => '4.2',
-            'articles' => [
-                0 => [
-                    'id' => $articles[0]->id,
-                    'quantity' => 4,
+            'quantity' => 42,
+            'value' => 4.2,
+            'barrels' => [
+                [
+                    'id' => $barrel->id,
+                    'quantity' => 1,
                 ],
-                1 => [
-                    'id' => $articles[1]->id,
+            ],
+            'bottles' => [
+                [
+                    'id' => $bottle->id,
                     'quantity' => 2,
                 ],
             ],
-            'detached_articles' => [$articles[2]->id],
+            'detached_food' => [$food->id],
         ]);
 
         $response->assertStatus(200)
+            ->assertJsonStructure([
+                'data' => [
+                    'id',
+                    'name',
+                    'quantity',
+                    'price' => [
+                        'id', 'value',
+                    ],
+                    'priceHistory' => [
+                        ['id', 'value', 'isActive', 'createdAt'],
+                        ['id', 'value', 'isActive', 'createdAt'],
+                    ],
+                    'articles',
+                ]
+            ])
             ->assertJson([
                 'data' => [
-                    'id' => $id,
+                    'id' => $bundle->id,
                     'name' => 'Bundle',
-                    'quantity' => '42',
-                    // TODO: 'pricesHistory' is present but will need to be defined later, will return true anyway
+                    'quantity' => 42,
                     'price' => [
                         'id' => $price->id + 1,
-                        'value' => '4.20',
+                        'value' => 4.2,
+                    ],
+                    'priceHistory' => [
+                        [
+                            'id' => $price->id,
+                            'value' => $price->value,
+                            'isActive' => false,
+                            'createdAt' => $price->created_at->toISOString(),
+                        ],
+                        [
+                            'id' => $price->id + 1,
+                            'value' => 4.2,
+                            'isActive' => true,
+                            'createdAt' => $price->created_at->toISOString(),
+                        ],
                     ],
                     'articles' => [
-                        0 => [
-                            'id' => $articles[0]->id,
-                            'name' => $articles[0]->name,
-                            'articleQuantity' => 4,
-                            'price' => '10.60',
-                            'type' => 'barrel',
-                            'volume' => '24.00',
+                        [
+                            'id' => $barrel->id,
+                            'type' => 'App\Barrel',
+                            'name' => $barrel->name,
+                            'quantity' => 1,
                         ],
-                        1 => [
-                            'id' => $articles[1]->id,
-                            'name' => $articles[1]->name,
-                            'articleQuantity' => 2,
-                            'price' => '12.26',
-                            'type' => 'bottle',
-                            'volume' => '2.00',
+                        [
+                            'id' => $bottle->id,
+                            'type' => 'App\Bottle',
+                            'name' => $bottle->name,
+                            'quantity' => 2,
                         ],
                     ],
-                ]
-            ]);
+                ]]);
     }
 
     public function testUpdate2(): void
@@ -171,21 +227,17 @@ class BundlesRoutingTest extends TestCase
 
     public function testShow1(): void
     {
-        $article_1 = factory(Article::class)->create();
-        $article_1->prices()->save(factory(Price::class)->make());
-        $article_1->barrel()->save(factory(Barrel::class)->make());
-
-        $article_2 = factory(Article::class)->create();
-        $article_2->prices()->save(factory(Price::class)->make());
-        $article_2->bottle()->save(factory(Bottle::class)->make());
+        $barrel = factory(Barrel::class)->create();
+        $barrel->prices()->save(factory(Price::class)->make());
+        $bottle = factory(Bottle::class)->create();
+        $bottle->prices()->save(factory(Price::class)->make());
 
         $bundle = factory(Bundle::class)->create();
-        $bundle->prices()->save(factory(Price::class)->make());
+        $price = factory(Price::class)->make();
+        $bundle->prices()->save($price);
 
-        $bundle->articles()->attach([
-            $article_1->id => ['article_quantity' => random_int(1, 10)],
-            $article_2->id => ['article_quantity' => random_int(1, 10)],
-        ]);
+        $bundle->barrels()->attach($barrel->id, ['quantity' => 1]);
+        $bundle->bottles()->attach($bottle->id, ['quantity' => 10]);
 
         $response = $this->getJson('/api/bundles/' . $bundle->id);
 
@@ -195,16 +247,44 @@ class BundlesRoutingTest extends TestCase
                     'id',
                     'name',
                     'quantity',
-                    'pricesHistory',
                     'price' => [
                         'id', 'value',
                     ],
-                    'articles' => [
-                        0 => [
-                            'id', 'name', 'articleQuantity', 'price', 'type', 'volume',
+                    'priceHistory' => [
+                        ['id', 'value', 'secondValue', 'isActive', 'createdAt'],
+                    ],
+                    'articles',
+                ]
+            ])
+            ->assertJson([
+                'data' => [
+                    'id' => $bundle->id,
+                    'name' => $bundle->name,
+                    'quantity' => $bundle->quantity,
+                    'price' => [
+                        'id' => $price->id,
+                        'value' => $price->value,
+                    ],
+                    'priceHistory' => [
+                        [
+                            'id' => $price->id,
+                            'value' => $price->value,
+                            'isActive' => true,
+                            'createdAt' => $price->created_at->toISOString(),
                         ],
-                        1 => [
-                            'id', 'name', 'articleQuantity', 'price', 'type', 'volume',
+                    ],
+                    'articles' => [
+                        [
+                            'id' => $barrel->id,
+                            'type' => 'App\Barrel',
+                            'name' => $barrel->name,
+                            'quantity' => 1,
+                        ],
+                        [
+                            'id' => $bottle->id,
+                            'type' => 'App\Bottle',
+                            'name' => $bottle->name,
+                            'quantity' => 10,
                         ],
                     ],
                 ]

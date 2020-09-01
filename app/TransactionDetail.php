@@ -28,7 +28,9 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 class TransactionDetail extends MorphPivot
 {
     public $timestamps = false;
+
     protected $table = 'transaction_details';
+
     protected $with = ['item'];
 
     ##

@@ -26,14 +26,14 @@ class PaymentMethodsRoutingTest extends TestCase
                     0 => [
                         'id',
                         'name',
-                        'needsCashDrawer',
+                        'debitCustomer',
                         'iconName',
                         'parameters',
                     ],
                     1 => [
                         'id',
                         'name',
-                        'needsCashDrawer',
+                        'debitCustomer',
                         'iconName',
                         'parameters',
                     ]
@@ -44,8 +44,8 @@ class PaymentMethodsRoutingTest extends TestCase
     public function testCreate(): void
     {
         $response = $this->postJson('/api/payment-methods', [
-            'name' => 'PaymentMethod McTest',
-            'needs_cash_drawer' => true,
+            'name' => 'PaymentMethod',
+            'debit_customer' => true,
             'icon_name' => 'payment',
             'parameters' => ['icon_type' => 'fontawesome'],
         ]);
@@ -55,7 +55,7 @@ class PaymentMethodsRoutingTest extends TestCase
                 'data' => [
                     'id',
                     'name',
-                    'needsCashDrawer',
+                    'debitCustomer',
                     'iconName',
                     'parameters',
                 ]
@@ -67,8 +67,8 @@ class PaymentMethodsRoutingTest extends TestCase
         $paymentMethod = factory(PaymentMethod::class)->create();
 
         $response = $this->putJson('/api/payment-methods/' . $paymentMethod->id, [
-            'name' => 'PaymentMethod McTest',
-            'needs_cash_drawer' => true,
+            'name' => 'PaymentMethod',
+            'debit_customer' => true,
             'icon_name' => 'payment',
             'parameters' => ['icon_type' => 'fontawesome'],
         ]);
@@ -76,8 +76,8 @@ class PaymentMethodsRoutingTest extends TestCase
         $response->assertStatus(200)
             ->assertJson(['data' => [
                 'id' => $paymentMethod->id,
-                'name' => 'PaymentMethod McTest',
-                'needsCashDrawer' => '1',
+                'name' => 'PaymentMethod',
+                'debitCustomer' => true,
                 'iconName' => 'payment',
                 'parameters' => '{"icon_type":"fontawesome"}',
             ]]);
@@ -99,9 +99,16 @@ class PaymentMethodsRoutingTest extends TestCase
             ->assertJsonStructure(['data' => [
                 'id',
                 'name',
-                'needsCashDrawer',
+                'debitCustomer',
                 'iconName',
                 'parameters',
+            ]])
+            ->assertJson(['data' => [
+                'id' => $paymentMethod->id,
+                'name' => $paymentMethod->name,
+                'debitCustomer' => $paymentMethod->debit_customer,
+                'iconName' => $paymentMethod->icon_name,
+                'parameters' => $paymentMethod->parameters,
             ]]);
     }
 

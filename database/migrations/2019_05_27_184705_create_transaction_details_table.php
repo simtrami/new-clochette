@@ -17,8 +17,8 @@ class CreateTransactionDetailsTable extends Migration
             $table->foreignId('transaction_id')->constrained()
                 ->onDelete('cascade')->onUpdate('cascade');
             $table->foreignId('item_id');
-//            $table->foreignId('price_id');
             $table->string('item_type');
+//            $table->foreignId('price_id');
             $table->unsignedInteger('quantity')->default(1);
         });
     }

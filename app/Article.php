@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
 
 /**
@@ -20,12 +22,8 @@ use Illuminate\Support\Carbon;
  * @property float $unit_price
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property-read Barrel|null $barrel
- * @property-read Bottle|null $bottle
- * @property-read Food|null $food
  * @property-read Collection|Bundle[] $bundles
  * @property-read int|null $bundles_count
- * @property-read Other|null $other
  * @property-read Collection|Price[] $prices
  * @property-read int|null $prices_count
  * @property-read Supplier|null $supplier
@@ -42,10 +40,13 @@ use Illuminate\Support\Carbon;
  * @method static Builder|Article whereUnitPrice($value)
  * @method static Builder|Article whereUpdatedAt($value)
  * @mixin Eloquent
+ * @method static \Illuminate\Database\Query\Builder|\App\Article onlyTrashed()
+ * @method static \Illuminate\Database\Query\Builder|\App\Article withTrashed()
+ * @method static \Illuminate\Database\Query\Builder|\App\Article withoutTrashed()
  */
 class Article extends Item
 {
-    protected $fillable = ['id', 'unit_price', 'name', 'quantity'];
+    use SoftDeletes;
 
     ##
     # Relationships
@@ -60,45 +61,13 @@ class Article extends Item
     }
 
     /**
-     * @return BelongsToMany
+     * @return MorphToMany
      */
-    public function bundles(): BelongsToMany
+    public function bundles(): MorphToMany
     {
-        return $this
-            ->belongsToMany(Bundle::class, 'bundles_articles', 'article_id', 'bundle_id')
-            ->using(BundleArticle::class)->withPivot('article_quantity')->withTimestamps();
-    }
-
-    /**
-     * @return HasOne
-     */
-    public function barrel(): HasOne
-    {
-        return $this->hasOne(Barrel::class, 'id');
-    }
-
-    /**
-     * @return HasOne
-     */
-    public function bottle(): HasOne
-    {
-        return $this->hasOne(Bottle::class, 'id');
-    }
-
-    /**
-     * @return HasOne
-     */
-    public function food(): HasOne
-    {
-        return $this->hasOne(Food::class, 'id');
-    }
-
-    /**
-     * @return HasOne
-     */
-    public function other(): HasOne
-    {
-        return $this->hasOne(Other::class, 'id');
+        return $this->MorphToMany(Bundle::class, 'article', 'bundles_articles')
+            ->using(BundleArticle::class)
+            ->withPivot('quantity');
     }
 
     ##
@@ -113,28 +82,4 @@ class Article extends Item
     # camelCase: made up property
     # snake_case: parent's attribute
     ##
-
-    /**
-     * @return string|null
-     */
-    public function type(): ?string
-    {
-        if ($this->bottle) {
-            return 'bottle';
-        }
-
-        if ($this->barrel) {
-            return 'barrel';
-        }
-
-        if ($this->food) {
-            return 'food';
-        }
-
-        if ($this->other) {
-            return 'other';
-        }
-
-        return null;
-    }
 }

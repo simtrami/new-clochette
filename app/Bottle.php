@@ -21,7 +21,6 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $deleted_at
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property-read Article $article
  * @method static \Illuminate\Database\Eloquent\Builder|Bottle newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Bottle newQuery()
  * @method static Builder|Bottle onlyTrashed()
@@ -38,78 +37,46 @@ use Illuminate\Support\Carbon;
  * @method static Builder|Bottle withTrashed()
  * @method static Builder|Bottle withoutTrashed()
  * @mixin Eloquent
+ * @property int|null $supplier_id
+ * @property string $name
+ * @property int $quantity
+ * @property float $unit_price
+ * @property-read Collection|Bundle[] $bundles
+ * @property-read int|null $bundles_count
+ * @property-read Collection|Price[] $prices
+ * @property-read int|null $prices_count
+ * @property-read Supplier|null $supplier
+ * @property-read Collection|Transaction[] $transactions
+ * @property-read int|null $transactions_count
+ * @method static \Illuminate\Database\Eloquent\Builder|Bottle whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Bottle whereQuantity($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Bottle whereSupplierId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Bottle whereUnitPrice($value)
  */
-class Bottle extends Model
+class Bottle extends Article
 {
-    use SoftDeletes;
+    protected $fillable = ['name', 'unit_price', 'quantity', 'volume', 'is_returnable', 'abv', 'ibu'];
 
-    protected $fillable = ['volume', 'is_returnable', 'abv', 'ibu'];
-
-    /**
-     * The relationships that should always be loaded.
-     *
-     * @var array
-     */
-    protected $with = ['article'];
+    protected $casts = [
+        'is_returnable' => 'boolean',
+    ];
 
     ##
     # Relationships
     ##
 
-    /**
-     * @return BelongsTo
-     */
-    public function article(): BelongsTo
-    {
-        return $this->belongsTo(Article::class, 'id');
-    }
+
 
     ##
     # Functions
     ##
 
-    /**
-     * @param $value
-     */
-    public function changePrice($value): void
-    {
-        $this->article->changePrice($value);
-    }
+
 
     ##
     # Extended Properties
     # Must be called with parenthesis
     ##
 
-    /**
-     * @return Collection|null
-     */
-    public function pricesHistory(): ?Collection
-    {
-        return $this->article->pricesHistory();
-    }
 
-    /**
-     * @return Price|null
-     */
-    public function price(): ?Price
-    {
-        return $this->article->price();
-    }
-
-    /**
-     * @return string
-     */
-    public function name(): string
-    {
-        return $this->article->name;
-    }
-
-    /**
-     * @return float
-     */
-    public function quantity(): float
-    {
-        return $this->article->quantity;
-    }
 }

@@ -2,7 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Article;
 use App\Other;
 use App\Price;
 use App\Supplier;
@@ -20,11 +19,9 @@ class OthersRoutingTest extends TestCase
     {
         $supplier = factory(Supplier::class)->create();
 
-        $articles = factory(Article::class, 2)
-            ->create(['supplier_id' => $supplier->id])
-            ->each(function ($article) {
-                $article->prices()->save(factory(Price::class)->make());
-                $article->other()->save(factory(Other::class)->make());
+        factory(Other::class, 2)->create(['supplier_id' => $supplier->id])
+            ->each(function ($other) {
+                $other->prices()->save(factory(Price::class)->make());
             });
 
         $response = $this->get('/api/others');
@@ -37,20 +34,20 @@ class OthersRoutingTest extends TestCase
                         'name',
                         'quantity',
                         'unitPrice',
+                        'description',
                         'price' => [
                             'id', 'value',
                         ],
-                        'description',
                     ],
                     1 => [
                         'id',
                         'name',
                         'quantity',
                         'unitPrice',
+                        'description',
                         'price' => [
                             'id', 'value',
                         ],
-                        'description',
                     ]
                 ]
             ]);
@@ -62,10 +59,10 @@ class OthersRoutingTest extends TestCase
 
         $response = $this->postJson('/api/others', [
             'name' => 'Other',
-            'quantity' => '42',
+            'quantity' => 42,
             'supplier_id' => $supplier->id,
-            'unit_price' => '142.42',
-            'value' => '4.2',
+            'unit_price' => 142.42,
+            'value' => 4.2,
             'description' => 'I am another thing you can buy.',
         ]);
 
@@ -76,11 +73,10 @@ class OthersRoutingTest extends TestCase
                     'name',
                     'quantity',
                     'unitPrice',
+                    'description',
                     'price' => [
                         'id', 'value',
                     ],
-                    'pricesHistory',
-                    'description',
                     'supplier' => [
                         'id', 'name', 'description',
                         'address', 'phone', 'email', 'supplierSince',
@@ -90,14 +86,12 @@ class OthersRoutingTest extends TestCase
             ->assertJson([
                 'data' => [
                     'name' => 'Other',
-                    'quantity' => '42',
-                    'unitPrice' => '142.42',
+                    'quantity' => 42,
+                    'unitPrice' => 142.42,
+                    'description' => 'I am another thing you can buy.',
                     'price' => [
                         'value' => 4.2,
                     ],
-                    // TODO: implement pricesHistory in app
-                    'pricesHistory' => [/*array of prices (raw)*/],
-                    'description' => 'I am another thing you can buy.',
                     'supplier' => [
                         'id' => $supplier->id,
                         'name' => $supplier->name,
@@ -105,7 +99,7 @@ class OthersRoutingTest extends TestCase
                         'address' => $supplier->address,
                         'phone' => $supplier->phone,
                         'email' => $supplier->email,
-                        'supplierSince' => $supplier->supplier_since,
+                        'supplierSince' => $supplier->supplier_since->toISOString(),
                     ],
                 ]
             ]);
@@ -116,18 +110,17 @@ class OthersRoutingTest extends TestCase
         $supplier_1 = factory(Supplier::class)->create();
         $supplier_2 = factory(Supplier::class)->create();
 
-        $article = factory(Article::class)->create(['supplier_id' => $supplier_1->id]);
-        $id = $article->id;
+        $other = factory(Other::class)->create(['supplier_id' => $supplier_1->id]);
+        $id = $other->id;
         $price = factory(Price::class)->make();
-        $article->prices()->save($price);
-        $article->other()->save(factory(Other::class)->make());
+        $other->prices()->save($price);
 
         $response = $this->putJson('/api/others/' . $id, [
             'name' => 'Other',
-            'quantity' => '42',
+            'quantity' => 42,
             'supplier_id' => $supplier_2->id,
-            'unit_price' => '142.42',
-            'value' => '4.2',
+            'unit_price' => 142.42,
+            'value' => 4.2,
             'description' => 'I am another thing you can buy.',
         ]);
 
@@ -136,14 +129,27 @@ class OthersRoutingTest extends TestCase
                 'data' => [
                     'id' => $id,
                     'name' => 'Other',
-                    'quantity' => '42',
-                    'unitPrice' => '142.42',
+                    'quantity' => 42,
+                    'unitPrice' => 142.42,
+                    'description' => 'I am another thing you can buy.',
                     'price' => [
                         'id' => $price->id + 1,
-                        'value' => '4.20',
+                        'value' => 4.2,
                     ],
-                    // TODO: 'pricesHistory' is present but will need to be defined later, will return true anyway
-                    'description' => 'I am another thing you can buy.',
+                    'priceHistory' => [
+                        [
+                            'id' => $price->id,
+                            'value' => $price->value,
+                            'isActive' => false,
+                            'createdAt' => $price->created_at->toISOString(),
+                        ],
+                        [
+                            'id' => $price->id + 1,
+                            'value' => 4.2,
+                            'isActive' => true,
+                            'createdAt' => $price->created_at->toISOString(),
+                        ],
+                    ],
                     'supplier' => [
                         'id' => $supplier_2->id,
                         'name' => $supplier_2->name,
@@ -151,7 +157,7 @@ class OthersRoutingTest extends TestCase
                         'address' => $supplier_2->address,
                         'phone' => $supplier_2->phone,
                         'email' => $supplier_2->email,
-                        'supplierSince' => $supplier_2->supplier_since,
+                        'supplierSince' => $supplier_2->supplier_since->toISOString(),
                     ],
                 ]
             ]);
@@ -167,11 +173,10 @@ class OthersRoutingTest extends TestCase
     {
         $supplier = factory(Supplier::class)->create();
 
-        $article = factory(Article::class)->create(['supplier_id' => $supplier->id]);
-        $id = $article->id;
+        $other = factory(Other::class)->create(['supplier_id' => $supplier->id]);
+        $id = $other->id;
         $price = factory(Price::class)->make();
-        $article->prices()->save($price);
-        $article->other()->save(factory(Other::class)->make());
+        $other->prices()->save($price);
 
         $response = $this->getJson('/api/others/' . $id);
 
@@ -182,11 +187,11 @@ class OthersRoutingTest extends TestCase
                     'name',
                     'quantity',
                     'unitPrice',
+                    'description',
                     'price' => [
                         'id', 'value',
                     ],
-                    'pricesHistory',
-                    'description',
+                    'priceHistory',
                     'supplier' => [
                         'id', 'name', 'description',
                         'address', 'phone', 'email', 'supplierSince',
@@ -196,16 +201,22 @@ class OthersRoutingTest extends TestCase
             ->assertJson([
                 'data' => [
                     'id' => $id,
-                    'name' => $article->name,
-                    'quantity' => $article->quantity,
-                    'unitPrice' => $article->unit_price,
+                    'name' => $other->name,
+                    'quantity' => $other->quantity,
+                    'unitPrice' => $other->unit_price,
+                    'description' => $other->description,
                     'price' => [
                         'id' => $price->id,
                         'value' => $price->value,
                     ],
-                    // TODO: implement pricesHistory in app
-                    'pricesHistory' => [/*array of prices (raw)*/],
-                    'description' => $article->other->description,
+                    'priceHistory' => [
+                        [
+                            'id' => $price->id,
+                            'value' => $price->value,
+                            'isActive' => true,
+                            'createdAt' => $price->created_at->toISOString(),
+                        ],
+                    ],
                     'supplier' => [
                         'id' => $supplier->id,
                         'name' => $supplier->name,
@@ -213,7 +224,7 @@ class OthersRoutingTest extends TestCase
                         'address' => $supplier->address,
                         'phone' => $supplier->phone,
                         'email' => $supplier->email,
-                        'supplierSince' => $supplier->supplier_since,
+                        'supplierSince' => $supplier->supplier_since->toISOString(),
                     ],
                 ]
             ]);
@@ -228,10 +239,9 @@ class OthersRoutingTest extends TestCase
     public function testDestroy(): void
     {
         $supplier = factory(Supplier::class)->create();
-        $article = factory(Article::class)->create(['supplier_id' => $supplier->id]);
-        $id = $article->id;
-        $article->prices()->save(factory(Price::class)->make());
-        $article->other()->save(factory(Other::class)->make());
+        $other = factory(Other::class)->create(['supplier_id' => $supplier->id]);
+        $id = $other->id;
+        $other->prices()->save(factory(Price::class)->make());
 
         $response = $this->deleteJson('/api/others/' . $id);
         $response->assertStatus(204);

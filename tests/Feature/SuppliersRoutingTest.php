@@ -2,9 +2,10 @@
 
 namespace Tests\Feature;
 
-use App\Article;
+use App\Barrel;
 use App\Contact;
 use App\Supplier;
+use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -84,6 +85,8 @@ class SuppliersRoutingTest extends TestCase
             'supplier_since' => '2019-04-01'
         ]);
 
+        $supplier_since = new Carbon('2019-04-01');
+
         $response->assertStatus(200)
             ->assertJson([
                 'data' => [
@@ -93,8 +96,8 @@ class SuppliersRoutingTest extends TestCase
                     'address' => "568 Dane Harbors Apt. 171, Runteburgh, IL 00560",
                     'phone' => "762.943.3595 x82638",
                     'email' => 'supplier@mctest.com',
-                    'supplierSince' => '2019-04-01',
-                    'contacts' => []
+                    'supplierSince' => $supplier_since->toISOString(),
+                    'contacts' => [],
                 ]
             ]);
     }
@@ -166,14 +169,14 @@ class SuppliersRoutingTest extends TestCase
     public function testDestroy3(): void
     {
         $supplier = factory(Supplier::class)->create();
-        $article = factory(Article::class)->create(['supplier_id' => $supplier->id]);
+        $barrel = factory(Barrel::class)->create(['supplier_id' => $supplier->id]);
 
-        self::assertEquals(1, Article::whereSupplierId($supplier->id)->count());
+        self::assertEquals(1, Barrel::whereSupplierId($supplier->id)->count());
 
         $response = $this->deleteJson('/api/suppliers/' . $supplier->id);
         $response->assertStatus(204);
         // Check the 'ON DELETE SET NULL' behaviour of article's supplier_id
-        self::assertEquals(0, Article::whereSupplierId($supplier->id)->count());
-        self::assertNull(Article::find($article->id)->supplier_id);
+        self::assertEquals(0, Barrel::whereSupplierId($supplier->id)->count());
+        self::assertNull(Barrel::find($barrel->id)->supplier_id);
     }
 }

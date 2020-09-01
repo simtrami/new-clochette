@@ -23,8 +23,7 @@ class FoodController extends Controller
      */
     public function index(): AnonymousResourceCollection
     {
-        return ArticleCollectionResource::collection(Article::has('food')
-            ->paginate(10));
+        return FoodResource::collection(Food::paginate(10));
     }
 
     /**
@@ -33,7 +32,7 @@ class FoodController extends Controller
      */
     public function show(Food $food): FoodResource
     {
-        return new FoodResource($food);
+        return new FoodResource($food->loadMissing('supplier', 'prices'));
     }
 
     /**
@@ -51,15 +50,11 @@ class FoodController extends Controller
             'is_bulk' => 'boolean',
         ]);
 
-        $article = Article::create($data);
-        $article->prices()->save(new Price($data));
+        $food = Food::create($data);
+        $food->prices()->save(new Price($data));
         if ($request->has('supplier_id')) {
-            $article->supplier()
-                ->associate(Supplier::find($data['supplier_id']));
+            $food->supplier()->associate(Supplier::find($data['supplier_id']));
         }
-
-        $food = new Food($data);
-        $food->article()->associate($article);
         $food->push();
 
         return new FoodResource($food);
@@ -81,26 +76,18 @@ class FoodController extends Controller
             'is_bulk' => 'boolean',
         ]);
 
-        $article = $food->article;
-        // Update article's fields
-        $article->update($data);
-
-        // Update price / create a new one
-        if ($request->has('value')) {
-            $article->changePrice($data['value']);
-        }
-
         // Update supplier
         if ($request->has('supplier_id')) {
-            $article->supplier()
-                ->associate(Supplier::find($data['supplier_id']));
-            $article->update();
+            $food->supplier()->associate(Supplier::find($data['supplier_id']));
         }
-
+        // Update price / create a new one
+        if ($request->has('value')) {
+            $food->changePrice($data['value']);
+        }
         // Update food's fields
         $food->update($data);
 
-        return new FoodResource($food);
+        return new FoodResource($food->loadMissing('supplier', 'prices'));
     }
 
     /**

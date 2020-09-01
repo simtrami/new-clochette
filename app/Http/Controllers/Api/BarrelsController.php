@@ -2,10 +2,8 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Article;
 use App\Barrel;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\ArticleCollectionResource;
 use App\Http\Resources\BarrelResource;
 use App\Price;
 use App\Supplier;
@@ -23,8 +21,7 @@ class BarrelsController extends Controller
      */
     public function index(): AnonymousResourceCollection
     {
-        return ArticleCollectionResource::collection(Article::has('barrel')
-            ->paginate(10));
+        return BarrelResource::collection(Barrel::paginate(10));
     }
 
     /**
@@ -33,7 +30,7 @@ class BarrelsController extends Controller
      */
     public function show(Barrel $barrel): BarrelResource
     {
-        return new BarrelResource($barrel);
+        return new BarrelResource($barrel->loadMissing('supplier', 'prices'));
     }
 
     /**
@@ -51,18 +48,15 @@ class BarrelsController extends Controller
             'second_value' => 'nullable|numeric|min:0',
             'volume' => 'required|numeric|min:0',
             'coupler' => 'nullable|string|min:1|max:255',
-            'abv' => 'nullable|numeric|min:0',
-            'ibu' => 'nullable|numeric|min:0',
+            'abv' => 'nullable|numeric|min:0|max:99.9',
+            'ibu' => 'nullable|numeric|min:0|max:999.9',
         ]);
 
-        $article = Article::create($data);
-        $article->prices()->save(new Price($data));
+        $barrel = Barrel::create($data);
+        $barrel->prices()->save(new Price($data));
         if ($request->has('supplier_id')) {
-            $article->supplier()
-                ->associate(Supplier::find($data['supplier_id']));
+            $barrel->supplier()->associate(Supplier::find($data['supplier_id']));
         }
-        $barrel = new Barrel($data);
-        $barrel->article()->associate($article);
         $barrel->push();
 
         return new BarrelResource($barrel);
@@ -84,27 +78,20 @@ class BarrelsController extends Controller
             'second_value' => 'nullable|numeric|min:0',
             'volume' => 'numeric|min:0',
             'coupler' => 'nullable|string|min:1|max:255',
-            'abv' => 'nullable|numeric|min:0',
-            'ibu' => 'nullable|numeric|min:0',
+            'abv' => 'nullable|numeric|min:0|max:99.9',
+            'ibu' => 'nullable|numeric|min:0|max:999.9',
         ]);
-
-        $article = $barrel->article;
-        // Update article's fields
-        $article->update($data);
-
-        // Update price / create a new one
-        $this->updatePrice($barrel, $request, $data);
 
         // Update supplier
         if ($request->has('supplier_id')) {
-            $article->supplier()->associate(Supplier::find($data['supplier_id']));
-            $article->update();
+            $barrel->supplier()->associate(Supplier::find($data['supplier_id']));
         }
-
+        // Update price / create a new one
+        $this->updatePrice($barrel, $request, $data);
         // Update barrel's fields
         $barrel->update($data);
 
-        return new BarrelResource($barrel);
+        return new BarrelResource($barrel->loadMissing('supplier', 'prices'));
     }
 
     /**

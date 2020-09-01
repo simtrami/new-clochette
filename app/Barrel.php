@@ -5,6 +5,7 @@ namespace App;
 use Eloquent;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Query\Builder;
@@ -21,7 +22,6 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $deleted_at
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property-read Article $article
  * @method static \Illuminate\Database\Eloquent\Builder|Barrel newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Barrel newQuery()
  * @method static Builder|Barrel onlyTrashed()
@@ -38,31 +38,31 @@ use Illuminate\Support\Carbon;
  * @method static Builder|Barrel withTrashed()
  * @method static Builder|Barrel withoutTrashed()
  * @mixin Eloquent
+ * @property int|null $supplier_id
+ * @property string $name
+ * @property int $quantity
+ * @property float $unit_price
+ * @property-read Collection|Bundle[] $bundles
+ * @property-read int|null $bundles_count
+ * @property-read Collection|Price[] $prices
+ * @property-read int|null $prices_count
+ * @property-read Supplier|null $supplier
+ * @property-read Collection|Transaction[] $transactions
+ * @property-read int|null $transactions_count
+ * @method static \Illuminate\Database\Eloquent\Builder|Barrel whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Barrel whereQuantity($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Barrel whereSupplierId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Barrel whereUnitPrice($value)
  */
-class Barrel extends Model
+class Barrel extends Article
 {
-    use SoftDeletes;
-
-    protected $fillable = ['volume', 'coupler', 'abv', 'ibu'];
-
-    /**
-     * The relationships that should always be loaded.
-     *
-     * @var array
-     */
-    protected $with = ['article'];
+    protected $fillable = ['name', 'unit_price', 'quantity', 'volume', 'coupler', 'abv', 'ibu'];
 
     ##
     # Relationships
     ##
 
-    /**
-     * @return BelongsTo
-     */
-    public function article(): BelongsTo
-    {
-        return $this->belongsTo(Article::class, 'id');
-    }
+
 
     ##
     # Functions
@@ -71,62 +71,17 @@ class Barrel extends Model
     /**
      * @param $value
      */
-    public function changePrice($value): void
-    {
-        $this->article->changePrice($value);
-    }
-
-    /**
-     * @param $value
-     */
     public function changeSecondPrice($value): void
     {
-        $this->article->changeSecondPrice($value);
-    }
-
-    /**
-     * @param $first_value
-     * @param null $second_value
-     */
-    public function changePrices($first_value, $second_value = null): void
-    {
-        $this->article->changePrices($first_value, $second_value);
+        if (!$this->activePrice()) {
+            throw new ModelNotFoundException(
+                "Barrel does not have an active price.");
+        }
+        $this->changePrices($this->activePrice()->value, $value);
     }
 
     ##
     # Extended Properties
     # Must be called with parenthesis
     ##
-
-    /**
-     * @return Collection|null
-     */
-    public function pricesHistory(): ?Collection
-    {
-        return $this->article->pricesHistory();
-    }
-
-    /**
-     * @return Price|null
-     */
-    public function price(): ?Price
-    {
-        return $this->article->price();
-    }
-
-    /**
-     * @return string
-     */
-    public function name(): string
-    {
-        return $this->article->name;
-    }
-
-    /**
-     * @return float
-     */
-    public function quantity(): float
-    {
-        return $this->article->quantity;
-    }
 }

@@ -16,10 +16,9 @@ class CreateBundlesArticlesTable extends Migration
         Schema::create('bundles_articles', function (Blueprint $table) {
             $table->foreignId('bundle_id')->constrained()
                 ->onDelete('cascade')->onUpdate('cascade');
-            $table->foreignId('article_id')->constrained()
-                ->onDelete('cascade')->onUpdate('cascade');
-            $table->unsignedInteger('article_quantity');
-            $table->timestamps();
+            $table->foreignId('article_id');
+            $table->string('article_type');
+            $table->unsignedInteger('quantity');
         });
     }
 

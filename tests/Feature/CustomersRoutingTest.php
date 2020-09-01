@@ -30,7 +30,7 @@ class CustomersRoutingTest extends TestCase
                         'lastName',
                         'nickname',
                         'balance',
-                        'isStaff'
+                        'isStaff',
                     ],
                     1 => [
                         'id',
@@ -38,7 +38,7 @@ class CustomersRoutingTest extends TestCase
                         'lastName',
                         'nickname',
                         'balance',
-                        'isStaff'
+                        'isStaff',
                     ]
                 ]
             ]);
@@ -76,7 +76,7 @@ class CustomersRoutingTest extends TestCase
             'last_name' => 'McTest',
             'nickname' => 'customer.mctest',
             'balance' => 0,
-            'is_staff' => 1
+            'is_staff' => true,
         ]);
 
         $response->assertStatus(200)
@@ -86,7 +86,7 @@ class CustomersRoutingTest extends TestCase
                 'lastName' => 'McTest',
                 'nickname' => 'customer.mctest',
                 'balance' => 0,
-                'isStaff' => 1
+                'isStaff' => true,
             ]]);
     }
 
@@ -110,7 +110,7 @@ class CustomersRoutingTest extends TestCase
                     'lastName',
                     'nickname',
                     'balance',
-                    'isStaff'
+                    'isStaff',
                 ]
             ]);
     }

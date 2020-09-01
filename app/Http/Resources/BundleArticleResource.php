@@ -4,19 +4,18 @@ namespace App\Http\Resources;
 
 use App\Barrel;
 use App\Bottle;
-use App\Bundle;
 use App\Food;
 use App\Other;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
- * @property int quantity
- * @property int item_id
- * @property string item_type
- * @property Barrel|Bottle|Bundle|Food|Other item
+ * @property mixed quantity
+ * @property Barrel|Bottle|Food|Other article
+ * @property mixed article_type
+ * @property mixed article_id
  */
-class TransactionDetailResource extends JsonResource
+class BundleArticleResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -27,9 +26,9 @@ class TransactionDetailResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'id' => $this->item_id,
-            'type' => $this->item_type,
-            'name' => $this->item->name,
+            'id' => $this->article_id,
+            'type' => $this->article_type,
+            'name' => $this->article->name,
             'quantity' => $this->quantity,
         ];
     }

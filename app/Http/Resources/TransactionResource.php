@@ -6,9 +6,9 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
- * @property mixed comment
- * @property mixed value
- * @property mixed id
+ * @property string comment
+ * @property float value
+ * @property int id
  */
 class TransactionResource extends JsonResource
 {
@@ -29,7 +29,7 @@ class TransactionResource extends JsonResource
             'paymentMethod' => new PaymentMethodResource($this->whenLoaded('paymentMethod')),
             'items' => TransactionDetailResource::collection($this->whenLoaded('details')),
 //            'articles' => ArticleCollectionResource::collection($this->articles),
-//            'bundles' => BundleCollectionResource::collection($this->bundles),
+//            'bundles' => BundleResource::collection($this->bundles),
         ];
     }
 }

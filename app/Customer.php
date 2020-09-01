@@ -43,6 +43,10 @@ class Customer extends Model
         'first_name', 'last_name', 'nickname', 'balance', 'is_staff',
     ];
 
+    protected $casts = [
+        'is_staff' => 'boolean',
+    ];
+
     ##
     # Relationships
     ##

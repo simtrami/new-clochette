@@ -2,9 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Article;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\ArticleCollectionResource;
 use App\Http\Resources\OtherResource;
 use App\Other;
 use App\Price;
@@ -23,8 +21,7 @@ class OthersController extends Controller
      */
     public function index(): AnonymousResourceCollection
     {
-        return ArticleCollectionResource::collection(Article::has('other')
-            ->paginate(10));
+        return OtherResource::collection(Other::paginate(10));
     }
 
     /**
@@ -33,7 +30,7 @@ class OthersController extends Controller
      */
     public function show(Other $other): OtherResource
     {
-        return new OtherResource($other);
+        return new OtherResource($other->loadMissing('supplier', 'prices'));
     }
 
     /**
@@ -51,15 +48,11 @@ class OthersController extends Controller
             'description' => 'required|string|min:10|max:500',
         ]);
 
-        $article = Article::create($data);
-        $article->prices()->save(new Price($data));
+        $other = Other::create($data);
+        $other->prices()->save(new Price($data));
         if ($request->has('supplier_id')) {
-            $article->supplier()
-                ->associate(Supplier::find($data['supplier_id']));
+            $other->supplier()->associate(Supplier::find($data['supplier_id']));
         }
-
-        $other = new Other($data);
-        $other->article()->associate($article);
         $other->push();
 
         return new OtherResource($other);
@@ -81,26 +74,18 @@ class OthersController extends Controller
             'description' => 'string|min:10|max:500',
         ]);
 
-        $article = $other->article;
-        // Update article's fields
-        $article->update($data);
-
-        // Update price / create a new one
-        if ($request->has('value')) {
-            $article->changePrice($data['value']);
-        }
-
         // Update supplier
         if ($request->has('supplier_id')) {
-            $article->supplier()
-                ->associate(Supplier::find($data['supplier_id']));
-            $article->update();
+            $other->supplier()->associate(Supplier::find($data['supplier_id']));
         }
-
+        // Update price / create a new one
+        if ($request->has('value')) {
+            $other->changePrice($data['value']);
+        }
         // Update food's fields
         $other->update($data);
 
-        return new OtherResource($other);
+        return new OtherResource($other->loadMissing('supplier', 'prices'));
     }
 
     /**

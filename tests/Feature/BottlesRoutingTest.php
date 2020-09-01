@@ -2,7 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Article;
 use App\Bottle;
 use App\Price;
 use App\Supplier;
@@ -20,11 +19,10 @@ class BottlesRoutingTest extends TestCase
     {
         $supplier = factory(Supplier::class)->create();
 
-        factory(Article::class, 2)
+        factory(Bottle::class, 2)
             ->create(['supplier_id' => $supplier->id])
-            ->each(function ($article) {
-                $article->prices()->save(factory(Price::class)->make());
-                $article->bottle()->save(factory(Bottle::class)->make());
+            ->each(function ($bottle) {
+                $bottle->prices()->save(factory(Price::class)->make());
             });
 
         $response = $this->get('/api/bottles');
@@ -66,14 +64,14 @@ class BottlesRoutingTest extends TestCase
 
         $response = $this->postJson('/api/bottles', [
             'name' => 'Bottle',
-            'quantity' => '42',
+            'quantity' => 42,
+            'unit_price' => 142.42,
+            'value' => 4.2,
+            'volume' => 30,
+            'is_returnable' => 1,
+            'abv' => 3.4,
+            'ibu' => 32.4,
             'supplier_id' => $supplier->id,
-            'unit_price' => '142.42',
-            'value' => '4.2',
-            'volume' => '30',
-            'is_returnable' => '1',
-            'abv' => '3.44',
-            'ibu' => '32.4',
         ]);
 
         $response->assertStatus(201)
@@ -86,7 +84,6 @@ class BottlesRoutingTest extends TestCase
                     'price' => [
                         'id', 'value',
                     ],
-                    'pricesHistory',
                     'volume',
                     'isReturnable',
                     'abv', 'ibu',
@@ -106,10 +103,8 @@ class BottlesRoutingTest extends TestCase
                     ],
                     'volume' => 30,
                     'isReturnable' => 1,
-                    'abv' => 3.44,
+                    'abv' => 3.4,
                     'ibu' => 32.4,
-                    // TODO: implement pricesHistory in app
-                    'pricesHistory' => [/*array of prices (raw)*/],
                     'supplier' => [
                         'id' => $supplier->id,
                         'name' => $supplier->name,
@@ -117,7 +112,7 @@ class BottlesRoutingTest extends TestCase
                         'address' => $supplier->address,
                         'phone' => $supplier->phone,
                         'email' => $supplier->email,
-                        'supplierSince' => $supplier->supplier_since,
+                        'supplierSince' => $supplier->supplier_since->toISOString(),
                     ],
                 ]
             ]);
@@ -129,23 +124,22 @@ class BottlesRoutingTest extends TestCase
         $supplier_1 = factory(Supplier::class)->create();
         $supplier_2 = factory(Supplier::class)->create();
 
-        $article = factory(Article::class)->create(['supplier_id' => $supplier_1->id]);
-        $id = $article->id;
+        $bottle = factory(Bottle::class)->create(['supplier_id' => $supplier_1->id, 'is_returnable' => false]);
+        $id = $bottle->id;
         $price = factory(Price::class)->make();
-        $article->prices()->save($price);
-        $article->bottle()->save(factory(Bottle::class)->make(['is_returnable' => false]));
+        $bottle->prices()->save($price);
 
 
         $response = $this->putJson('/api/bottles/' . $id, [
             'name' => 'Bottle',
-            'quantity' => '42',
+            'quantity' => 42,
             'supplier_id' => $supplier_2->id,
-            'unit_price' => '142.42',
-            'value' => '4.2',
-            'volume' => '30',
-            'is_returnable' => '1',
-            'abv' => '3.44',
-            'ibu' => '32.4',
+            'unit_price' => 142.42,
+            'value' => 4.2,
+            'volume' => 30,
+            'is_returnable' => 1,
+            'abv' => 3.4,
+            'ibu' => 32.4,
         ]);
 
         $response->assertStatus(200)
@@ -153,16 +147,29 @@ class BottlesRoutingTest extends TestCase
                 'data' => [
                     'id' => $id,
                     'name' => 'Bottle',
-                    'quantity' => '42',
-                    'unitPrice' => '142.42',
+                    'quantity' => 42,
+                    'unitPrice' => 142.42,
                     'price' => [
                         'id' => $price->id + 1,
-                        'value' => '4.20',
+                        'value' => 4.20,
                     ],
-                    // TODO: 'pricesHistory' is present but will need to be defined later, will return true anyway
-                    'volume' => '30',
-                    'isReturnable' => '1',
-                    'abv' => 3.44,
+                    'priceHistory' => [
+                        [
+                            'id' => $price->id,
+                            'value' => $price->value,
+                            'isActive' => false,
+                            'createdAt' => $price->created_at->toISOString(),
+                        ],
+                        [
+                            'id' => $price->id + 1,
+                            'value' => 4.2,
+                            'isActive' => true,
+                            'createdAt' => $price->created_at->toISOString(),
+                        ],
+                    ],
+                    'volume' => 30,
+                    'isReturnable' => true,
+                    'abv' => 3.4,
                     'ibu' => 32.4,
                     'supplier' => [
                         'id' => $supplier_2->id,
@@ -171,7 +178,7 @@ class BottlesRoutingTest extends TestCase
                         'address' => $supplier_2->address,
                         'phone' => $supplier_2->phone,
                         'email' => $supplier_2->email,
-                        'supplierSince' => $supplier_2->supplier_since,
+                        'supplierSince' => $supplier_2->supplier_since->toISOString(),
                     ],
                 ]
             ]);
@@ -187,11 +194,10 @@ class BottlesRoutingTest extends TestCase
     {
         $supplier = factory(Supplier::class)->create();
 
-        $article = factory(Article::class)->create(['supplier_id' => $supplier->id]);
-        $id = $article->id;
+        $bottle = factory(Bottle::class)->create(['supplier_id' => $supplier->id, 'is_returnable' => false]);
+        $id = $bottle->id;
         $price = factory(Price::class)->make();
-        $article->prices()->save($price);
-        $article->bottle()->save(factory(Bottle::class)->make(['is_returnable' => false]));
+        $bottle->prices()->save($price);
 
         $response = $this->getJson('/api/bottles/' . $id);
 
@@ -205,7 +211,7 @@ class BottlesRoutingTest extends TestCase
                     'price' => [
                         'id', 'value',
                     ],
-                    'pricesHistory',
+                    'priceHistory',
                     'volume',
                     'isReturnable',
                     'abv', 'ibu',
@@ -218,19 +224,25 @@ class BottlesRoutingTest extends TestCase
             ->assertJson([
                 'data' => [
                     'id' => $id,
-                    'name' => $article->name,
-                    'quantity' => $article->quantity,
-                    'unitPrice' => $article->unit_price,
+                    'name' => $bottle->name,
+                    'quantity' => $bottle->quantity,
+                    'unitPrice' => $bottle->unit_price,
                     'price' => [
                         'id' => $price->id,
                         'value' => $price->value,
                     ],
-                    // TODO: implement pricesHistory in app
-                    'pricesHistory' => [/*array of prices (raw)*/],
-                    'volume' => $article->bottle->volume,
+                    'priceHistory' => [
+                        [
+                            'id' => $price->id,
+                            'value' => $price->value,
+                            'isActive' => true,
+                            'createdAt' => $price->created_at->toISOString(),
+                        ],
+                    ],
+                    'volume' => $bottle->volume,
                     'isReturnable' => false,
-                    'abv' => $article->bottle->abv,
-                    'ibu' => $article->bottle->ibu,
+                    'abv' => $bottle->abv,
+                    'ibu' => $bottle->ibu,
                     'supplier' => [
                         'id' => $supplier->id,
                         'name' => $supplier->name,
@@ -238,7 +250,7 @@ class BottlesRoutingTest extends TestCase
                         'address' => $supplier->address,
                         'phone' => $supplier->phone,
                         'email' => $supplier->email,
-                        'supplierSince' => $supplier->supplier_since,
+                        'supplierSince' => $supplier->supplier_since->toISOString(),
                     ],
                 ]
             ]);
@@ -253,10 +265,9 @@ class BottlesRoutingTest extends TestCase
     public function testDestroy(): void
     {
         $supplier = factory(Supplier::class)->create();
-        $article = factory(Article::class)->create(['supplier_id' => $supplier->id]);
-        $id = $article->id;
-        $article->prices()->save(factory(Price::class)->make());
-        $article->bottle()->save(factory(Bottle::class)->make());
+        $bottle = factory(Bottle::class)->create(['supplier_id' => $supplier->id]);
+        $id = $bottle->id;
+        $bottle->prices()->save(factory(Price::class)->make());
 
         $response = $this->deleteJson('/api/bottles/' . $id);
         $response->assertStatus(204);

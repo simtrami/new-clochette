@@ -35,8 +35,13 @@ use Illuminate\Support\Carbon;
  */
 class Price extends Model
 {
-
     protected $fillable = ['value', 'second_value', 'is_active'];
+
+    protected $casts = [
+        'is_active' => 'boolean',
+//        'created_at' => 'datetime:Y-m-d H:i:s',
+    ];
+
     ##
     # Relationships
     ##
@@ -46,7 +51,7 @@ class Price extends Model
      */
     public function item(): MorphTo
     {
-        return $this->morphTo(Item::class);
+        return $this->morphTo();
     }
 
     ##

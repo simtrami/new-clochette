@@ -8,7 +8,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 /**
  * @property mixed parameters
  * @property mixed icon_name
- * @property mixed needs_cash_drawer
+ * @property mixed debit_customer
  * @property mixed name
  * @property mixed id
  */
@@ -25,7 +25,7 @@ class PaymentMethodResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'needsCashDrawer' => $this->needs_cash_drawer,
+            'debitCustomer' => $this->debit_customer,
             'iconName' => $this->icon_name,
             'parameters' => $this->parameters,
         ];

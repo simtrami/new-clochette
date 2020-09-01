@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Factory;
 $factory->define(PaymentMethod::class, function (Faker $faker) {
     return [
         'name' => $faker->unique()->monthName,
-        'needs_cash_drawer' => $faker->boolean,
+        'debit_customer' => $faker->boolean,
         'icon_name' => $faker->word,
     ];
 });

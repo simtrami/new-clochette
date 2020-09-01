@@ -43,6 +43,15 @@ use Illuminate\Support\Carbon;
  * @method static Builder|Transaction whereUserId($value)
  * @method static Builder|Transaction whereValue($value)
  * @mixin Eloquent
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Barrel[] $barrels
+ * @property-read int|null $barrels_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Bottle[] $bottles
+ * @property-read int|null $bottles_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Food[] $food
+ * @property-read int|null $food_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Other[] $others
+ * @property-read int|null $others_count
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Transaction whereComment($value)
  */
 class Transaction extends Model
 {
@@ -80,9 +89,16 @@ class Transaction extends Model
         return $this->hasMany(TransactionDetail::class);
     }
 
-    public function articles(): MorphToMany
+    public function barrels(): MorphToMany
     {
-        return $this->morphedByMany(Article::class, 'item', 'transaction_details')
+        return $this->morphedByMany(Barrel::class, 'item', 'transaction_details')
+            ->using(TransactionDetail::class)
+            ->withPivot('quantity');
+    }
+
+    public function bottles(): MorphToMany
+    {
+        return $this->morphedByMany(Bottle::class, 'item', 'transaction_details')
             ->using(TransactionDetail::class)
             ->withPivot('quantity');
     }
@@ -90,6 +106,20 @@ class Transaction extends Model
     public function bundles(): MorphToMany
     {
         return $this->morphedByMany(Bundle::class, 'item', 'transaction_details')
+            ->using(TransactionDetail::class)
+            ->withPivot('quantity');
+    }
+
+    public function food(): MorphToMany
+    {
+        return $this->morphedByMany(Food::class, 'item', 'transaction_details')
+            ->using(TransactionDetail::class)
+            ->withPivot('quantity');
+    }
+
+    public function others(): MorphToMany
+    {
+        return $this->morphedByMany(Other::class, 'item', 'transaction_details')
             ->using(TransactionDetail::class)
             ->withPivot('quantity');
     }

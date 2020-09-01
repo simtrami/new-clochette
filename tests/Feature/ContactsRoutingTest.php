@@ -103,7 +103,7 @@ class ContactsRoutingTest extends TestCase
                         'address' => $supplier2->address,
                         'phone' => $supplier2->phone,
                         'email' => $supplier2->email,
-                        'supplierSince' => $supplier2->supplier_since
+                        'supplierSince' => $supplier2->supplier_since->toISOString(),
                     ],
                     'firstName' => 'Contact',
                     'lastName' => 'McTest',

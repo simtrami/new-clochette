@@ -14,8 +14,12 @@ class CreateFoodTable extends Migration
     public function up()
     {
         Schema::create('food', function (Blueprint $table) {
-            $table->foreignId('id')->primary()->constrained('articles')
-                ->onDelete('cascade')->onUpdate('cascade');
+            $table->bigIncrements('id');
+            $table->foreignId('supplier_id')->nullable()->constrained()
+                ->onDelete('set null')->onUpdate('cascade');
+            $table->string('name');
+            $table->unsignedInteger('quantity');
+            $table->unsignedDecimal('unit_price', 9, 3);
             $table->boolean('is_bulk')->default(false);
             $table->softDeletes();
             $table->timestamps();

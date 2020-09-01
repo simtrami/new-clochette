@@ -40,7 +40,7 @@ class PaymentMethodsController extends Controller
     {
         $data = $request->validate([
             'name' => 'required|string|min:2|max:255|unique:payment_methods',
-            'needs_cash_drawer' => 'boolean',
+            'debit_customer' => 'boolean',
             'icon_name' => 'string|min:2|max:100',
             'parameters' => 'array|min:1',
         ]);
@@ -67,7 +67,7 @@ class PaymentMethodsController extends Controller
                 'string', 'min:2', 'max:255',
                 Rule::unique('payment_methods')->ignore($paymentMethod),
             ],
-            'needs_cash_drawer' => 'boolean',
+            'debit_customer' => 'boolean',
             'icon_name' => 'string|min:2|max:100',
             'parameters' => 'array|min:1',
         ]);

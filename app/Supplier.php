@@ -18,7 +18,6 @@ use Illuminate\Support\Carbon;
  * @property string|null $address
  * @property string|null $phone
  * @property string|null $email
- * @property string $supplier_since
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property-read Collection|Contact[] $contacts
@@ -36,11 +35,21 @@ use Illuminate\Support\Carbon;
  * @method static Builder|Supplier whereSupplierSince($value)
  * @method static Builder|Supplier whereUpdatedAt($value)
  * @mixin Eloquent
+ * @property \Illuminate\Support\Carbon|null $supplier_since
  */
 class Supplier extends Model
 {
     protected $fillable = [
         'name', 'description', 'address', 'phone', 'email', 'supplier_since',
+    ];
+
+    /**
+     * The attributes that should be mutated to dates.
+     *
+     * @var array
+     */
+    protected $dates = [
+        'supplier_since',
     ];
 
     /**

@@ -2,10 +2,8 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Article;
 use App\Bottle;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\ArticleCollectionResource;
 use App\Http\Resources\BottleResource;
 use App\Price;
 use App\Supplier;
@@ -23,8 +21,7 @@ class BottlesController extends Controller
      */
     public function index(): AnonymousResourceCollection
     {
-        return ArticleCollectionResource::collection(Article::has('bottle')
-            ->paginate(10));
+        return BottleResource::collection(Bottle::paginate(10));
     }
 
     /**
@@ -33,7 +30,7 @@ class BottlesController extends Controller
      */
     public function show(Bottle $bottle): BottleResource
     {
-        return new BottleResource($bottle);
+        return new BottleResource($bottle->loadMissing('supplier', 'prices'));
     }
 
     /**
@@ -50,17 +47,15 @@ class BottlesController extends Controller
             'value' => 'required|numeric|min:0',
             'volume' => 'required|numeric|min:0',
             'is_returnable' => 'boolean',
-            'abv' => 'nullable|numeric|min:0',
-            'ibu' => 'nullable|numeric|min:0',
+            'abv' => 'nullable|numeric|min:0|max:99.9',
+            'ibu' => 'nullable|numeric|min:0|max:999.9',
         ]);
 
-        $article = Article::create($data);
-        $article->prices()->save(new Price($data));
-        if (array_key_exists('supplier_id', $data)) {
-            $article->supplier()->associate(Supplier::find($data['supplier_id']));
+        $bottle = Bottle::create($data);
+        $bottle->prices()->save(new Price($data));
+        if ($request->has('supplier_id')) {
+            $bottle->supplier()->associate(Supplier::find($data['supplier_id']));
         }
-        $bottle = new Bottle($data);
-        $bottle->article()->associate($article);
         $bottle->push();
 
         return new BottleResource($bottle);
@@ -81,26 +76,22 @@ class BottlesController extends Controller
             'value' => 'numeric|min:0',
             'volume' => 'numeric|min:0',
             'is_returnable' => 'boolean',
-            'abv' => 'nullable|numeric|min:0',
-            'ibu' => 'nullable|numeric|min:0',
+            'abv' => 'nullable|numeric|min:0|max:99.9',
+            'ibu' => 'nullable|numeric|min:0|max:999.9',
         ]);
 
-        $article = $bottle->article;
-
         // Update supplier
-        if (array_key_exists('supplier_id', $data)) {
-            $article->supplier()->associate(Supplier::find($data['supplier_id']));
+        if ($request->has('supplier_id')) {
+            $bottle->supplier()->associate(Supplier::find($data['supplier_id']));
         }
         // Update price / create a new one
-        if (array_key_exists('value', $data)) {
-            $article->changePrice($data['value']);
+        if ($request->has('value')) {
+            $bottle->changePrice($data['value']);
         }
-        $article->update($data);
-
         // Update bottle's fields
         $bottle->update($data);
 
-        return new BottleResource($bottle);
+        return new BottleResource($bottle->loadMissing('supplier', 'prices'));
     }
 
     /**
