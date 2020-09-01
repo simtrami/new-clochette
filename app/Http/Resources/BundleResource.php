@@ -11,7 +11,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  * @property mixed id
  * @property mixed item
  */
-class KitResource extends JsonResource
+class BundleResource extends JsonResource
 {
     /**
      * Transform the resource into an array.

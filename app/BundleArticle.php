@@ -7,14 +7,14 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
 /**
- * App\KitArticle
+ * App\BundleArticle
  *
- * @method static Builder|KitArticle newModelQuery()
- * @method static Builder|KitArticle newQuery()
- * @method static Builder|KitArticle query()
+ * @method static Builder|BundleArticle newModelQuery()
+ * @method static Builder|BundleArticle newQuery()
+ * @method static Builder|BundleArticle query()
  * @mixin Eloquent
  */
-class KitArticle extends Pivot
+class BundleArticle extends Pivot
 {
     protected $fillable = ['article_quantity'];
 }

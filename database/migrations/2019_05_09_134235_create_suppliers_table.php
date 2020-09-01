@@ -20,7 +20,7 @@ class CreateSuppliersTable extends Migration
             $table->string('address')->nullable();
             $table->string('phone')->nullable();
             $table->string('email')->nullable();
-            $table->date('supplier_since');
+            $table->date('supplier_since')->nullable();
             $table->timestamps();
         });
     }

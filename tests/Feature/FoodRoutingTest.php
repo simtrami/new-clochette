@@ -24,9 +24,8 @@ class FoodRoutingTest extends TestCase
             ->create(['supplier_id' => $supplier->id])
             ->each(function ($article) {
                 $article->prices()->save(factory(Price::class)->make());
+                $article->food()->save(factory(Food::class)->make());
             });
-        $articles[0]->food()->save(factory(Food::class)->make(['is_bulk' => true, 'units_left' => 1]));
-        $articles[1]->food()->save(factory(Food::class)->make(['is_bulk' => false]));
 
         $response = $this->get('/api/food');
 
@@ -42,7 +41,6 @@ class FoodRoutingTest extends TestCase
                             'id', 'value',
                         ],
                         'isBulk',
-                        'unitsLeft',
                     ],
                     1 => [
                         'id',
@@ -69,7 +67,6 @@ class FoodRoutingTest extends TestCase
             'unit_price' => '142.42',
             'value' => '4.2',
             'is_bulk' => '1',
-            'units_left' => '30',
         ]);
 
         $response->assertStatus(201)
@@ -84,7 +81,6 @@ class FoodRoutingTest extends TestCase
                     ],
                     'pricesHistory',
                     'isBulk',
-                    'unitsLeft',
                     'supplier' => [
                         'id', 'name', 'description',
                         'address', 'phone', 'email', 'supplierSince',
@@ -97,7 +93,6 @@ class FoodRoutingTest extends TestCase
                     'quantity' => 42,
                     'unitPrice' => 142.42,
                     'isBulk' => 1,
-                    'unitsLeft' => 30,
                     'price' => [
                         'value' => 4.2,
                     ],
@@ -125,7 +120,7 @@ class FoodRoutingTest extends TestCase
         $id = $article->id;
         $price = factory(Price::class)->make();
         $article->prices()->save($price);
-        $article->food()->save(factory(Food::class)->make(['is_bulk' => false, 'units_left' => null]));
+        $article->food()->save(factory(Food::class)->make(['is_bulk' => false]));
 
 
         $response = $this->putJson('/api/food/' . $id, [
@@ -135,7 +130,6 @@ class FoodRoutingTest extends TestCase
             'unit_price' => '142.42',
             'value' => '4.2',
             'is_bulk' => '1',
-            'units_left' => '30',
         ]);
 
         $response->assertStatus(200)
@@ -151,7 +145,6 @@ class FoodRoutingTest extends TestCase
                     ],
                     // TODO: 'pricesHistory' is present but will need to be defined later, will return true anyway
                     'isBulk' => '1',
-                    'unitsLeft' => '30',
                     'supplier' => [
                         'id' => $supplier_2->id,
                         'name' => $supplier_2->name,

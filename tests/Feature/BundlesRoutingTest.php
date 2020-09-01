@@ -6,13 +6,13 @@ use App\Article;
 use App\Barrel;
 use App\Bottle;
 use App\Food;
-use App\Kit;
+use App\Bundle;
 use App\Price;
 use Exception;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-class KitsRoutingTest extends TestCase
+class BundlesRoutingTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -29,20 +29,20 @@ class KitsRoutingTest extends TestCase
                 $article->barrel()->save(factory(Barrel::class)->make());
             });
 
-        $kits = factory(Kit::class, 2)
+        $bundles = factory(Bundle::class, 2)
             ->create()
-            ->each(function ($kit) {
-                $kit->prices()->save(factory(Price::class)->make());
+            ->each(function ($bundle) {
+                $bundle->prices()->save(factory(Price::class)->make());
             });
 
-        Kit::find($kits[0]->id)->articles()->attach($articles[0]->id, ['article_quantity' => random_int(1, 10)]);
+        Bundle::find($bundles[0]->id)->articles()->attach($articles[0]->id, ['article_quantity' => random_int(1, 10)]);
 
-        Kit::find($kits[1]->id)->articles()->attach([
+        Bundle::find($bundles[1]->id)->articles()->attach([
             $articles[0]->id => ['article_quantity' => random_int(1, 10)],
             $articles[1]->id => ['article_quantity' => random_int(1, 10)],
         ]);
 
-        $response = $this->get('/api/kits');
+        $response = $this->get('/api/bundles');
 
         $response->assertStatus(200)
             ->assertJsonStructure([
@@ -71,8 +71,8 @@ class KitsRoutingTest extends TestCase
 
     public function testCreate(): void
     {
-        $response = $this->postJson('/api/kits', [
-            'name' => 'Kit',
+        $response = $this->postJson('/api/bundles', [
+            'name' => 'Bundle',
             'quantity' => '42',
             'value' => '14.2',
         ]);
@@ -106,15 +106,15 @@ class KitsRoutingTest extends TestCase
         $articles[2]->prices()->save(factory(Price::class)->make());
         $articles[2]->bottle()->save(factory(Food::class)->make());
 
-        $kit = factory(Kit::class)->create();
+        $bundle = factory(Bundle::class)->create();
         $price = factory(Price::class)->make();
-        $kit->prices()->save($price);
-        $id = $kit->id;
+        $bundle->prices()->save($price);
+        $id = $bundle->id;
 
-        Kit::find($id)->articles()->attach($articles[2]->id, ['article_quantity' => 1]);
+        Bundle::find($id)->articles()->attach($articles[2]->id, ['article_quantity' => 1]);
 
-        $response = $this->putJson('/api/kits/' . $id, [
-            'name' => 'Kit',
+        $response = $this->putJson('/api/bundles/' . $id, [
+            'name' => 'Bundle',
             'quantity' => '42',
             'value' => '4.2',
             'articles' => [
@@ -134,7 +134,7 @@ class KitsRoutingTest extends TestCase
             ->assertJson([
                 'data' => [
                     'id' => $id,
-                    'name' => 'Kit',
+                    'name' => 'Bundle',
                     'quantity' => '42',
                     // TODO: 'pricesHistory' is present but will need to be defined later, will return true anyway
                     'price' => [
@@ -165,7 +165,7 @@ class KitsRoutingTest extends TestCase
 
     public function testUpdate2(): void
     {
-        $response = $this->putJson('/api/kits/0');
+        $response = $this->putJson('/api/bundles/0');
         $response->assertStatus(404);
     }
 
@@ -179,15 +179,15 @@ class KitsRoutingTest extends TestCase
         $article_2->prices()->save(factory(Price::class)->make());
         $article_2->bottle()->save(factory(Bottle::class)->make());
 
-        $kit = factory(Kit::class)->create();
-        $kit->prices()->save(factory(Price::class)->make());
+        $bundle = factory(Bundle::class)->create();
+        $bundle->prices()->save(factory(Price::class)->make());
 
-        $kit->articles()->attach([
+        $bundle->articles()->attach([
             $article_1->id => ['article_quantity' => random_int(1, 10)],
             $article_2->id => ['article_quantity' => random_int(1, 10)],
         ]);
 
-        $response = $this->getJson('/api/kits/' . $kit->id);
+        $response = $this->getJson('/api/bundles/' . $bundle->id);
 
         $response->assertStatus(200)
             ->assertJsonStructure([
@@ -213,25 +213,25 @@ class KitsRoutingTest extends TestCase
 
     public function testShow2(): void
     {
-        $response = $this->getJson('/api/kits/0');
+        $response = $this->getJson('/api/bundles/0');
         $response->assertStatus(404);
     }
 
     public function testDestroy(): void
     {
-        $kit = factory(Kit::class)->create();
-        $kit->prices()->save(factory(Price::class)->make());
+        $bundle = factory(Bundle::class)->create();
+        $bundle->prices()->save(factory(Price::class)->make());
 
-        $response = $this->deleteJson('/api/kits/' . $kit->id);
+        $response = $this->deleteJson('/api/bundles/' . $bundle->id);
         $response->assertStatus(204);
         // Check whether the resource is unreachable
-        $response = $this->deleteJson('/api/kits/' . $kit->id);
+        $response = $this->deleteJson('/api/bundles/' . $bundle->id);
         $response->assertStatus(404);
-        $response = $this->putJson('/api/kits/' . $kit->id);
+        $response = $this->putJson('/api/bundles/' . $bundle->id);
         $response->assertStatus(404);
-        $response = $this->getJson('/api/kits/' . $kit->id);
+        $response = $this->getJson('/api/bundles/' . $bundle->id);
         $response->assertStatus(404);
         // Check the soft delete success
-        self::assertNotNull(Kit::onlyTrashed()->find($kit->id));
+        self::assertNotNull(Bundle::onlyTrashed()->find($bundle->id));
     }
 }

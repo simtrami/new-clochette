@@ -20,7 +20,6 @@ class CreateBarrelsTable extends Migration
             $table->string('coupler')->nullable();
             $table->unsignedDecimal('abv', 4, 2)->nullable();
             $table->unsignedDecimal('ibu', 4, 1)->nullable();
-            $table->string('variety')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

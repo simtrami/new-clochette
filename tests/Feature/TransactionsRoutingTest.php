@@ -4,7 +4,7 @@ namespace Tests\Feature;
 
 use App\Article;
 use App\Customer;
-use App\Kit;
+use App\Bundle;
 use App\PaymentMethod;
 use App\Price;
 use App\Transaction;
@@ -42,7 +42,7 @@ class TransactionsRoutingTest extends TestCase
                     0 => [
                         'id',
                         'value',
-                        'comments',
+                        'comment',
                         'user',
                         'customer',
                         'paymentMethod',
@@ -50,7 +50,7 @@ class TransactionsRoutingTest extends TestCase
                     1 => [
                         'id',
                         'value',
-                        'comments',
+                        'comment',
                         'user',
                         'paymentMethod',
                     ]
@@ -70,19 +70,19 @@ class TransactionsRoutingTest extends TestCase
         $article_1->prices()->save(factory(Price::class)->make(['value' => 4]));
         $article_2 = factory(Article::class)->create();
         $article_2->prices()->save(factory(Price::class)->make(['value' => 3.5]));
-        $kit = factory(Kit::class)->create();
-        $kit->prices()->save(factory(Price::class)->make(['value' => 3]));
+        $bundle = factory(Bundle::class)->create();
+        $bundle->prices()->save(factory(Price::class)->make(['value' => 3]));
 
-        self::assertIsInt($kit->id);
+        self::assertIsInt($bundle->id);
 
         $response = $this->postJson('/api/transactions', [
             'value' => 11.5,
-            'comments' => 'foo bar',
+            'comment' => 'foo bar',
             'user_id' => $user->id,
             'payment_method_id' => $payment_method->id,
             'customer_id' => $customer->id,
             'articles' => [$article_1->id, $article_2->id, $article_2->id],
-            'kits' => [$kit->id],
+            'bundles' => [$bundle->id],
         ]);
 
         $response->assertStatus(201)
@@ -90,19 +90,19 @@ class TransactionsRoutingTest extends TestCase
                 'data' => [
                     'id',
                     'value',
-                    'comments',
+                    'comment',
                     'user',
                     'customer',
                     'paymentMethod',
                     'items',
 //                    'articles',
-//                    'kits',
+//                    'bundles',
                 ]
             ])
             ->assertJson([
                 'data' => [
                     'value' => 11.5,
-                    'comments' => 'foo bar',
+                    'comment' => 'foo bar',
                     'user' => [
                         'id' => $user->id,
                         'name' => $user->name,
@@ -128,9 +128,9 @@ class TransactionsRoutingTest extends TestCase
                     ],
                     'items' => [
                         [
-                            'id' => $kit->id,
-                            'type' => 'App\Kit',
-                            'name' => $kit->name,
+                            'id' => $bundle->id,
+                            'type' => 'App\Bundle',
+                            'name' => $bundle->name,
                             'quantity' => 1,
                         ],
                         [
@@ -168,13 +168,13 @@ class TransactionsRoutingTest extends TestCase
 //                            ]
 //                        ],
 //                    ],
-//                    'kits' => [
+//                    'bundles' => [
 //                        [
-//                            'id' => $kit->id,
-//                            'name' => $kit->name,
-//                            'quantity' => $kit->quantity,
+//                            'id' => $bundle->id,
+//                            'name' => $bundle->name,
+//                            'quantity' => $bundle->quantity,
 //                            'price' => [
-//                                'id' => $kit->price()->id,
+//                                'id' => $bundle->price()->id,
 //                                'value' => 3.00,
 //                            ],
 //                            'nbArticles' => 0,
@@ -204,17 +204,17 @@ class TransactionsRoutingTest extends TestCase
 
         $article_2 = factory(Article::class)->create();
         $article_2->prices()->save(factory(Price::class)->make(['value' => 3.5]));
-        $kit = factory(Kit::class)->create();
-        $kit->prices()->save(factory(Price::class)->make(['value' => 1.5]));
+        $bundle = factory(Bundle::class)->create();
+        $bundle->prices()->save(factory(Price::class)->make(['value' => 1.5]));
 
         $response = $this->putJson('/api/transactions/' . $transaction->id, [
             'value' => 8.5,
-            'comments' => 'foo bar',
+            'comment' => 'foo bar',
             'user_id' => $user_2->id,
             'payment_method_id' => $payment_method_2->id,
             'customer_id' => $customer->id,
             'articles' => [$article_2->id, $article_2->id],
-            'kits' => [$kit->id],
+            'bundles' => [$bundle->id],
             'detached_articles' => [$article_1->id],
         ]);
 
@@ -223,20 +223,20 @@ class TransactionsRoutingTest extends TestCase
                 'data' => [
                     'id',
                     'value',
-                    'comments',
+                    'comment',
                     'user',
                     'customer',
                     'paymentMethod',
                     'items',
 //                    'articles',
-//                    'kits',
+//                    'bundles',
                 ]
             ])
             ->assertJson([
                 'data' => [
                     'id' => $transaction->id,
                     'value' => 8.50,
-                    'comments' => 'foo bar',
+                    'comment' => 'foo bar',
                     'user' => [
                         'id' => $user_2->id,
                         'name' => $user_2->name,
@@ -259,9 +259,9 @@ class TransactionsRoutingTest extends TestCase
                     ],
                     'items' => [
                         [
-                            'id' => $kit->id,
-                            'type' => 'App\Kit',
-                            'name' => $kit->name,
+                            'id' => $bundle->id,
+                            'type' => 'App\Bundle',
+                            'name' => $bundle->name,
                             'quantity' => 1,
                         ],
                         [
@@ -300,19 +300,19 @@ class TransactionsRoutingTest extends TestCase
         $response->assertStatus(200)
             ->assertJsonStructure(['data' => [
                 'id',
-                'comments',
+                'comment',
                 'user',
                 'paymentMethod',
                 'customer',
                 'items',
 //              'articles',
-//              'kits',
+//              'bundles',
             ]])
             ->assertJson([
                 'data' => [
                     'id' => $transaction->id,
                     'value' => $transaction->value,
-                    'comments' => $transaction->comments,
+                    'comment' => $transaction->comment,
                     'user' => [
                         'id' => $user->id,
                         'name' => $user->name,

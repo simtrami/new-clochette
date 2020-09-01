@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
- * @property mixed comments
+ * @property mixed comment
  * @property mixed value
  * @property mixed id
  */
@@ -23,13 +23,13 @@ class TransactionResource extends JsonResource
         return [
             'id' => $this->id,
             'value' => $this->value,
-            'comments' => $this->comments,
+            'comment' => $this->comment,
             'user' => new UserResource($this->whenLoaded('user')),
             'customer' => new CustomerResource($this->whenLoaded('customer')),
             'paymentMethod' => new PaymentMethodResource($this->whenLoaded('paymentMethod')),
             'items' => TransactionDetailResource::collection($this->whenLoaded('details')),
 //            'articles' => ArticleCollectionResource::collection($this->articles),
-//            'kits' => KitCollectionResource::collection($this->kits),
+//            'bundles' => BundleCollectionResource::collection($this->bundles),
         ];
     }
 }

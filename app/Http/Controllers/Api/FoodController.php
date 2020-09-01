@@ -49,7 +49,6 @@ class FoodController extends Controller
             'unit_price' => 'required|numeric|min:0',
             'value' => 'required|numeric|min:0',
             'is_bulk' => 'boolean',
-            'units_left' => 'required_if:is_bulk,true|numeric|min:0',
         ]);
 
         $article = Article::create($data);
@@ -80,7 +79,6 @@ class FoodController extends Controller
             'unit_price' => 'numeric|min:0',
             'value' => 'numeric|min:0',
             'is_bulk' => 'boolean',
-            'units_left' => 'required_with:is_bulk|numeric|min:0',
         ]);
 
         $article = $food->article;

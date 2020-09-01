@@ -22,7 +22,7 @@ class CreateTransactionsTable extends Migration
                 ->onDelete('set null')->onUpdate('cascade');
             $table->foreignId('customer_id')->nullable()->constrained()
                 ->onDelete('set null')->onUpdate('cascade');
-            $table->string('comments')->nullable();
+            $table->string('comment')->nullable();
             $table->timestamps();
         });
     }

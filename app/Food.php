@@ -15,7 +15,6 @@ use Illuminate\Support\Carbon;
  *
  * @property int $id
  * @property int $is_bulk
- * @property int|null $units_left
  * @property Carbon|null $deleted_at
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
@@ -40,7 +39,7 @@ class Food extends Model
 
     protected $table = 'food';
 
-    protected $fillable = ['is_bulk', 'units_left'];
+    protected $fillable = ['is_bulk'];
 
     ##
     # Relationships

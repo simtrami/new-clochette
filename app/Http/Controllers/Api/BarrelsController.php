@@ -53,7 +53,6 @@ class BarrelsController extends Controller
             'coupler' => 'nullable|string|min:1|max:255',
             'abv' => 'nullable|numeric|min:0',
             'ibu' => 'nullable|numeric|min:0',
-            'variety' => 'nullable|string|min:1|max:255',
         ]);
 
         $article = Article::create($data);
@@ -87,7 +86,6 @@ class BarrelsController extends Controller
             'coupler' => 'nullable|string|min:1|max:255',
             'abv' => 'nullable|numeric|min:0',
             'ibu' => 'nullable|numeric|min:0',
-            'variety' => 'nullable|string|min:1|max:255',
         ]);
 
         $article = $barrel->article;

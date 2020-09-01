@@ -38,11 +38,9 @@ class FoodResource extends JsonResource
         ];
         $ret = array_merge($ret, [
             'pricesHistory' => $this->pricesHistory(),
-//            'kits' => KitResource::collection($this->whenLoaded('kits')),
+//            'bundles' => BundleResource::collection($this->whenLoaded('bundles')),
             'isBulk' => $this->is_bulk,
-            'unitsLeft' => $this->units_left,
         ]);
-//        $this->is_bulk == 0 ?: $ret['unitsLeft'] = $this->units_left;
         $supplier = $this->article->supplier;
         if ($supplier) {
             $ret['supplier'] = [
@@ -55,14 +53,14 @@ class FoodResource extends JsonResource
                 'supplierSince' => $supplier->supplier_since,
             ];
         }
-        $kits = $this->article->kits;
-        if ($kits) {
-            $ret['kits'] = [];
-            foreach ($kits as $kit) {
-                $ret['kits'][] = [
-                    'id', $kit->id,
-                    'name' => $kit->name,
-                    'articleQuantity' => $kit->pivot->article_quantity,
+        $bundles = $this->article->bundles;
+        if ($bundles) {
+            $ret['bundles'] = [];
+            foreach ($bundles as $bundle) {
+                $ret['bundles'][] = [
+                    'id', $bundle->id,
+                    'name' => $bundle->name,
+                    'articleQuantity' => $bundle->pivot->article_quantity,
                 ];
             }
         }

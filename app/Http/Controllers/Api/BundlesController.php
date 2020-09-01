@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\KitCollectionResource;
-use App\Http\Resources\KitResource;
-use App\Kit;
+use App\Http\Resources\BundleCollectionResource;
+use App\Http\Resources\BundleResource;
+use App\Bundle;
 use App\Price;
 use Exception;
 use Illuminate\Http\JsonResponse;
@@ -14,30 +14,30 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
 use Illuminate\Routing\ResponseFactory;
 
-class KitsController extends Controller
+class BundlesController extends Controller
 {
     /**
      * @return AnonymousResourceCollection
      */
     public function index(): AnonymousResourceCollection
     {
-        return KitCollectionResource::collection(Kit::paginate(10));
+        return BundleCollectionResource::collection(Bundle::paginate(10));
     }
 
     /**
-     * @param Kit $kit
-     * @return KitResource
+     * @param Bundle $bundle
+     * @return BundleResource
      */
-    public function show(Kit $kit): KitResource
+    public function show(Bundle $bundle): BundleResource
     {
-        return new KitResource($kit->loadMissing('articles'));
+        return new BundleResource($bundle->loadMissing('articles'));
     }
 
     /**
      * @param Request $request
-     * @return KitResource
+     * @return BundleResource
      */
-    public function store(Request $request): KitResource
+    public function store(Request $request): BundleResource
     {
         $data = $request->validate([
             'name' => 'required|string|min:2|max:255',
@@ -45,19 +45,19 @@ class KitsController extends Controller
             'value' => 'required|numeric|min:0',
         ]);
 
-        $kit = Kit::create($data);
-        $kit->prices()->save(new Price($data));
-        $kit->push();
+        $bundle = Bundle::create($data);
+        $bundle->prices()->save(new Price($data));
+        $bundle->push();
 
-        return new KitResource($kit);
+        return new BundleResource($bundle);
     }
 
     /**
-     * @param Kit $kit
+     * @param Bundle $bundle
      * @param Request $request
-     * @return KitResource
+     * @return BundleResource
      */
-    public function update(Kit $kit, Request $request): KitResource
+    public function update(Bundle $bundle, Request $request): BundleResource
     {
         $data = $request->validate([
             'name' => 'string|min:2|max:255',
@@ -70,21 +70,21 @@ class KitsController extends Controller
             'detached_articles.*' => 'required_with:detached_articles|exists:articles,id',
         ]);
 
-        $kit->update($data);
+        $bundle->update($data);
         // Update price / create a new one
         if ($request->has('value')) {
-            $kit->changePrice($data['value']);
+            $bundle->changePrice($data['value']);
         }
 
-        // Detach articles from the kit
+        // Detach articles from the bundle
         if ($request->has('detached_articles')) {
-            $kit->articles()->detach($data['detached_articles']);
+            $bundle->articles()->detach($data['detached_articles']);
         }
-        // Attach each articles to the kit with their respective quantities
+        // Attach each articles to the bundle with their respective quantities
         // Articles are not of the Article class but one of its children's class
         if ($request->has('articles')) {
             foreach ($data['articles'] as $selectedArticle) {
-                $kit->articles()
+                $bundle->articles()
                     ->syncWithoutDetaching([
                         $selectedArticle['id'] => [
                             'article_quantity' => $selectedArticle['quantity']
@@ -93,18 +93,18 @@ class KitsController extends Controller
             }
         }
 
-        return new KitResource($kit);
+        return new BundleResource($bundle);
     }
 
     /**
-     * @param Kit $kit
+     * @param Bundle $bundle
      * @return ResponseFactory|JsonResponse|Response
      * @throws Exception
      */
-    public function destroy(Kit $kit)
+    public function destroy(Bundle $bundle)
     {
         try {
-            $kit->delete();
+            $bundle->delete();
         } catch (Exception $err) {
             return response()->json($err, 500);
         }

@@ -10,7 +10,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  * @property Collection articles
  * @property mixed item_id
  */
-class KitCollectionResource extends JsonResource
+class BundleCollectionResource extends JsonResource
 {
     /**
      * Transform the resource into an array.

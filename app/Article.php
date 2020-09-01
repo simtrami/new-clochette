@@ -23,8 +23,8 @@ use Illuminate\Support\Carbon;
  * @property-read Barrel|null $barrel
  * @property-read Bottle|null $bottle
  * @property-read Food|null $food
- * @property-read Collection|Kit[] $kits
- * @property-read int|null $kits_count
+ * @property-read Collection|Bundle[] $bundles
+ * @property-read int|null $bundles_count
  * @property-read Other|null $other
  * @property-read Collection|Price[] $prices
  * @property-read int|null $prices_count
@@ -62,11 +62,11 @@ class Article extends Item
     /**
      * @return BelongsToMany
      */
-    public function kits(): BelongsToMany
+    public function bundles(): BelongsToMany
     {
         return $this
-            ->belongsToMany(Kit::class, 'kits_articles', 'article_id', 'kit_id')
-            ->using(KitArticle::class)->withPivot('article_quantity')->withTimestamps();
+            ->belongsToMany(Bundle::class, 'bundles_articles', 'article_id', 'bundle_id')
+            ->using(BundleArticle::class)->withPivot('article_quantity')->withTimestamps();
     }
 
     /**

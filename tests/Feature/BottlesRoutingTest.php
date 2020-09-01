@@ -42,7 +42,7 @@ class BottlesRoutingTest extends TestCase
                         ],
                         'volume',
                         'isReturnable',
-                        'abv', 'ibu', 'variety',
+                        'abv', 'ibu',
                     ],
                     1 => [
                         'id',
@@ -54,7 +54,7 @@ class BottlesRoutingTest extends TestCase
                         ],
                         'volume',
                         'isReturnable',
-                        'abv', 'ibu', 'variety',
+                        'abv', 'ibu',
                     ]
                 ]
             ]);
@@ -72,7 +72,8 @@ class BottlesRoutingTest extends TestCase
             'value' => '4.2',
             'volume' => '30',
             'is_returnable' => '1',
-            'abv' => '3.4',
+            'abv' => '3.44',
+            'ibu' => '32.4',
         ]);
 
         $response->assertStatus(201)
@@ -88,7 +89,7 @@ class BottlesRoutingTest extends TestCase
                     'pricesHistory',
                     'volume',
                     'isReturnable',
-                    'abv', 'ibu', 'variety',
+                    'abv', 'ibu',
                     'supplier' => [
                         'id', 'name', 'description',
                         'address', 'phone', 'email', 'supplierSince',
@@ -105,7 +106,8 @@ class BottlesRoutingTest extends TestCase
                     ],
                     'volume' => 30,
                     'isReturnable' => 1,
-                    'abv' => 3.4,
+                    'abv' => 3.44,
+                    'ibu' => 32.4,
                     // TODO: implement pricesHistory in app
                     'pricesHistory' => [/*array of prices (raw)*/],
                     'supplier' => [
@@ -142,7 +144,8 @@ class BottlesRoutingTest extends TestCase
             'value' => '4.2',
             'volume' => '30',
             'is_returnable' => '1',
-            'abv' => '3.4',
+            'abv' => '3.44',
+            'ibu' => '32.4',
         ]);
 
         $response->assertStatus(200)
@@ -159,9 +162,8 @@ class BottlesRoutingTest extends TestCase
                     // TODO: 'pricesHistory' is present but will need to be defined later, will return true anyway
                     'volume' => '30',
                     'isReturnable' => '1',
-                    'abv' => '3.40',
-                    'ibu' => null,
-                    'variety' => null,
+                    'abv' => 3.44,
+                    'ibu' => 32.4,
                     'supplier' => [
                         'id' => $supplier_2->id,
                         'name' => $supplier_2->name,
@@ -206,7 +208,7 @@ class BottlesRoutingTest extends TestCase
                     'pricesHistory',
                     'volume',
                     'isReturnable',
-                    'abv', 'ibu', 'variety',
+                    'abv', 'ibu',
                     'supplier' => [
                         'id', 'name', 'description',
                         'address', 'phone', 'email', 'supplierSince',
@@ -229,7 +231,6 @@ class BottlesRoutingTest extends TestCase
                     'isReturnable' => false,
                     'abv' => $article->bottle->abv,
                     'ibu' => $article->bottle->ibu,
-                    'variety' => $article->bottle->variety,
                     'supplier' => [
                         'id' => $supplier->id,
                         'name' => $supplier->name,

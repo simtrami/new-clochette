@@ -13,7 +13,6 @@ use Illuminate\Http\Resources\Json\JsonResource;
  * @property mixed id
  * @property mixed abv
  * @property mixed ibu
- * @property mixed variety
  * @method name()
  * @method quantity()
  * @method pricesHistory()
@@ -47,7 +46,6 @@ class BarrelResource extends JsonResource
             'coupler' => $this->coupler,
             'abv' => $this->abv,
             'ibu' => $this->ibu,
-            'variety' => $this->variety,
         ]);
         $supplier = $this->article->supplier;
         if ($supplier) {
@@ -61,14 +59,14 @@ class BarrelResource extends JsonResource
                 'supplierSince' => $supplier->supplier_since,
             ];
         }
-        $kits = $this->article->kits;
-        if ($kits) {
-            $ret['kits'] = [];
-            foreach ($kits as $kit) {
-                $ret['kits'][] = [
-                    'id', $kit->id,
-                    'name' => $kit->name,
-                    'articleQuantity' => $kit->pivot->article_quantity,
+        $bundles = $this->article->bundles;
+        if ($bundles) {
+            $ret['bundles'] = [];
+            foreach ($bundles as $bundle) {
+                $ret['bundles'][] = [
+                    'id', $bundle->id,
+                    'name' => $bundle->name,
+                    'articleQuantity' => $bundle->pivot->article_quantity,
                 ];
             }
         }

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateKitsTable extends Migration
+class CreateBundlesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateKitsTable extends Migration
      */
     public function up()
     {
-        Schema::create('kits', function (Blueprint $table) {
+        Schema::create('bundles', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('name');
             $table->unsignedInteger('quantity');
@@ -29,6 +29,6 @@ class CreateKitsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('kits');
+        Schema::dropIfExists('bundles');
     }
 }

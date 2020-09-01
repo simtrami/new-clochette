@@ -9,5 +9,6 @@ use Illuminate\Database\Eloquent\Factory;
 $factory->define(Transaction::class, function (Faker $faker) {
     return [
         'value' => $faker->randomFloat(2, -10, 100),
+        'comment' => $faker->sentence,
     ];
 });

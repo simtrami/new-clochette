@@ -18,7 +18,6 @@ use Illuminate\Support\Carbon;
  * @property string|null $coupler
  * @property float|null $abv
  * @property float|null $ibu
- * @property string|null $variety
  * @property Carbon|null $deleted_at
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
@@ -44,7 +43,7 @@ class Barrel extends Model
 {
     use SoftDeletes;
 
-    protected $fillable = ['volume', 'coupler', 'abv', 'ibu', 'variety'];
+    protected $fillable = ['volume', 'coupler', 'abv', 'ibu'];
 
     /**
      * The relationships that should always be loaded.

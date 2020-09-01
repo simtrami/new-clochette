@@ -17,7 +17,6 @@ class CreateFoodTable extends Migration
             $table->foreignId('id')->primary()->constrained('articles')
                 ->onDelete('cascade')->onUpdate('cascade');
             $table->boolean('is_bulk')->default(false);
-            $table->unsignedInteger('units_left')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

@@ -73,12 +73,12 @@ Route::group(['namespace' => 'Api', 'prefix' => '/others'], function () {
     Route::put('/{other}', 'OthersController@update');
     Route::delete('/{other}', 'OthersController@destroy');
 });
-Route::group(['namespace' => 'Api', 'prefix' => '/kits'], function () {
-    Route::get('/', 'KitsController@index');
-    Route::post('/', 'KitsController@store');
-    Route::get('/{kit}', 'KitsController@show');
-    Route::put('/{kit}', 'KitsController@update');
-    Route::delete('/{kit}', 'KitsController@destroy');
+Route::group(['namespace' => 'Api', 'prefix' => '/bundles'], function () {
+    Route::get('/', 'BundlesController@index');
+    Route::post('/', 'BundlesController@store');
+    Route::get('/{bundle}', 'BundlesController@show');
+    Route::put('/{bundle}', 'BundlesController@update');
+    Route::delete('/{bundle}', 'BundlesController@destroy');
 });
 Route::group(['namespace' => 'Api', 'prefix' => '/payment-methods'], function () {
     Route::get('/', 'PaymentMethodsController@index');

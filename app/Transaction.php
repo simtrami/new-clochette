@@ -19,7 +19,7 @@ use Illuminate\Support\Carbon;
  * @property int|null $user_id
  * @property int|null $payment_method_id
  * @property int|null $customer_id
- * @property string|null $comments
+ * @property string|null $comment
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property-read Collection|Article[] $articles
@@ -27,8 +27,8 @@ use Illuminate\Support\Carbon;
  * @property-read Customer|null $customer
  * @property-read Collection|TransactionDetail[] $details
  * @property-read int|null $details_count
- * @property-read Collection|Kit[] $kits
- * @property-read int|null $kits_count
+ * @property-read Collection|Bundle[] $bundles
+ * @property-read int|null $bundles_count
  * @property-read PaymentMethod|null $paymentMethod
  * @property-read User|null $user
  * @method static Builder|Transaction newModelQuery()
@@ -46,7 +46,7 @@ use Illuminate\Support\Carbon;
  */
 class Transaction extends Model
 {
-    protected $fillable = ['user_id', 'customer_id', 'payment_method_id', 'value', 'comments'];
+    protected $fillable = ['user_id', 'customer_id', 'payment_method_id', 'value', 'comment'];
 
     /**
      * The relationships that should always be loaded.
@@ -87,9 +87,9 @@ class Transaction extends Model
             ->withPivot('quantity');
     }
 
-    public function kits(): MorphToMany
+    public function bundles(): MorphToMany
     {
-        return $this->morphedByMany(Kit::class, 'item', 'transaction_details')
+        return $this->morphedByMany(Bundle::class, 'item', 'transaction_details')
             ->using(TransactionDetail::class)
             ->withPivot('quantity');
     }

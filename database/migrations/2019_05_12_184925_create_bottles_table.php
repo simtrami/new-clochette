@@ -20,7 +20,6 @@ class CreateBottlesTable extends Migration
             $table->boolean('is_returnable')->default(false);
             $table->unsignedDecimal('abv', 4, 2)->nullable();
             $table->unsignedDecimal('ibu', 4, 1)->nullable();
-            $table->string('variety')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

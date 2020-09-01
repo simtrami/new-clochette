@@ -18,7 +18,6 @@ use Illuminate\Support\Carbon;
  * @property int $is_returnable
  * @property float|null $abv
  * @property float|null $ibu
- * @property string|null $variety
  * @property Carbon|null $deleted_at
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
@@ -44,7 +43,7 @@ class Bottle extends Model
 {
     use SoftDeletes;
 
-    protected $fillable = ['volume', 'is_returnable', 'abv', 'ibu', 'variety'];
+    protected $fillable = ['volume', 'is_returnable', 'abv', 'ibu'];
 
     /**
      * The relationships that should always be loaded.

@@ -2,11 +2,11 @@
 
 /* @var $factory Factory */
 
-use App\KitArticle;
+use App\BundleArticle;
 use Faker\Generator as Faker;
 use Illuminate\Database\Eloquent\Factory;
 
-$factory->define(KitArticle::class, function (Faker $faker) {
+$factory->define(BundleArticle::class, function (Faker $faker) {
     return [
         //
     ];

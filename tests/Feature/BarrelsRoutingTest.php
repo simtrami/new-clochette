@@ -43,7 +43,7 @@ class BarrelsRoutingTest extends TestCase
                         ],
                         'volume',
                         'coupler',
-                        'abv', 'ibu', 'variety',
+                        'abv', 'ibu',
                     ],
                     1 => [
                         'id',
@@ -55,7 +55,7 @@ class BarrelsRoutingTest extends TestCase
                         ],
                         'volume',
                         'coupler',
-                        'abv', 'ibu', 'variety',
+                        'abv', 'ibu',
                     ]
                 ]
             ]);
@@ -74,7 +74,8 @@ class BarrelsRoutingTest extends TestCase
             'second_value' => '2.6',
             'volume' => '30',
             'coupler' => 'KeyKeg',
-            'abv' => '4.5',
+            'abv' => '4.55',
+            'ibu' => '42.5',
         ]);
 
         $response->assertStatus(201)
@@ -90,7 +91,7 @@ class BarrelsRoutingTest extends TestCase
                     'pricesHistory',
                     'volume',
                     'coupler',
-                    'abv', 'ibu', 'variety',
+                    'abv', 'ibu',
                     'supplier' => [
                         'id', 'name', 'description', 'address', 'phone', 'email', 'supplierSince',
                     ],
@@ -119,7 +120,8 @@ class BarrelsRoutingTest extends TestCase
             'second_value' => '2.6',
             'volume' => '30',
             'coupler' => 'KeyKeg',
-            'abv' => '4.5',
+            'abv' => '4.55',
+            'ibu' => '42.5',
         ]);
 
         $response->assertStatus(200)
@@ -137,9 +139,8 @@ class BarrelsRoutingTest extends TestCase
                     // TODO: 'pricesHistory' is present but will need to be defined later, will return true anyway
                     'volume' => '30',
                     'coupler' => 'KeyKeg',
-                    'abv' => '4.50',
-                    'ibu' => null,
-                    'variety' => null,
+                    'abv' => 4.55,
+                    'ibu' => 42.5,
                     'supplier' => [
                         'id' => $supplier_2->id,
                         'name' => $supplier_2->name,
@@ -183,7 +184,7 @@ class BarrelsRoutingTest extends TestCase
                     'pricesHistory',
                     'volume',
                     'coupler',
-                    'abv', 'ibu', 'variety',
+                    'abv', 'ibu',
                     'supplier' => [
                         'id', 'name', 'description', 'address', 'phone', 'email', 'supplierSince',
                     ],
@@ -206,7 +207,6 @@ class BarrelsRoutingTest extends TestCase
                     'coupler' => $article->barrel->coupler,
                     'abv' => $article->barrel->abv,
                     'ibu' => $article->barrel->ibu,
-                    'variety' => $article->barrel->variety,
                     'supplier' => [
                         'id' => $supplier->id,
                         'name' => $supplier->name,

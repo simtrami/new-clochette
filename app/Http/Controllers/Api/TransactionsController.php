@@ -39,14 +39,14 @@ class TransactionsController extends Controller
     {
         $data = $request->validate([
             'value' => 'required|numeric',
-            'comments' => 'string|min:2|max:255',
+            'comment' => 'string|min:2|max:255',
             'user_id' => 'required|exists:users,id',
             'payment_method_id' => 'required|exists:payment_methods,id',
             'customer_id' => 'required_if:payment_method_parameter,requires_account|exists:customers,id',
             'articles' => 'array|min:1',
             'articles.*' => 'required_with:articles|exists:articles,id',
-            'kits' => 'array|min:1',
-            'kits.*' => 'required_with:kits|exists:kits,id',
+            'bundles' => 'array|min:1',
+            'bundles.*' => 'required_with:bundles|exists:bundles,id',
         ]);
 
         $transaction = new Transaction($data);
@@ -68,18 +68,18 @@ class TransactionsController extends Controller
     {
         $data = $request->validate([
             'value' => 'numeric',
-            'comments' => 'string|min:2|max:255',
+            'comment' => 'string|min:2|max:255',
             'user_id' => 'exists:users,id',
             'payment_method_id' => 'exists:payment_methods,id',
             'customer_id' => 'exists:customers,id',
             'articles' => 'array|min:1',
             'articles.*' => 'required_with:articles|exists:articles,id',
-            'kits' => 'array|min:1',
-            'kits.*' => 'required_with:kits|exists:kits,id',
+            'bundles' => 'array|min:1',
+            'bundles.*' => 'required_with:bundles|exists:bundles,id',
             'detached_articles' => 'array|min:1',
             'detached_articles.*' => 'required_with:detached_articles|exists:articles,id',
-            'detached_kits' => 'array|min:1',
-            'detached_kits.*' => 'required_with:detached_kits|exists:kits,id',
+            'detached_bundles' => 'array|min:1',
+            'detached_bundles.*' => 'required_with:detached_bundles|exists:bundles,id',
         ]);
 
         $this->detachItems($transaction, $data);
@@ -114,11 +114,11 @@ class TransactionsController extends Controller
      */
     private function addItems(Transaction $transaction, array $data): void
     {
-        if (array_key_exists('kits', $data)) {
-            $occurrences = array_count_values($data['kits']);
-            $kits = array_unique($data['kits']);
-            foreach ($kits as $kitId) {
-                $transaction->kits()->attach($kitId, ['quantity' => $occurrences[$kitId]]);
+        if (array_key_exists('bundles', $data)) {
+            $occurrences = array_count_values($data['bundles']);
+            $bundles = array_unique($data['bundles']);
+            foreach ($bundles as $bundleId) {
+                $transaction->bundles()->attach($bundleId, ['quantity' => $occurrences[$bundleId]]);
             }
         }
         if (array_key_exists('articles', $data)) {
@@ -136,8 +136,8 @@ class TransactionsController extends Controller
      */
     private function detachItems(Transaction $transaction, array $data): void
     {
-        if (array_key_exists('detached_kits', $data)) {
-            $transaction->kits()->detach($data['detached_kits']);
+        if (array_key_exists('detached_bundles', $data)) {
+            $transaction->bundles()->detach($data['detached_bundles']);
         }
         if (array_key_exists('detached_articles', $data)) {
             $transaction->articles()->detach($data['detached_articles']);
