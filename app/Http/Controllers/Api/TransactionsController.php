@@ -2,17 +2,24 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Barrel;
+use App\Bottle;
+use App\Bundle;
+use App\Food;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\TransactionResource;
+use App\Other;
 use App\PaymentMethod;
 use App\Transaction;
 use Exception;
+use http\Exception\RuntimeException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
 use Illuminate\Routing\ResponseFactory;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 
 class TransactionsController extends Controller
 {
@@ -53,6 +60,7 @@ class TransactionsController extends Controller
             'barrels' => 'array|min:1',
             'barrels.*.id' => 'required_with:barrels|exists:barrels',
             'barrels.*.quantity' => 'required_with:barrels|integer|min:1',
+            'barrels.*.second_price' => 'required_with:barrels|boolean',
             'bottles' => 'array|min:1',
             'bottles.*.id' => 'required_with:bottles|exists:bottles',
             'bottles.*.quantity' => 'required_with:bottles|integer|min:1', // add max = qty in stock
@@ -100,6 +108,7 @@ class TransactionsController extends Controller
             'barrels' => 'array|min:1',
             'barrels.*.id' => 'required_with:barrels|exists:barrels',
             'barrels.*.quantity' => 'required_with:barrels|integer|min:1',
+            'barrels.*.second_price' => 'required_with:barrels|boolean',
             'bottles' => 'array|min:1',
             'bottles.*.id' => 'required_with:bottles|exists:bottles',
             'bottles.*.quantity' => 'required_with:bottles|integer|min:1', // add max = qty in stock
@@ -153,31 +162,81 @@ class TransactionsController extends Controller
     /**
      * @param Transaction $transaction
      * @param array $data
+     * @throws ValidationException
      */
     private function syncItems(Transaction $transaction, array $data): void
     {
-        $reshape_data = static function ($data) {
-            foreach ($data as $item) {
-                $items[$item['id']] = ['quantity' => $item['quantity']];
-            }
-            return $items ?? [];
-        };
-
-        if (array_key_exists('barrels', $data)) {
-            $transaction->barrels()->syncWithoutDetaching($reshape_data($data['barrels']));
-        }
         if (array_key_exists('bottles', $data)) {
-            $transaction->bottles()->syncWithoutDetaching($reshape_data($data['bottles']));
+            $transaction->bottles()->syncWithoutDetaching($this->reshapeData($data['bottles'], Bottle::class));
         }
         if (array_key_exists('food', $data)) {
-            $transaction->food()->syncWithoutDetaching($reshape_data($data['food']));
+            $transaction->food()->syncWithoutDetaching($this->reshapeData($data['food'], Food::class));
         }
         if (array_key_exists('others', $data)) {
-            $transaction->others()->syncWithoutDetaching($reshape_data($data['others']));
+            $transaction->others()->syncWithoutDetaching($this->reshapeData($data['others'], Other::class));
         }
         if (array_key_exists('bundles', $data)) {
-            $transaction->bundles()->syncWithoutDetaching($reshape_data($data['bundles']));
+            $transaction->bundles()->syncWithoutDetaching($this->reshapeData($data['bundles'], Bundle::class));
         }
+
+        if (array_key_exists('barrels', $data)) {
+            // Barrels can have a price with a second value, custom logic is mandatory.
+            $transaction->barrels()->syncWithoutDetaching($this->reshapeBarrelsData($data['barrels']));
+        }
+    }
+
+    /**
+     * Reshape function for passing the items array to the syncWithoutDetaching method
+     *
+     * @param $items
+     * @param $type
+     * @return array
+     */
+    private function reshapeData($items, $type): array
+    {
+        foreach ($items as $item) {
+            $reshapedItems[$item['id']] = [
+                'quantity' => $item['quantity'],
+                'value' => $type::findOrFail($item['id'])->activePrice()->value,
+            ];
+        }
+        return $reshapedItems ?? [];
+    }
+
+    /**
+     * Reshape function for passing the barrels array to the syncWithoutDetaching method
+     * Specific to the barrels as it is the only item type to have two possible values for its price
+     *
+     * @param array $barrels
+     * @return array
+     * @throws ValidationException
+     */
+    private function reshapeBarrelsData($barrels): array
+    {
+        foreach ($barrels as $barrel) {
+            $price = Barrel::findOrFail($barrel['id'])->activePrice();
+            if (!$price) {
+                throw new RuntimeException("Barrel {$barrel['id']} doesn't have an active price.");
+            }
+            // If however, no second_value is registered on the active price and the second_price request parameter
+            // is set to true, there will be a validation error.
+            if ($barrel['second_price'] == false) {
+                $reshapedBarrels[$barrel['id']] = [
+                    'quantity' => $barrel['quantity'],
+                    'value' => Barrel::findOrFail($barrel['id'])->activePrice()->value,
+                ];
+            } elseif ($barrel['second_price'] == true && $price->second_value !== null) {
+                $reshapedBarrels[$barrel['id']] = [
+                    'quantity' => $barrel['quantity'],
+                    'value' => Barrel::findOrFail($barrel['id'])->activePrice()->second_value,
+                ];
+            } else {
+                throw ValidationException::withMessages([
+                    'barrels' => "Barrel {$barrel['id']} doesn't have a second price value.",
+                ]);
+            }
+        }
+        return $reshapedBarrels ?? [];
     }
 
     /**

@@ -93,35 +93,35 @@ class Transaction extends Model
     {
         return $this->morphedByMany(Barrel::class, 'item', 'transaction_details')
             ->using(TransactionDetail::class)
-            ->withPivot('quantity');
+            ->withPivot('quantity', 'value');
     }
 
     public function bottles(): MorphToMany
     {
         return $this->morphedByMany(Bottle::class, 'item', 'transaction_details')
             ->using(TransactionDetail::class)
-            ->withPivot('quantity');
+            ->withPivot('quantity', 'value');
     }
 
     public function bundles(): MorphToMany
     {
         return $this->morphedByMany(Bundle::class, 'item', 'transaction_details')
             ->using(TransactionDetail::class)
-            ->withPivot('quantity');
+            ->withPivot('quantity', 'value');
     }
 
     public function food(): MorphToMany
     {
         return $this->morphedByMany(Food::class, 'item', 'transaction_details')
             ->using(TransactionDetail::class)
-            ->withPivot('quantity');
+            ->withPivot('quantity', 'value');
     }
 
     public function others(): MorphToMany
     {
         return $this->morphedByMany(Other::class, 'item', 'transaction_details')
             ->using(TransactionDetail::class)
-            ->withPivot('quantity');
+            ->withPivot('quantity', 'value');
     }
 }
 

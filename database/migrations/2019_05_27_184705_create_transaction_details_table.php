@@ -15,11 +15,11 @@ class CreateTransactionDetailsTable extends Migration
     {
         Schema::create('transaction_details', function (Blueprint $table) {
             $table->foreignId('transaction_id')->constrained()
-                ->onDelete('cascade')->onUpdate('cascade');
+                ->cascadeOnDelete()->cascadeOnUpdate();
             $table->foreignId('item_id');
             $table->string('item_type');
-//            $table->foreignId('price_id');
-            $table->unsignedInteger('quantity')->default(1);
+            $table->unsignedDecimal('value', 8, 2);
+            $table->unsignedInteger('quantity');
         });
     }
 

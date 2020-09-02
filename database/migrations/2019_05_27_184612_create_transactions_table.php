@@ -17,11 +17,11 @@ class CreateTransactionsTable extends Migration
             $table->bigIncrements('id');
             $table->decimal('value', 8, 2);
             $table->foreignId('user_id')->nullable()->constrained()
-                ->onDelete('set null')->onUpdate('cascade');
+                ->onDelete('set null')->cascadeOnUpdate();
             $table->foreignId('payment_method_id')->nullable()->constrained()
-                ->onDelete('set null')->onUpdate('cascade');
+                ->onDelete('set null')->cascadeOnUpdate();
             $table->foreignId('customer_id')->nullable()->constrained()
-                ->onDelete('set null')->onUpdate('cascade');
+                ->onDelete('set null')->cascadeOnUpdate();
             $table->string('comment')->nullable();
             $table->timestamps();
         });

@@ -16,7 +16,7 @@ class CreateBarrelsTable extends Migration
         Schema::create('barrels', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->foreignId('supplier_id')->nullable()->constrained()
-                ->onDelete('set null')->onUpdate('cascade');
+                ->onDelete('set null')->cascadeOnUpdate();
             $table->string('name');
             $table->unsignedInteger('quantity');
             $table->unsignedDecimal('unit_price', 9, 3);

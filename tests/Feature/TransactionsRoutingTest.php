@@ -61,7 +61,7 @@ class TransactionsRoutingTest extends TestCase
             ]);
     }
 
-    public function testCreate(): void
+    public function testCreate1(): void
     {
         $user = factory(User::class)->create();
         $payment_method = factory(PaymentMethod::class)->create(['debit_customer' => true]);
@@ -74,8 +74,6 @@ class TransactionsRoutingTest extends TestCase
         $bundle = factory(Bundle::class)->create();
         $bundle->prices()->save(factory(Price::class)->make(['value' => 3]));
 
-        self::assertIsInt($bundle->id);
-
         $response = $this->postJson('/api/transactions', [
             'value' => 11.5,
             'comment' => 'foo bar',
@@ -86,6 +84,7 @@ class TransactionsRoutingTest extends TestCase
                 [
                     'id' => $barrel->id,
                     'quantity' => 1,
+                    'second_price' => false,
                 ],
             ],
             'food' => [
@@ -143,22 +142,146 @@ class TransactionsRoutingTest extends TestCase
                     ],
                     'items' => [
                         [
-                            'id' => $barrel->id,
-                            'type' => 'App\Barrel',
-                            'name' => $barrel->name,
-                            'quantity' => 1,
-                        ],
-                        [
                             'id' => $food->id,
                             'type' => 'App\Food',
                             'name' => $food->name,
                             'quantity' => 2,
+                            'value' => 3.5
                         ],
                         [
                             'id' => $bundle->id,
                             'type' => 'App\Bundle',
                             'name' => $bundle->name,
                             'quantity' => 1,
+                            'value' => 3,
+                        ],
+                        [
+                            'id' => $barrel->id,
+                            'type' => 'App\Barrel',
+                            'name' => $barrel->name,
+                            'quantity' => 1,
+                            'value' => 4,
+                        ],
+                    ],
+                ]
+            ]);
+    }
+
+    public function testCreate2(): void
+    {
+        $user = factory(User::class)->create();
+        $payment_method = factory(PaymentMethod::class)->create(['debit_customer' => true]);
+        $customer = factory(Customer::class)->create();
+
+        $barrel = factory(Barrel::class)->create();
+        $barrel->prices()->save(factory(Price::class)->make(['value' => 4]));
+        $food = factory(Food::class)->create();
+        $food->prices()->save(factory(Price::class)->make(['value' => 3.5]));
+        $bundle = factory(Bundle::class)->create();
+        $bundle->prices()->save(factory(Price::class)->make(['value' => 3]));
+
+        $response = $this->postJson('/api/transactions', [
+            'value' => 11.5,
+            'comment' => 'foo bar',
+            'user_id' => $user->id,
+            'payment_method_id' => $payment_method->id,
+            'customer_id' => $customer->id,
+            'barrels' => [
+                [
+                    'id' => $barrel->id,
+                    'quantity' => 1,
+                    'second_price' => true,
+                ],
+            ],
+            'food' => [
+                [
+                    'id' => $food->id,
+                    'quantity' => 2,
+                ],
+            ],
+            'bundles' => [
+                [
+                    'id' => $bundle->id,
+                    'quantity' => 1,
+                ],
+            ],
+        ]);
+
+        // There must be a validation error (422) as the barrel does not have a second price value
+        // although the 'second_price' request parameter is set to true.
+        $response->assertStatus(422);
+    }
+
+    public function testCreate3(): void
+    {
+        $user = factory(User::class)->create();
+        $payment_method = factory(PaymentMethod::class)->create(['debit_customer' => true]);
+        $customer = factory(Customer::class)->create();
+
+        $barrel = factory(Barrel::class)->create();
+        $barrel->prices()->save(factory(Price::class)->make(['value' => 4, 'second_value' => 2]));
+
+        $response = $this->postJson('/api/transactions', [
+            'value' => 11.5,
+            'comment' => 'foo bar',
+            'user_id' => $user->id,
+            'payment_method_id' => $payment_method->id,
+            'customer_id' => $customer->id,
+            'barrels' => [
+                [
+                    'id' => $barrel->id,
+                    'quantity' => 1,
+                    'second_price' => true,
+                ],
+            ],
+        ]);
+
+        $response->assertStatus(201)
+            ->assertJsonStructure([
+                'data' => [
+                    'id',
+                    'value',
+                    'comment',
+                    'user',
+                    'customer',
+                    'paymentMethod',
+                    'items',
+                ]
+            ])
+            ->assertJson([
+                'data' => [
+                    'value' => 11.5,
+                    'comment' => 'foo bar',
+                    'user' => [
+                        'id' => $user->id,
+                        'name' => $user->name,
+                        'username' => $user->username,
+                        'email' => $user->email,
+                        'roles' => [],
+                        'permissions' => [],
+                    ],
+                    'customer' => [
+                        'id' => $customer->id,
+                        'firstName' => $customer->first_name,
+                        'lastName' => $customer->last_name,
+                        'nickname' => $customer->nickname,
+                        'balance' => $customer->balance,
+                        'isStaff' => $customer->is_staff,
+                    ],
+                    'paymentMethod' => [
+                        'id' => $payment_method->id,
+                        'name' => $payment_method->name,
+                        'debitCustomer' => $payment_method->debit_customer,
+                        'iconName' => $payment_method->icon_name,
+                        'parameters' => null,
+                    ],
+                    'items' => [
+                        [
+                            'id' => $barrel->id,
+                            'type' => 'App\Barrel',
+                            'name' => $barrel->name,
+                            'quantity' => 1,
+                            'value' => 2,
                         ],
                     ],
                 ]
@@ -174,15 +297,15 @@ class TransactionsRoutingTest extends TestCase
         $customer = factory(Customer::class)->create(['is_staff' => true]);
 
         $barrel = factory(Barrel::class)->create();
-        $barrel->prices()->save(factory(Price::class)->make(['value' => 4]));
+        $barrel->prices()->save(factory(Price::class)->make(['value' => 4, 'second_value' => 2]));
         $food = factory(Food::class)->create();
         $food->prices()->save(factory(Price::class)->make(['value' => 6]));
 
         $transaction = factory(Transaction::class)->create([
             'user_id' => $user_1->id, 'payment_method_id' => $payment_method_1->id,
         ]);
-        $transaction->barrels()->attach($barrel->id, ['quantity' => 2]);
-        $transaction->food()->attach($food->id, ['quantity' => 1]);
+        $transaction->barrels()->attach($barrel->id, ['quantity' => 2, 'value' => 4]);
+        $transaction->food()->attach($food->id, ['quantity' => 1, 'value' => 6]);
 
         $bottle = factory(Bottle::class)->create();
         $bottle->prices()->save(factory(Price::class)->make(['value' => 3.5]));
@@ -199,6 +322,7 @@ class TransactionsRoutingTest extends TestCase
                 [
                     'id' => $barrel->id,
                     'quantity' => 1,
+                    'second_price' => true,
                 ],
             ],
             'bottles' => [
@@ -259,18 +383,21 @@ class TransactionsRoutingTest extends TestCase
                             'type' => 'App\Barrel',
                             'name' => $barrel->name,
                             'quantity' => 1,
+                            'value' => 2,
                         ],
                         [
                             'id' => $bottle->id,
                             'type' => 'App\Bottle',
                             'name' => $bottle->name,
                             'quantity' => 2,
+                            'value' => 3.5,
                         ],
                         [
                             'id' => $bundle->id,
                             'type' => 'App\Bundle',
                             'name' => $bundle->name,
                             'quantity' => 1,
+                            'value' => 1.5,
                         ],
                     ],
                 ]]);
@@ -295,7 +422,7 @@ class TransactionsRoutingTest extends TestCase
             'user_id' => $user->id, 'payment_method_id' => $payment_method->id,
             'customer_id' => $customer->id,
         ]);
-        $transaction->others()->attach($other->id, ['quantity' => 2]);
+        $transaction->others()->attach($other->id, ['quantity' => 2, 'value' => 4]);
 
         $response = $this->getJson('/api/transactions/' . $transaction->id);
 
@@ -341,6 +468,7 @@ class TransactionsRoutingTest extends TestCase
                             'type' => 'App\Other',
                             'name' => $other->name,
                             'quantity' => 2,
+                            'value' => 4,
                         ],
                     ],
                 ]]);
@@ -389,7 +517,7 @@ class TransactionsRoutingTest extends TestCase
             'user_id' => $user->id, 'payment_method_id' => $payment_method->id,
             'customer_id' => $customer->id,
         ]);
-        $transaction->food()->attach($food->id, ['quantity' => 2]);
+        $transaction->food()->attach($food->id, ['quantity' => 2, 'value' => 4]);
 
         self::assertEquals(1, TransactionDetail::whereTransactionId($transaction->id)->count());
 

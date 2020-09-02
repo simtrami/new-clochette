@@ -15,6 +15,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  * @property int item_id
  * @property string item_type
  * @property Barrel|Bottle|Bundle|Food|Other item
+ * @property mixed value
  */
 class TransactionDetailResource extends JsonResource
 {
@@ -31,6 +32,7 @@ class TransactionDetailResource extends JsonResource
             'type' => $this->item_type,
             'name' => $this->item->name,
             'quantity' => $this->quantity,
+            'value' => $this->value,
         ];
     }
 }

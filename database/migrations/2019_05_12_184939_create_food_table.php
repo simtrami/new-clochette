@@ -16,7 +16,7 @@ class CreateFoodTable extends Migration
         Schema::create('food', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->foreignId('supplier_id')->nullable()->constrained()
-                ->onDelete('set null')->onUpdate('cascade');
+                ->onDelete('set null')->cascadeOnUpdate();
             $table->string('name');
             $table->unsignedInteger('quantity');
             $table->unsignedDecimal('unit_price', 9, 3);
