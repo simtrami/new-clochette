@@ -47,13 +47,13 @@ class BundlesController extends Controller
             'barrels.*.quantity' => 'required_with:barrels|integer|min:1',
             'bottles' => 'array|min:1',
             'bottles.*.id' => 'required_with:bottles|exists:bottles',
-            'bottles.*.quantity' => 'required_with:bottles|integer|min:1', // add max = qty in stock
+            'bottles.*.quantity' => 'required_with:bottles|integer|min:1',
             'food' => 'array|min:1',
             'food.*.id' => 'required_with:food|exists:food',
-            'food.*.quantity' => 'required_with:food|integer|min:1', // add max = qty in stock
+            'food.*.quantity' => 'required_with:food|integer|min:1',
             'others' => 'array|min:1',
             'others.*.id' => 'required_with:others|exists:others',
-            'others.*.quantity' => 'required_with:others|integer|min:1', // add max = qty in stock
+            'others.*.quantity' => 'required_with:others|integer|min:1',
         ]);
 
         $bundle = Bundle::create($data);
@@ -80,13 +80,13 @@ class BundlesController extends Controller
             'barrels.*.quantity' => 'required_with:barrels|integer|min:1',
             'bottles' => 'array|min:1',
             'bottles.*.id' => 'required_with:bottles|exists:bottles',
-            'bottles.*.quantity' => 'required_with:bottles|integer|min:1', // add max = qty in stock
+            'bottles.*.quantity' => 'required_with:bottles|integer|min:1',
             'food' => 'array|min:1',
             'food.*.id' => 'required_with:food|exists:food',
-            'food.*.quantity' => 'required_with:food|integer|min:1', // add max = qty in stock
+            'food.*.quantity' => 'required_with:food|integer|min:1',
             'others' => 'array|min:1',
             'others.*.id' => 'required_with:others|exists:others',
-            'others.*.quantity' => 'required_with:others|integer|min:1', // add max = qty in stock
+            'others.*.quantity' => 'required_with:others|integer|min:1',
             'detached_barrels' => 'array|min:1',
             'detached_barrels.*' => 'required_with:detached_barrels|exists:barrels,id',
             'detached_bottles' => 'array|min:1',

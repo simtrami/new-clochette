@@ -12,7 +12,6 @@ use App\Other;
 use App\PaymentMethod;
 use App\Transaction;
 use Exception;
-use http\Exception\RuntimeException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -43,6 +42,7 @@ class TransactionsController extends Controller
     /**
      * @param Request $request
      * @return TransactionResource
+     * @throws ValidationException
      */
     public function store(Request $request): TransactionResource
     {
@@ -63,16 +63,16 @@ class TransactionsController extends Controller
             'barrels.*.second_price' => 'required_with:barrels|boolean',
             'bottles' => 'array|min:1',
             'bottles.*.id' => 'required_with:bottles|exists:bottles',
-            'bottles.*.quantity' => 'required_with:bottles|integer|min:1', // add max = qty in stock
+            'bottles.*.quantity' => 'required_with:bottles|integer|min:1', // TODO: add max = qty in stock
             'bundles' => 'array|min:1',
             'bundles.*.id' => 'required_with:bundles|exists:bundles',
-            'bundles.*.quantity' => 'required_with:bundles|integer|min:1', // add max = qty in stock
+            'bundles.*.quantity' => 'required_with:bundles|integer|min:1', // TODO: add max = qty in stock
             'food' => 'array|min:1',
             'food.*.id' => 'required_with:food|exists:food',
-            'food.*.quantity' => 'required_with:food|integer|min:1', // add max = qty in stock
+            'food.*.quantity' => 'required_with:food|integer|min:1', // TODO: add max = qty in stock
             'others' => 'array|min:1',
             'others.*.id' => 'required_with:others|exists:others',
-            'others.*.quantity' => 'required_with:others|integer|min:1', // add max = qty in stock
+            'others.*.quantity' => 'required_with:others|integer|min:1', // TODO: add max = qty in stock
         ]);
 
         $transaction = Transaction::create($data);
@@ -88,6 +88,7 @@ class TransactionsController extends Controller
      * @param Transaction $transaction
      * @param Request $request
      * @return TransactionResource
+     * @throws ValidationException
      */
     public function update(Transaction $transaction, Request $request): TransactionResource
     {
@@ -111,16 +112,16 @@ class TransactionsController extends Controller
             'barrels.*.second_price' => 'required_with:barrels|boolean',
             'bottles' => 'array|min:1',
             'bottles.*.id' => 'required_with:bottles|exists:bottles',
-            'bottles.*.quantity' => 'required_with:bottles|integer|min:1', // add max = qty in stock
+            'bottles.*.quantity' => 'required_with:bottles|integer|min:1', // TODO: add max = qty in stock
             'bundles' => 'array|min:1',
             'bundles.*.id' => 'required_with:bundles|exists:bundles',
-            'bundles.*.quantity' => 'required_with:bundles|integer|min:1', // add max = qty in stock
+            'bundles.*.quantity' => 'required_with:bundles|integer|min:1', // TODO: add max = qty in stock
             'food' => 'array|min:1',
             'food.*.id' => 'required_with:food|exists:food',
-            'food.*.quantity' => 'required_with:food|integer|min:1', // add max = qty in stock
+            'food.*.quantity' => 'required_with:food|integer|min:1', // TODO: add max = qty in stock
             'others' => 'array|min:1',
             'others.*.id' => 'required_with:others|exists:others',
-            'others.*.quantity' => 'required_with:others|integer|min:1', // add max = qty in stock
+            'others.*.quantity' => 'required_with:others|integer|min:1', // TODO: add max = qty in stock
             'detached_barrels' => 'array|min:1',
             'detached_barrels.*' => 'required_with:detached_barrels|exists:barrels,id',
             'detached_bottles' => 'array|min:1',
@@ -210,22 +211,23 @@ class TransactionsController extends Controller
      * @param array $barrels
      * @return array
      * @throws ValidationException
+     * @throws Exception
      */
-    private function reshapeBarrelsData($barrels): array
+    private function reshapeBarrelsData(array $barrels): array
     {
         foreach ($barrels as $barrel) {
             $price = Barrel::findOrFail($barrel['id'])->activePrice();
             if (!$price) {
-                throw new RuntimeException("Barrel {$barrel['id']} doesn't have an active price.");
+                throw new Exception("Barrel {$barrel['id']} doesn't have an active price.");
             }
-            // If however, no second_value is registered on the active price and the second_price request parameter
+            // If no second_value is registered on the active price and the second_price request parameter
             // is set to true, there will be a validation error.
-            if ($barrel['second_price'] == false) {
+            if ((bool)$barrel['second_price'] === false) {
                 $reshapedBarrels[$barrel['id']] = [
                     'quantity' => $barrel['quantity'],
                     'value' => Barrel::findOrFail($barrel['id'])->activePrice()->value,
                 ];
-            } elseif ($barrel['second_price'] == true && $price->second_value !== null) {
+            } elseif ((bool)$barrel['second_price'] === true && $price->second_value !== null) {
                 $reshapedBarrels[$barrel['id']] = [
                     'quantity' => $barrel['quantity'],
                     'value' => Barrel::findOrFail($barrel['id'])->activePrice()->second_value,
