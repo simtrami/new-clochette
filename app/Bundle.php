@@ -4,7 +4,6 @@ namespace App;
 
 use Eloquent;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -20,8 +19,16 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $deleted_at
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property-read Collection|Article[] $articles
+ * @property-read Collection|BundleArticle[] $articles
  * @property-read int|null $articles_count
+ * @property-read Collection|Barrel[] $barrels
+ * @property-read int|null $barrels_count
+ * @property-read Collection|Bottle[] $bottles
+ * @property-read int|null $bottles_count
+ * @property-read Collection|Food[] $food
+ * @property-read int|null $food_count
+ * @property-read Collection|Other[] $others
+ * @property-read int|null $others_count
  * @property-read Collection|Price[] $prices
  * @property-read int|null $prices_count
  * @property-read Collection|Transaction[] $transactions
@@ -39,14 +46,6 @@ use Illuminate\Support\Carbon;
  * @method static Builder|Bundle withTrashed()
  * @method static Builder|Bundle withoutTrashed()
  * @mixin Eloquent
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Barrel[] $barrels
- * @property-read int|null $barrels_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Bottle[] $bottles
- * @property-read int|null $bottles_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Food[] $food
- * @property-read int|null $food_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Other[] $others
- * @property-read int|null $others_count
  */
 class Bundle extends Item
 {

@@ -18,6 +18,7 @@ use Illuminate\Support\Carbon;
  * @property string|null $address
  * @property string|null $phone
  * @property string|null $email
+ * @property Carbon|null $supplier_since
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property-read Collection|Contact[] $contacts
@@ -35,7 +36,6 @@ use Illuminate\Support\Carbon;
  * @method static Builder|Supplier whereSupplierSince($value)
  * @method static Builder|Supplier whereUpdatedAt($value)
  * @mixin Eloquent
- * @property \Illuminate\Support\Carbon|null $supplier_since
  */
 class Supplier extends Model
 {

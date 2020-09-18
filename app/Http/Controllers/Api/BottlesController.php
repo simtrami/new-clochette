@@ -52,7 +52,7 @@ class BottlesController extends Controller
         ]);
 
         $bottle = Bottle::create($data);
-        $bottle->prices()->save(new Price($data));
+        $bottle->setActivePrice(new Price($data));
         if ($request->has('supplier_id')) {
             $bottle->supplier()->associate(Supplier::find($data['supplier_id']));
         }
@@ -86,7 +86,7 @@ class BottlesController extends Controller
         }
         // Update price / create a new one
         if ($request->has('value')) {
-            $bottle->changePrice($data['value']);
+            $bottle->setActivePrice(new Price($data));
         }
         // Update bottle's fields
         $bottle->update($data);

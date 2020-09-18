@@ -17,8 +17,8 @@ use Illuminate\Support\Carbon;
  * @property string $first_name
  * @property string $last_name
  * @property string $nickname
- * @property float $balance
- * @property int $is_staff
+ * @property string $balance
+ * @property bool $is_staff
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property-read Collection|Transaction[] $transactions

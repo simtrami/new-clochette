@@ -157,13 +157,11 @@ class BottlesRoutingTest extends TestCase
                         [
                             'id' => $price->id,
                             'value' => $price->value,
-                            'isActive' => false,
                             'createdAt' => $price->created_at->toISOString(),
                         ],
                         [
                             'id' => $price->id + 1,
                             'value' => 4.2,
-                            'isActive' => true,
                             'createdAt' => $price->created_at->toISOString(),
                         ],
                     ],
@@ -235,7 +233,6 @@ class BottlesRoutingTest extends TestCase
                         [
                             'id' => $price->id,
                             'value' => $price->value,
-                            'isActive' => true,
                             'createdAt' => $price->created_at->toISOString(),
                         ],
                     ],

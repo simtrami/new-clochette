@@ -4,8 +4,8 @@ namespace Tests\Feature;
 
 use App\Barrel;
 use App\Bottle;
-use App\Food;
 use App\Bundle;
+use App\Food;
 use App\Price;
 use Exception;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -173,8 +173,8 @@ class BundlesRoutingTest extends TestCase
                         'id', 'value',
                     ],
                     'priceHistory' => [
-                        ['id', 'value', 'isActive', 'createdAt'],
-                        ['id', 'value', 'isActive', 'createdAt'],
+                        ['id', 'value', 'createdAt'],
+                        ['id', 'value', 'createdAt'],
                     ],
                     'articles',
                 ]
@@ -192,13 +192,11 @@ class BundlesRoutingTest extends TestCase
                         [
                             'id' => $price->id,
                             'value' => $price->value,
-                            'isActive' => false,
                             'createdAt' => $price->created_at->toISOString(),
                         ],
                         [
                             'id' => $price->id + 1,
                             'value' => 4.2,
-                            'isActive' => true,
                             'createdAt' => $price->created_at->toISOString(),
                         ],
                     ],
@@ -251,7 +249,7 @@ class BundlesRoutingTest extends TestCase
                         'id', 'value',
                     ],
                     'priceHistory' => [
-                        ['id', 'value', 'secondValue', 'isActive', 'createdAt'],
+                        ['id', 'value', 'secondValue', 'createdAt'],
                     ],
                     'articles',
                 ]
@@ -269,7 +267,6 @@ class BundlesRoutingTest extends TestCase
                         [
                             'id' => $price->id,
                             'value' => $price->value,
-                            'isActive' => true,
                             'createdAt' => $price->created_at->toISOString(),
                         ],
                     ],

@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Article;
 use App\Food;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ArticleCollectionResource;
@@ -51,7 +50,7 @@ class FoodController extends Controller
         ]);
 
         $food = Food::create($data);
-        $food->prices()->save(new Price($data));
+        $food->setActivePrice(new Price($data));
         if ($request->has('supplier_id')) {
             $food->supplier()->associate(Supplier::find($data['supplier_id']));
         }
@@ -82,7 +81,7 @@ class FoodController extends Controller
         }
         // Update price / create a new one
         if ($request->has('value')) {
-            $food->changePrice($data['value']);
+            $food->setActivePrice(new Price($data));
         }
         // Update food's fields
         $food->update($data);

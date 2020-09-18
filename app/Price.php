@@ -12,11 +12,10 @@ use Illuminate\Support\Carbon;
  * App\Price
  *
  * @property int $id
- * @property int $item_id
+ * @property int|null $item_id
  * @property string $item_type
- * @property float $value
- * @property float|null $second_value
- * @property int $is_active
+ * @property string $value
+ * @property string|null $second_value
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property-read Model|Eloquent $item
@@ -25,7 +24,6 @@ use Illuminate\Support\Carbon;
  * @method static Builder|Price query()
  * @method static Builder|Price whereCreatedAt($value)
  * @method static Builder|Price whereId($value)
- * @method static Builder|Price whereIsActive($value)
  * @method static Builder|Price whereItemId($value)
  * @method static Builder|Price whereItemType($value)
  * @method static Builder|Price whereSecondValue($value)
@@ -35,12 +33,7 @@ use Illuminate\Support\Carbon;
  */
 class Price extends Model
 {
-    protected $fillable = ['value', 'second_value', 'is_active'];
-
-    protected $casts = [
-        'is_active' => 'boolean',
-//        'created_at' => 'datetime:Y-m-d H:i:s',
-    ];
+    protected $fillable = ['value', 'second_value'];
 
     ##
     # Relationships
@@ -58,27 +51,8 @@ class Price extends Model
     # Functions
     ##
 
-    /**
-     * @return void
-     */
-    public function activate(): void
+    public function equals(Price $other): bool
     {
-        $this->isActive() ?: $this->update(['is_active' => true]);
-    }
-
-    /**
-     * @return bool
-     */
-    public function isActive(): bool
-    {
-        return (bool)$this->is_active;
-    }
-
-    /**
-     * @return void
-     */
-    public function deactivate(): void
-    {
-        !$this->isActive() ?: $this->update(['is_active' => false]);
+        return $this->value === $other->value && $this->second_value === $other->second_value;
     }
 }

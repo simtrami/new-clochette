@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Bundle;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\BundleResource;
-use App\Bundle;
 use App\Price;
 use Exception;
 use Illuminate\Http\JsonResponse;
@@ -57,7 +57,7 @@ class BundlesController extends Controller
         ]);
 
         $bundle = Bundle::create($data);
-        $bundle->prices()->save(new Price($data));
+        $bundle->setActivePrice(new Price($data));
         $this->syncItems($bundle, $data);
         $bundle->push();
 
@@ -104,7 +104,7 @@ class BundlesController extends Controller
 
         // Update price / create a new one
         if ($request->has('value')) {
-            $bundle->changePrice($data['value']);
+            $bundle->setActivePrice(new Price($data));
         }
         $bundle->update($data);
 

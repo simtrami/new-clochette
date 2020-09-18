@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  * @property int $transaction_id
  * @property int $item_id
  * @property string $item_type
+ * @property string $value
  * @property int $quantity
  * @property-read Model|Eloquent $item
  * @method static Builder|TransactionDetail newModelQuery()
@@ -23,6 +24,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  * @method static Builder|TransactionDetail whereItemType($value)
  * @method static Builder|TransactionDetail whereQuantity($value)
  * @method static Builder|TransactionDetail whereTransactionId($value)
+ * @method static Builder|TransactionDetail whereValue($value)
  * @mixin Eloquent
  */
 class TransactionDetail extends MorphPivot

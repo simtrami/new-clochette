@@ -49,7 +49,7 @@ class OthersController extends Controller
         ]);
 
         $other = Other::create($data);
-        $other->prices()->save(new Price($data));
+        $other->setActivePrice(new Price($data));
         if ($request->has('supplier_id')) {
             $other->supplier()->associate(Supplier::find($data['supplier_id']));
         }
@@ -80,7 +80,7 @@ class OthersController extends Controller
         }
         // Update price / create a new one
         if ($request->has('value')) {
-            $other->changePrice($data['value']);
+            $other->setActivePrice(new Price($data));
         }
         // Update food's fields
         $other->update($data);

@@ -26,7 +26,6 @@ class PriceHistoryResource extends JsonResource
             'id' => $this->id,
             'value' => $this->value,
             'secondValue' => $this->second_value,
-            'isActive' => $this->is_active,
             'createdAt' => $this->created_at,
         ];
     }

@@ -14,7 +14,7 @@ use Illuminate\Support\Carbon;
  *
  * @property int $id
  * @property string $name
- * @property int $debit_customer
+ * @property bool $debit_customer
  * @property string|null $icon_name
  * @property mixed|null $parameters
  * @property Carbon|null $created_at
@@ -25,10 +25,10 @@ use Illuminate\Support\Carbon;
  * @method static Builder|PaymentMethod newQuery()
  * @method static Builder|PaymentMethod query()
  * @method static Builder|PaymentMethod whereCreatedAt($value)
+ * @method static Builder|PaymentMethod whereDebitCustomer($value)
  * @method static Builder|PaymentMethod whereIconName($value)
  * @method static Builder|PaymentMethod whereId($value)
  * @method static Builder|PaymentMethod whereName($value)
- * @method static Builder|PaymentMethod wheredebitCustomer($value)
  * @method static Builder|PaymentMethod whereParameters($value)
  * @method static Builder|PaymentMethod whereUpdatedAt($value)
  * @mixin Eloquent

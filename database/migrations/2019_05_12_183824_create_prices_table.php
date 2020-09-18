@@ -15,11 +15,10 @@ class CreatePricesTable extends Migration
     {
         Schema::create('prices', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->foreignId('item_id');
+            $table->foreignId('item_id')->nullable();
             $table->string('item_type');
             $table->unsignedDecimal('value', 8, 2);
             $table->unsignedDecimal('second_value', 8, 2)->nullable();
-            $table->boolean('is_active')->default(true);
             $table->timestamps();
         });
     }

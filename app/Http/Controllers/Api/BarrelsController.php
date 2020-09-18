@@ -53,7 +53,7 @@ class BarrelsController extends Controller
         ]);
 
         $barrel = Barrel::create($data);
-        $barrel->prices()->save(new Price($data));
+        $barrel->setActivePrice(new Price($data));
         if ($request->has('supplier_id')) {
             $barrel->supplier()->associate(Supplier::find($data['supplier_id']));
         }
@@ -86,8 +86,7 @@ class BarrelsController extends Controller
         if ($request->has('supplier_id')) {
             $barrel->supplier()->associate(Supplier::find($data['supplier_id']));
         }
-        // Update price / create a new one
-        $this->updatePrice($barrel, $request, $data);
+        $barrel->setActivePrice(new Price($data));
         // Update barrel's fields
         $barrel->update($data);
 
@@ -108,21 +107,5 @@ class BarrelsController extends Controller
         }
 
         return response(null, 204);
-    }
-
-    /**
-     * @param Barrel $barrel
-     * @param Request $request
-     * @param array $data
-     */
-    private function updatePrice(Barrel $barrel, Request $request, array $data): void
-    {
-        if ($request->has(['value', 'second_value'])) {
-            $barrel->changePrices($data['value'], $data['second_value']);
-        } elseif ($request->has('value')) {
-            $barrel->changePrice($data['value']);
-        } elseif ($request->has('second_value')) {
-            $barrel->changeSecondPrice($data['second_value']);
-        }
     }
 }
