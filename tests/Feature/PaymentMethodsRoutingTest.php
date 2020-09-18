@@ -16,7 +16,7 @@ class PaymentMethodsRoutingTest extends TestCase
      */
     public function testIndex(): void
     {
-        factory(PaymentMethod::class, 2)->create();
+        PaymentMethod::factory()->count(2)->create();
 
         $response = $this->get('/api/payment-methods');
 
@@ -64,7 +64,7 @@ class PaymentMethodsRoutingTest extends TestCase
 
     public function testUpdate1(): void
     {
-        $paymentMethod = factory(PaymentMethod::class)->create();
+        $paymentMethod = PaymentMethod::factory()->create();
 
         $response = $this->putJson('/api/payment-methods/' . $paymentMethod->id, [
             'name' => 'PaymentMethod',
@@ -91,7 +91,7 @@ class PaymentMethodsRoutingTest extends TestCase
 
     public function testShow1(): void
     {
-        $paymentMethod = factory(PaymentMethod::class)->create();
+        $paymentMethod = PaymentMethod::factory()->create();
 
         $response = $this->getJson('/api/payment-methods/' . $paymentMethod->id);
 
@@ -120,7 +120,7 @@ class PaymentMethodsRoutingTest extends TestCase
 
     public function testDestroy1(): void
     {
-        $paymentMethod = factory(PaymentMethod::class)->create();
+        $paymentMethod = PaymentMethod::factory()->create();
 
         $response = $this->deleteJson('/api/payment-methods/' . $paymentMethod->id);
         $response->assertStatus(204);
@@ -137,8 +137,8 @@ class PaymentMethodsRoutingTest extends TestCase
 
     public function testDestroy2(): void
     {
-        $paymentMethod = factory(PaymentMethod::class)->create();
-        $transaction = factory(Transaction::class)->create(['payment_method_id' => $paymentMethod->id]);
+        $paymentMethod = PaymentMethod::factory()->create();
+        $transaction = Transaction::factory()->create(['payment_method_id' => $paymentMethod->id]);
 
         self::assertEquals(1, Transaction::wherePaymentMethodId($paymentMethod->id)->count());
 

@@ -18,7 +18,7 @@ class SuppliersRoutingTest extends TestCase
      */
     public function testIndex(): void
     {
-        factory(Supplier::class, 2)->create();
+        Supplier::factory()->count(2)->create();
 
         $response = $this->get('/api/suppliers');
 
@@ -74,7 +74,7 @@ class SuppliersRoutingTest extends TestCase
 
     public function testUpdate1(): void
     {
-        $supplier = factory(Supplier::class)->create();
+        $supplier = Supplier::factory()->create();
 
         $response = $this->putJson('/api/suppliers/' . $supplier->id, [
             'name' => 'Supplier McTest',
@@ -110,7 +110,7 @@ class SuppliersRoutingTest extends TestCase
 
     public function testShow1(): void
     {
-        $supplier = factory(Supplier::class)->create();
+        $supplier = Supplier::factory()->create();
 
         $response = $this->getJson('/api/suppliers/' . $supplier->id);
 
@@ -137,7 +137,7 @@ class SuppliersRoutingTest extends TestCase
 
     public function testDestroy1(): void
     {
-        $supplier = factory(Supplier::class)->create();
+        $supplier = Supplier::factory()->create();
 
         $response = $this->deleteJson('/api/suppliers/' . $supplier->id);
         $response->assertStatus(204);
@@ -154,8 +154,8 @@ class SuppliersRoutingTest extends TestCase
 
     public function testDestroy2(): void
     {
-        $supplier = factory(Supplier::class)->create();
-        $contact = factory(Contact::class)->create(['supplier_id' => $supplier->id]);
+        $supplier = Supplier::factory()->create();
+        $contact = Contact::factory()->create(['supplier_id' => $supplier->id]);
 
         self::assertEquals(1, Contact::whereSupplierId($supplier->id)->count());
 
@@ -168,8 +168,8 @@ class SuppliersRoutingTest extends TestCase
 
     public function testDestroy3(): void
     {
-        $supplier = factory(Supplier::class)->create();
-        $barrel = factory(Barrel::class)->create(['supplier_id' => $supplier->id]);
+        $supplier = Supplier::factory()->create();
+        $barrel = Barrel::factory()->create(['supplier_id' => $supplier->id]);
 
         self::assertEquals(1, Barrel::whereSupplierId($supplier->id)->count());
 

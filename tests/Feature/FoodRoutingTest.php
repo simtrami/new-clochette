@@ -17,12 +17,10 @@ class FoodRoutingTest extends TestCase
      */
     public function testIndex(): void
     {
-        $supplier = factory(Supplier::class)->create();
-
-        factory(Food::class, 2)->create(['supplier_id' => $supplier->id])
-            ->each(function ($food) {
-                $food->prices()->save(factory(Price::class)->make());
-            });
+        Food::factory()
+            ->count(2)
+            ->hasPrices(1)
+            ->create();
 
         $response = $this->get('/api/food');
 
@@ -55,7 +53,7 @@ class FoodRoutingTest extends TestCase
 
     public function testCreate(): void
     {
-        $supplier = factory(Supplier::class)->create();
+        $supplier = Supplier::factory()->create();
 
         $response = $this->postJson('/api/food', [
             'name' => 'Food',
@@ -107,19 +105,19 @@ class FoodRoutingTest extends TestCase
 
     public function testUpdate1(): void
     {
-        $supplier_1 = factory(Supplier::class)->create();
-        $supplier_2 = factory(Supplier::class)->create();
-
-        $food = factory(Food::class)->create(['supplier_id' => $supplier_1->id, 'is_bulk' => false]);
-        $id = $food->id;
-        $price = factory(Price::class)->make();
+        $food = Food::factory()
+            ->state(['is_bulk' => false])
+            ->create();
+        $price = Price::factory()->make();
         $food->prices()->save($price);
 
+        $newSupplier = Supplier::factory()->create();
+        $id = $food->id;
 
         $response = $this->putJson('/api/food/' . $id, [
             'name' => 'Food',
             'quantity' => 42,
-            'supplier_id' => $supplier_2->id,
+            'supplier_id' => $newSupplier->id,
             'unit_price' => 142.42,
             'value' => 4.2,
             'is_bulk' => 1,
@@ -150,13 +148,13 @@ class FoodRoutingTest extends TestCase
                         ],
                     ],
                     'supplier' => [
-                        'id' => $supplier_2->id,
-                        'name' => $supplier_2->name,
-                        'description' => $supplier_2->description,
-                        'address' => $supplier_2->address,
-                        'phone' => $supplier_2->phone,
-                        'email' => $supplier_2->email,
-                        'supplierSince' => $supplier_2->supplier_since->toISOString(),
+                        'id' => $newSupplier->id,
+                        'name' => $newSupplier->name,
+                        'description' => $newSupplier->description,
+                        'address' => $newSupplier->address,
+                        'phone' => $newSupplier->phone,
+                        'email' => $newSupplier->email,
+                        'supplierSince' => $newSupplier->supplier_since->toISOString(),
                     ],
                 ]
             ]);
@@ -170,13 +168,14 @@ class FoodRoutingTest extends TestCase
 
     public function testShow1(): void
     {
-        $supplier = factory(Supplier::class)->create();
-
-        $food = factory(Food::class)->create(['supplier_id' => $supplier->id, 'is_bulk' => false]);
-        $id = $food->id;
-        $price = factory(Price::class)->make();
+        $supplier = Supplier::factory()->create();
+        $food = Food::factory()
+            ->state(['supplier_id' => $supplier->id, 'is_bulk' => false])
+            ->create();
+        $price = Price::factory()->make();
         $food->prices()->save($price);
 
+        $id = $food->id;
         $response = $this->getJson('/api/food/' . $id);
 
         $response->assertStatus(200)
@@ -236,11 +235,11 @@ class FoodRoutingTest extends TestCase
 
     public function testDestroy(): void
     {
-        $supplier = factory(Supplier::class)->create();
-        $food = factory(Food::class)->create(['supplier_id' => $supplier->id]);
-        $id = $food->id;
-        $food->prices()->save(factory(Price::class)->make());
+        $food = Food::factory()
+            ->hasPrices(1)
+            ->create();
 
+        $id = $food->id;
         $response = $this->deleteJson('/api/food/' . $id);
         $response->assertStatus(204);
         // Check whether the resource is unreachable

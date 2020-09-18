@@ -16,7 +16,7 @@ class UsersRoutingTest extends TestCase
      */
     public function testIndex(): void
     {
-        factory(User::class, 2)->create();
+        User::factory()->count(2)->create();
 
         $response = $this->get('/api/users');
 
@@ -42,8 +42,9 @@ class UsersRoutingTest extends TestCase
                 ]
             ]);
 
-        $customer = factory(Customer::class)->create();
-        factory(User::class)->create(['customer_id' => $customer->id]);
+        User::factory()
+            ->forCustomer()
+            ->create();
 
         $response = $this->get('/api/users');
         $response->assertStatus(200)
@@ -115,7 +116,7 @@ class UsersRoutingTest extends TestCase
 
     public function testCreate2(): void
     {
-        $customer = factory(Customer::class)->create();
+        $customer = Customer::factory()->create();
 
         $response = $this->postJson('/api/users', [
             'name' => 'User McTest',
@@ -143,7 +144,7 @@ class UsersRoutingTest extends TestCase
 
     public function testUpdate1(): void
     {
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
 
         $response = $this->putJson('/api/users/' . $user->id, [
             'name' => 'User McTest',
@@ -182,8 +183,8 @@ class UsersRoutingTest extends TestCase
 
     public function testUpdate3(): void
     {
-        $customer = factory(Customer::class)->create();
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
+        $customer = Customer::factory()->create();
 
         $response = $this->putJson('/api/users/' . $user->id, [
             'name' => 'User McTest',
@@ -208,8 +209,9 @@ class UsersRoutingTest extends TestCase
 
     public function testUpdate4(): void
     {
-        $customer = factory(Customer::class)->create();
-        $user = factory(User::class)->create(['customer_id' => $customer->id]);
+        $user = User::factory()
+            ->forCustomer()
+            ->create();
 
         $response = $this->putJson('/api/users/' . $user->id, [
             'name' => 'User McTest',
@@ -232,7 +234,7 @@ class UsersRoutingTest extends TestCase
 
     public function testShow1(): void
     {
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
 
         $response = $this->getJson('/api/users/' . $user->id);
 
@@ -261,8 +263,9 @@ class UsersRoutingTest extends TestCase
 
     public function testShow3(): void
     {
-        $customer = factory(Customer::class)->create();
-        $user = factory(User::class)->create(['customer_id' => $customer->id]);
+        $user = User::factory()
+            ->forCustomer()
+            ->create();
 
         $response = $this->getJson('/api/users/' . $user->id);
 
@@ -274,7 +277,7 @@ class UsersRoutingTest extends TestCase
 
     public function testDestroy(): void
     {
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
 
         $response = $this->deleteJson('/api/users/' . $user->id);
         $response->assertStatus(204);

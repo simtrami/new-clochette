@@ -1,6 +1,18 @@
 <?php
 
+use App\Http\Controllers\Api\BarrelsController;
+use App\Http\Controllers\Api\BottlesController;
+use App\Http\Controllers\Api\BundlesController;
+use App\Http\Controllers\Api\ContactsController;
+use App\Http\Controllers\Api\CustomersController;
+use App\Http\Controllers\Api\FoodController;
+use App\Http\Controllers\Api\OthersController;
+use App\Http\Controllers\Api\PaymentMethodsController;
+use App\Http\Controllers\Api\SuppliersController;
+use App\Http\Controllers\Api\TransactionsController;
+use App\Http\Controllers\Api\UsersController;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,79 +30,79 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 Route::group(['namespace' => 'Api', 'prefix' => '/users'], function () {
-    Route::get('/', 'UsersController@index');
-    Route::post('/', 'UsersController@store');
-    Route::get('/{user}', 'UsersController@show');
-    Route::put('/{user}', 'UsersController@update');
-    Route::delete('/{user}', 'UsersController@destroy');
+    Route::get('/', [UsersController::class, 'index']);
+    Route::post('/', [UsersController::class, 'store']);
+    Route::get('/{user}', [UsersController::class, 'show']);
+    Route::put('/{user}', [UsersController::class, 'update']);
+    Route::delete('/{user}', [UsersController::class, 'destroy']);
 });
 Route::group(['namespace' => 'Api', 'prefix' => '/customers'], function () {
-    Route::get('/', 'CustomersController@index');
-    Route::post('/', 'CustomersController@store');
-    Route::get('/{customer}', 'CustomersController@show');
-    Route::put('/{customer}', 'CustomersController@update');
-    Route::delete('/{customer}', 'CustomersController@destroy');
+    Route::get('/', [CustomersController::class, 'index']);
+    Route::post('/', [CustomersController::class, 'store']);
+    Route::get('/{customer}', [CustomersController::class, 'show']);
+    Route::put('/{customer}', [CustomersController::class, 'update']);
+    Route::delete('/{customer}', [CustomersController::class, 'destroy']);
 });
 Route::group(['namespace' => 'Api', 'prefix' => '/suppliers'], function () {
-    Route::get('/', 'SuppliersController@index');
-    Route::post('/', 'SuppliersController@store');
-    Route::get('/{supplier}', 'SuppliersController@show');
-    Route::put('/{supplier}', 'SuppliersController@update');
-    Route::delete('/{supplier}', 'SuppliersController@destroy');
+    Route::get('/', [SuppliersController::class, 'index']);
+    Route::post('/', [SuppliersController::class, 'store']);
+    Route::get('/{supplier}', [SuppliersController::class, 'show']);
+    Route::put('/{supplier}', [SuppliersController::class, 'update']);
+    Route::delete('/{supplier}', [SuppliersController::class, 'destroy']);
 });
 Route::group(['namespace' => 'Api', 'prefix' => '/contacts'], function () {
-    Route::get('/', 'ContactsController@index');
-    Route::post('/', 'ContactsController@store');
-    Route::get('/{contact}', 'ContactsController@show');
-    Route::put('/{contact}', 'ContactsController@update');
-    Route::delete('/{contact}', 'ContactsController@destroy');
+    Route::get('/', [ContactsController::class, 'index']);
+    Route::post('/', [ContactsController::class, 'store']);
+    Route::get('/{contact}', [ContactsController::class, 'show']);
+    Route::put('/{contact}', [ContactsController::class, 'update']);
+    Route::delete('/{contact}', [ContactsController::class, 'destroy']);
 });
 Route::group(['namespace' => 'Api', 'prefix' => '/barrels'], function () {
-    Route::get('/', 'BarrelsController@index');
-    Route::post('/', 'BarrelsController@store');
-    Route::get('/{barrel}', 'BarrelsController@show');
-    Route::put('/{barrel}', 'BarrelsController@update');
-    Route::delete('/{barrel}', 'BarrelsController@destroy');
+    Route::get('/', [BarrelsController::class, 'index']);
+    Route::post('/', [BarrelsController::class, 'store']);
+    Route::get('/{barrel}', [BarrelsController::class, 'show']);
+    Route::put('/{barrel}', [BarrelsController::class, 'update']);
+    Route::delete('/{barrel}', [BarrelsController::class, 'destroy']);
 });
 Route::group(['namespace' => 'Api', 'prefix' => '/bottles'], function () {
-    Route::get('/', 'BottlesController@index');
-    Route::post('/', 'BottlesController@store');
-    Route::get('/{bottle}', 'BottlesController@show');
-    Route::put('/{bottle}', 'BottlesController@update');
-    Route::delete('/{bottle}', 'BottlesController@destroy');
+    Route::get('/', [BottlesController::class, 'index']);
+    Route::post('/', [BottlesController::class, 'store']);
+    Route::get('/{bottle}', [BottlesController::class, 'show']);
+    Route::put('/{bottle}', [BottlesController::class, 'update']);
+    Route::delete('/{bottle}', [BottlesController::class, 'destroy']);
 });
 Route::group(['namespace' => 'Api', 'prefix' => '/food'], function () {
-    Route::get('/', 'FoodController@index');
-    Route::post('/', 'FoodController@store');
-    Route::get('/{food}', 'FoodController@show');
-    Route::put('/{food}', 'FoodController@update');
-    Route::delete('/{food}', 'FoodController@destroy');
+    Route::get('/', [FoodController::class, 'index']);
+    Route::post('/', [FoodController::class, 'store']);
+    Route::get('/{food}', [FoodController::class, 'show']);
+    Route::put('/{food}', [FoodController::class, 'update']);
+    Route::delete('/{food}', [FoodController::class, 'destroy']);
 });
 Route::group(['namespace' => 'Api', 'prefix' => '/others'], function () {
-    Route::get('/', 'OthersController@index');
-    Route::post('/', 'OthersController@store');
-    Route::get('/{other}', 'OthersController@show');
-    Route::put('/{other}', 'OthersController@update');
-    Route::delete('/{other}', 'OthersController@destroy');
+    Route::get('/', [OthersController::class, 'index']);
+    Route::post('/', [OthersController::class, 'store']);
+    Route::get('/{other}', [OthersController::class, 'show']);
+    Route::put('/{other}', [OthersController::class, 'update']);
+    Route::delete('/{other}', [OthersController::class, 'destroy']);
 });
 Route::group(['namespace' => 'Api', 'prefix' => '/bundles'], function () {
-    Route::get('/', 'BundlesController@index');
-    Route::post('/', 'BundlesController@store');
-    Route::get('/{bundle}', 'BundlesController@show');
-    Route::put('/{bundle}', 'BundlesController@update');
-    Route::delete('/{bundle}', 'BundlesController@destroy');
+    Route::get('/', [BundlesController::class, 'index']);
+    Route::post('/', [BundlesController::class, 'store']);
+    Route::get('/{bundle}', [BundlesController::class, 'show']);
+    Route::put('/{bundle}', [BundlesController::class, 'update']);
+    Route::delete('/{bundle}', [BundlesController::class, 'destroy']);
 });
 Route::group(['namespace' => 'Api', 'prefix' => '/payment-methods'], function () {
-    Route::get('/', 'PaymentMethodsController@index');
-    Route::post('/', 'PaymentMethodsController@store');
-    Route::get('/{paymentMethod}', 'PaymentMethodsController@show');
-    Route::put('/{paymentMethod}', 'PaymentMethodsController@update');
-    Route::delete('/{paymentMethod}', 'PaymentMethodsController@destroy');
+    Route::get('/', [PaymentMethodsController::class, 'index']);
+    Route::post('/', [PaymentMethodsController::class, 'store']);
+    Route::get('/{paymentMethod}', [PaymentMethodsController::class, 'show']);
+    Route::put('/{paymentMethod}', [PaymentMethodsController::class, 'update']);
+    Route::delete('/{paymentMethod}', [PaymentMethodsController::class, 'destroy']);
 });
 Route::group(['namespace' => 'Api', 'prefix' => '/transactions'], function () {
-    Route::get('/', 'TransactionsController@index');
-    Route::post('/', 'TransactionsController@store');
-    Route::get('/{transaction}', 'TransactionsController@show');
-    Route::put('/{transaction}', 'TransactionsController@update');
-    Route::delete('/{transaction}', 'TransactionsController@destroy');
+    Route::get('/', [TransactionsController::class, 'index']);
+    Route::post('/', [TransactionsController::class, 'store']);
+    Route::get('/{transaction}', [TransactionsController::class, 'show']);
+    Route::put('/{transaction}', [TransactionsController::class, 'update']);
+    Route::delete('/{transaction}', [TransactionsController::class, 'destroy']);
 });

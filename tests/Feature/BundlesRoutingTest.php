@@ -21,24 +21,13 @@ class BundlesRoutingTest extends TestCase
      */
     public function testIndex(): void
     {
-        $barrels = factory(Barrel::class, 2)->create()
-            ->each(function ($barrel) {
-                $barrel->prices()->save(factory(Price::class)->make());
-            });
-
-        $bundles = factory(Bundle::class, 2)->create()
-            ->each(function ($bundle) {
-                $bundle->prices()->save(factory(Price::class)->make());
-            });
-
-//        Bundle::find($bundles[0]->id)->barrels()->attach($barrels[0]->id, ['quantity' => random_int(1, 10)]);
-        $bundles[0]->barrels()->attach($barrels[0]->id, ['quantity' => random_int(1, 10)]);
-
-//        Bundle::find($bundles[1]->id)->barrels()->attach([
-        $bundles[1]->barrels()->attach([
-            $barrels[0]->id => ['quantity' => random_int(1, 10)],
-            $barrels[1]->id => ['quantity' => random_int(1, 10)],
-        ]);
+        Bundle::factory()->count(2)
+            ->hasAttached(
+                Barrel::factory()->hasPrices(),
+                ['quantity' => random_int(1, 10)]
+            )
+            ->hasPrices()
+            ->create();
 
         $response = $this->get('/api/bundles');
 
@@ -67,10 +56,12 @@ class BundlesRoutingTest extends TestCase
 
     public function testCreate(): void
     {
-        $barrel = factory(Barrel::class)->create();
-        $barrel->prices()->save(factory(Price::class)->make(['value' => 4]));
-        $food = factory(Food::class)->create();
-        $food->prices()->save(factory(Price::class)->make(['value' => 3.5]));
+        $barrel = Barrel::factory()
+            ->hasPrices(1, ['value' => 4])
+            ->create();
+        $food = Food::factory()
+            ->hasPrices(1, ['value' => 3.5])
+            ->create();
 
         $response = $this->postJson('/api/bundles', [
             'name' => 'Bundle',
@@ -129,16 +120,19 @@ class BundlesRoutingTest extends TestCase
 
     public function testUpdate1(): void
     {
-        $barrel = factory(Barrel::class)->create();
-        $barrel->prices()->save(factory(Price::class)->make(['value' => 4]));
-        $food = factory(Food::class)->create();
-        $food->prices()->save(factory(Price::class)->make(['value' => 6]));
+        $barrel = Barrel::factory()
+            ->hasPrices(1, ['value' => 4])
+            ->create();
+        $food = Food::factory()
+            ->hasPrices(1, ['value' => 6])
+            ->create();
 
-        $bottle = factory(Bottle::class)->create();
-        $bottle->prices()->save(factory(Price::class)->make(['value' => 3.5]));
+        $bottle = Bottle::factory()
+            ->hasPrices(1, ['value' => 3.5])
+            ->create();
 
-        $bundle = factory(Bundle::class)->create();
-        $price = factory(Price::class)->make();
+        $bundle = Bundle::factory()->create();
+        $price = Price::factory()->make();
         $bundle->prices()->save($price);
         $bundle->barrels()->attach($barrel->id, ['quantity' => 2]);
         $bundle->food()->attach($food->id, ['quantity' => 1]);
@@ -225,13 +219,15 @@ class BundlesRoutingTest extends TestCase
 
     public function testShow1(): void
     {
-        $barrel = factory(Barrel::class)->create();
-        $barrel->prices()->save(factory(Price::class)->make());
-        $bottle = factory(Bottle::class)->create();
-        $bottle->prices()->save(factory(Price::class)->make());
+        $barrel = Barrel::factory()
+            ->hasPrices(1)
+            ->create();
+        $bottle = Bottle::factory()
+            ->hasPrices(1)
+            ->create();
 
-        $bundle = factory(Bundle::class)->create();
-        $price = factory(Price::class)->make();
+        $bundle = Bundle::factory()->create();
+        $price = Price::factory()->make();
         $bundle->prices()->save($price);
 
         $bundle->barrels()->attach($barrel->id, ['quantity' => 1]);
@@ -296,8 +292,9 @@ class BundlesRoutingTest extends TestCase
 
     public function testDestroy(): void
     {
-        $bundle = factory(Bundle::class)->create();
-        $bundle->prices()->save(factory(Price::class)->make());
+        $bundle = Bundle::factory()
+            ->hasPrices(1)
+            ->create();
 
         $response = $this->deleteJson('/api/bundles/' . $bundle->id);
         $response->assertStatus(204);

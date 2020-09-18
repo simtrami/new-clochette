@@ -17,13 +17,10 @@ class BottlesRoutingTest extends TestCase
      */
     public function testIndex(): void
     {
-        $supplier = factory(Supplier::class)->create();
-
-        factory(Bottle::class, 2)
-            ->create(['supplier_id' => $supplier->id])
-            ->each(function ($bottle) {
-                $bottle->prices()->save(factory(Price::class)->make());
-            });
+        Bottle::factory()
+            ->count(2)
+            ->hasPrices(1)
+            ->create();
 
         $response = $this->get('/api/bottles');
 
@@ -60,7 +57,7 @@ class BottlesRoutingTest extends TestCase
 
     public function testCreate(): void
     {
-        $supplier = factory(Supplier::class)->create();
+        $supplier = Supplier::factory()->create();
 
         $response = $this->postJson('/api/bottles', [
             'name' => 'Bottle',
@@ -120,20 +117,19 @@ class BottlesRoutingTest extends TestCase
 
     public function testUpdate1(): void
     {
-
-        $supplier_1 = factory(Supplier::class)->create();
-        $supplier_2 = factory(Supplier::class)->create();
-
-        $bottle = factory(Bottle::class)->create(['supplier_id' => $supplier_1->id, 'is_returnable' => false]);
-        $id = $bottle->id;
-        $price = factory(Price::class)->make();
+        $bottle = Bottle::factory()
+            ->state(['is_returnable' => false])
+            ->create();
+        $price = Price::factory()->make();
         $bottle->prices()->save($price);
 
+        $newSupplier = Supplier::factory()->create();
+        $id = $bottle->id;
 
         $response = $this->putJson('/api/bottles/' . $id, [
             'name' => 'Bottle',
             'quantity' => 42,
-            'supplier_id' => $supplier_2->id,
+            'supplier_id' => $newSupplier->id,
             'unit_price' => 142.42,
             'value' => 4.2,
             'volume' => 30,
@@ -170,13 +166,13 @@ class BottlesRoutingTest extends TestCase
                     'abv' => 3.4,
                     'ibu' => 32.4,
                     'supplier' => [
-                        'id' => $supplier_2->id,
-                        'name' => $supplier_2->name,
-                        'description' => $supplier_2->description,
-                        'address' => $supplier_2->address,
-                        'phone' => $supplier_2->phone,
-                        'email' => $supplier_2->email,
-                        'supplierSince' => $supplier_2->supplier_since->toISOString(),
+                        'id' => $newSupplier->id,
+                        'name' => $newSupplier->name,
+                        'description' => $newSupplier->description,
+                        'address' => $newSupplier->address,
+                        'phone' => $newSupplier->phone,
+                        'email' => $newSupplier->email,
+                        'supplierSince' => $newSupplier->supplier_since->toISOString(),
                     ],
                 ]
             ]);
@@ -190,13 +186,14 @@ class BottlesRoutingTest extends TestCase
 
     public function testShow1(): void
     {
-        $supplier = factory(Supplier::class)->create();
-
-        $bottle = factory(Bottle::class)->create(['supplier_id' => $supplier->id, 'is_returnable' => false]);
-        $id = $bottle->id;
-        $price = factory(Price::class)->make();
+        $supplier = Supplier::factory()->create();
+        $bottle = Bottle::factory()
+            ->state(['supplier_id' => $supplier->id, 'is_returnable' => false])
+            ->create();
+        $price = Price::factory()->make();
         $bottle->prices()->save($price);
 
+        $id = $bottle->id;
         $response = $this->getJson('/api/bottles/' . $id);
 
         $response->assertStatus(200)
@@ -261,11 +258,11 @@ class BottlesRoutingTest extends TestCase
 
     public function testDestroy(): void
     {
-        $supplier = factory(Supplier::class)->create();
-        $bottle = factory(Bottle::class)->create(['supplier_id' => $supplier->id]);
-        $id = $bottle->id;
-        $bottle->prices()->save(factory(Price::class)->make());
+        $bottle = Bottle::factory()
+            ->hasPrices(1)
+            ->create();
 
+        $id = $bottle->id;
         $response = $this->deleteJson('/api/bottles/' . $id);
         $response->assertStatus(204);
         // Check whether the resource is unreachable

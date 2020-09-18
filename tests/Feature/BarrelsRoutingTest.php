@@ -17,13 +17,12 @@ class BarrelsRoutingTest extends TestCase
      */
     public function testIndex(): void
     {
-        $supplier = factory(Supplier::class)->create();
-
-        $barrel_1 = factory(Barrel::class)->create(['supplier_id' => $supplier->id]);
-        $barrel_1->prices()->save(factory(Price::class)->make(['second_value' => 4.2]));
-
-        $barrel_2 = factory(Barrel::class)->create(['supplier_id' => $supplier->id]);
-        $barrel_2->prices()->save(factory(Price::class)->make());
+        Barrel::factory()
+            ->count(2)
+            ->hasPrices(1, [
+                'second_value' => 4.2,
+            ])
+            ->create();
 
         $response = $this->get('/api/barrels');
 
@@ -60,7 +59,7 @@ class BarrelsRoutingTest extends TestCase
 
     public function testCreate(): void
     {
-        $supplier = factory(Supplier::class)->create();
+        $supplier = Supplier::factory()->create();
 
         $response = $this->postJson('/api/barrels', [
             'name' => 'Barrel',
@@ -122,18 +121,17 @@ class BarrelsRoutingTest extends TestCase
 
     public function testUpdate1(): void
     {
-        $supplier_1 = factory(Supplier::class)->create();
-        $supplier_2 = factory(Supplier::class)->create();
-
-        $barrel = factory(Barrel::class)->create(['supplier_id' => $supplier_1->id]);
-        $id = $barrel->id;
-        $price = factory(Price::class)->make(['second_value' => 3.4]);
+        $barrel = Barrel::factory()->create();
+        $price = Price::factory()->make(['second_value' => 3.4]);
         $barrel->prices()->save($price);
+
+        $newSupplier = Supplier::factory()->create();
+        $id = $barrel->id;
 
         $response = $this->putJson('/api/barrels/' . $id, [
             'name' => 'Barrel',
             'quantity' => 42,
-            'supplier_id' => $supplier_2->id,
+            'supplier_id' => $newSupplier->id,
             'unit_price' => 142.42,
             'value' => 4.2,
             'second_value' => 2.6,
@@ -196,13 +194,13 @@ class BarrelsRoutingTest extends TestCase
                     'abv' => 4.55,
                     'ibu' => 42.5,
                     'supplier' => [
-                        'id' => $supplier_2->id,
-                        'name' => $supplier_2->name,
-                        'description' => $supplier_2->description,
-                        'address' => $supplier_2->address,
-                        'phone' => $supplier_2->phone,
-                        'email' => $supplier_2->email,
-                        'supplierSince' => $supplier_2->supplier_since->toISOString(),
+                        'id' => $newSupplier->id,
+                        'name' => $newSupplier->name,
+                        'description' => $newSupplier->description,
+                        'address' => $newSupplier->address,
+                        'phone' => $newSupplier->phone,
+                        'email' => $newSupplier->email,
+                        'supplierSince' => $newSupplier->supplier_since->toISOString(),
                     ],
                 ]
             ]);
@@ -216,12 +214,14 @@ class BarrelsRoutingTest extends TestCase
 
     public function testShow1(): void
     {
-        $supplier = factory(Supplier::class)->create();
-        $barrel = factory(Barrel::class)->create(['supplier_id' => $supplier->id]);
-        $id = $barrel->id;
-        $price = factory(Price::class)->make(['second_value' => 3.4]);
+        $supplier = Supplier::factory()->create();
+        $barrel = Barrel::factory()
+            ->state(['supplier_id' => $supplier->id])
+            ->create();
+        $price = Price::factory()->make(['second_value' => 3.4]);
         $barrel->prices()->save($price);
 
+        $id = $barrel->id;
         $response = $this->getJson('/api/barrels/' . $id);
 
         $response->assertStatus(200)
@@ -290,11 +290,11 @@ class BarrelsRoutingTest extends TestCase
 
     public function testDestroy(): void
     {
-        $supplier = factory(Supplier::class)->create();
-        $barrel = factory(Barrel::class)->create(['supplier_id' => $supplier->id]);
-        $id = $barrel->id;
-        $barrel->prices()->save(factory(Price::class)->make(['second_value' => 3.4]));
+        $barrel = Barrel::factory()
+            ->hasPrices(1, ['second_value' => 3.4])
+            ->create();
 
+        $id = $barrel->id;
         $response = $this->deleteJson('/api/barrels/' . $id);
         $response->assertStatus(204);
         // Check whether the resource is unreachable

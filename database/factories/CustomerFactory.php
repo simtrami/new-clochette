@@ -1,17 +1,32 @@
 <?php
 
-/* @var $factory Factory */
+namespace Database\Factories;
 
 use App\Customer;
-use Faker\Generator as Faker;
-use Illuminate\Database\Eloquent\Factory;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-$factory->define(Customer::class, function (Faker $faker) {
-    return [
-        'first_name' => $faker->firstName,
-        'last_name' => $faker->lastName,
-        'nickname' => $faker->unique()->userName,
-        'balance' => $faker->randomFloat(2, -200, 200),
-        'is_staff' => $faker->randomElement([false, true]),
-    ];
-});
+class CustomerFactory extends Factory
+{
+    /**
+     * The name of the factory's corresponding model.
+     *
+     * @var string
+     */
+    protected $model = Customer::class;
+
+    /**
+     * Define the model's default state.
+     *
+     * @return array
+     */
+    public function definition(): array
+    {
+        return [
+            'first_name' => $this->faker->firstName,
+            'last_name' => $this->faker->lastName,
+            'nickname' => $this->faker->unique()->userName,
+            'balance' => $this->faker->randomFloat(2, -200, 200),
+            'is_staff' => $this->faker->randomElement([false, true]),
+        ];
+    }
+}

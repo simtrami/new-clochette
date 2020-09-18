@@ -1,18 +1,35 @@
 <?php
 
-/* @var $factory Factory */
+namespace Database\Factories;
 
 use App\Contact;
-use Faker\Generator as Faker;
-use Illuminate\Database\Eloquent\Factory;
+use App\Supplier;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-$factory->define(Contact::class, function (Faker $faker) {
-    return [
-        'first_name' => $faker->firstName,
-        'last_name' => $faker->lastName,
-        'phone' => $faker->phoneNumber,
-        'email' => $faker->safeEmail,
-        'role' => $faker->jobTitle,
-        'notes' => $faker->paragraph
-    ];
-});
+class ContactFactory extends Factory
+{
+    /**
+     * The name of the factory's corresponding model.
+     *
+     * @var string
+     */
+    protected $model = Contact::class;
+
+    /**
+     * Define the model's default state.
+     *
+     * @return array
+     */
+    public function definition(): array
+    {
+        return [
+            'supplier_id' => Supplier::factory(),
+            'first_name' => $this->faker->firstName,
+            'last_name' => $this->faker->lastName,
+            'phone' => $this->faker->phoneNumber,
+            'email' => $this->faker->safeEmail,
+            'role' => $this->faker->jobTitle,
+            'notes' => $this->faker->paragraph
+        ];
+    }
+}

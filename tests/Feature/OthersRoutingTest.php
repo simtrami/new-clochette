@@ -17,12 +17,10 @@ class OthersRoutingTest extends TestCase
      */
     public function testIndex(): void
     {
-        $supplier = factory(Supplier::class)->create();
-
-        factory(Other::class, 2)->create(['supplier_id' => $supplier->id])
-            ->each(function ($other) {
-                $other->prices()->save(factory(Price::class)->make());
-            });
+        Other::factory()
+            ->count(2)
+            ->hasPrices(1)
+            ->create();
 
         $response = $this->get('/api/others');
 
@@ -55,7 +53,7 @@ class OthersRoutingTest extends TestCase
 
     public function testCreate(): void
     {
-        $supplier = factory(Supplier::class)->create();
+        $supplier = Supplier::factory()->create();
 
         $response = $this->postJson('/api/others', [
             'name' => 'Other',
@@ -107,18 +105,18 @@ class OthersRoutingTest extends TestCase
 
     public function testUpdate1(): void
     {
-        $supplier_1 = factory(Supplier::class)->create();
-        $supplier_2 = factory(Supplier::class)->create();
-
-        $other = factory(Other::class)->create(['supplier_id' => $supplier_1->id]);
-        $id = $other->id;
-        $price = factory(Price::class)->make();
+        $other = Other::factory()
+            ->create();
+        $price = Price::factory()->make();
         $other->prices()->save($price);
+
+        $newSupplier = Supplier::factory()->create();
+        $id = $other->id;
 
         $response = $this->putJson('/api/others/' . $id, [
             'name' => 'Other',
             'quantity' => 42,
-            'supplier_id' => $supplier_2->id,
+            'supplier_id' => $newSupplier->id,
             'unit_price' => 142.42,
             'value' => 4.2,
             'description' => 'I am another thing you can buy.',
@@ -149,13 +147,13 @@ class OthersRoutingTest extends TestCase
                         ],
                     ],
                     'supplier' => [
-                        'id' => $supplier_2->id,
-                        'name' => $supplier_2->name,
-                        'description' => $supplier_2->description,
-                        'address' => $supplier_2->address,
-                        'phone' => $supplier_2->phone,
-                        'email' => $supplier_2->email,
-                        'supplierSince' => $supplier_2->supplier_since->toISOString(),
+                        'id' => $newSupplier->id,
+                        'name' => $newSupplier->name,
+                        'description' => $newSupplier->description,
+                        'address' => $newSupplier->address,
+                        'phone' => $newSupplier->phone,
+                        'email' => $newSupplier->email,
+                        'supplierSince' => $newSupplier->supplier_since->toISOString(),
                     ],
                 ]
             ]);
@@ -169,13 +167,14 @@ class OthersRoutingTest extends TestCase
 
     public function testShow1(): void
     {
-        $supplier = factory(Supplier::class)->create();
-
-        $other = factory(Other::class)->create(['supplier_id' => $supplier->id]);
-        $id = $other->id;
-        $price = factory(Price::class)->make();
+        $supplier = Supplier::factory()->create();
+        $other = Other::factory()
+            ->state(['supplier_id' => $supplier->id])
+            ->create();
+        $price = Price::factory()->make();
         $other->prices()->save($price);
 
+        $id = $other->id;
         $response = $this->getJson('/api/others/' . $id);
 
         $response->assertStatus(200)
@@ -235,11 +234,11 @@ class OthersRoutingTest extends TestCase
 
     public function testDestroy(): void
     {
-        $supplier = factory(Supplier::class)->create();
-        $other = factory(Other::class)->create(['supplier_id' => $supplier->id]);
-        $id = $other->id;
-        $other->prices()->save(factory(Price::class)->make());
+        $other = Other::factory()
+            ->hasPrices(1)
+            ->create();
 
+        $id = $other->id;
         $response = $this->deleteJson('/api/others/' . $id);
         $response->assertStatus(204);
         // Check whether the resource is unreachable

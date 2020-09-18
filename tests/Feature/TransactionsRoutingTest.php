@@ -13,6 +13,7 @@ use App\Price;
 use App\Transaction;
 use App\TransactionDetail;
 use App\User;
+use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -25,17 +26,15 @@ class TransactionsRoutingTest extends TestCase
      */
     public function testIndex(): void
     {
-        $user = factory(User::class)->create();
-        $payment_method = factory(PaymentMethod::class)->create();
-        $customer = factory(Customer::class)->create();
+        $customer = Customer::factory()->create();
 
-        factory(Transaction::class)->create([
-            'user_id' => $user->id, 'payment_method_id' => $payment_method->id,
-            'customer_id' => $customer->id,
-        ]);
-        factory(Transaction::class)->create([
-            'user_id' => $user->id, 'payment_method_id' => $payment_method->id,
-        ]);
+        Transaction::factory()
+            ->count(2)
+            ->state(new Sequence(
+                ['customer_id' => null],
+                ['customer_id' => $customer->id],
+            ))
+            ->create();
 
         $response = $this->get('/api/transactions');
 
@@ -63,16 +62,19 @@ class TransactionsRoutingTest extends TestCase
 
     public function testCreate1(): void
     {
-        $user = factory(User::class)->create();
-        $payment_method = factory(PaymentMethod::class)->create(['debit_customer' => true]);
-        $customer = factory(Customer::class)->create();
+        $user = User::factory()->create();
+        $payment_method = PaymentMethod::factory()->create(['debit_customer' => true]);
+        $customer = Customer::factory()->create();
 
-        $barrel = factory(Barrel::class)->create();
-        $barrel->prices()->save(factory(Price::class)->make(['value' => 4]));
-        $food = factory(Food::class)->create();
-        $food->prices()->save(factory(Price::class)->make(['value' => 3.5]));
-        $bundle = factory(Bundle::class)->create();
-        $bundle->prices()->save(factory(Price::class)->make(['value' => 3]));
+        $barrel = Barrel::factory()
+            ->hasPrices(1, ['value' => 4])
+            ->create();
+        $food = Food::factory()
+            ->hasPrices(1, ['value' => 3.5])
+            ->create();
+        $bundle = Bundle::factory()
+            ->hasPrices(1, ['value' => 3])
+            ->create();
 
         $response = $this->postJson('/api/transactions', [
             'value' => 11.5,
@@ -169,16 +171,19 @@ class TransactionsRoutingTest extends TestCase
 
     public function testCreate2(): void
     {
-        $user = factory(User::class)->create();
-        $payment_method = factory(PaymentMethod::class)->create(['debit_customer' => true]);
-        $customer = factory(Customer::class)->create();
+        $user = User::factory()->create();
+        $payment_method = PaymentMethod::factory()->create(['debit_customer' => true]);
+        $customer = Customer::factory()->create();
 
-        $barrel = factory(Barrel::class)->create();
-        $barrel->prices()->save(factory(Price::class)->make(['value' => 4]));
-        $food = factory(Food::class)->create();
-        $food->prices()->save(factory(Price::class)->make(['value' => 3.5]));
-        $bundle = factory(Bundle::class)->create();
-        $bundle->prices()->save(factory(Price::class)->make(['value' => 3]));
+        $barrel = Barrel::factory()
+            ->hasPrices(1, ['value' => 4])
+            ->create();
+        $food = Food::factory()
+            ->hasPrices(1, ['value' => 3.5])
+            ->create();
+        $bundle = Bundle::factory()
+            ->hasPrices(1, ['value' => 3])
+            ->create();
 
         $response = $this->postJson('/api/transactions', [
             'value' => 11.5,
@@ -214,12 +219,13 @@ class TransactionsRoutingTest extends TestCase
 
     public function testCreate3(): void
     {
-        $user = factory(User::class)->create();
-        $payment_method = factory(PaymentMethod::class)->create(['debit_customer' => true]);
-        $customer = factory(Customer::class)->create();
+        $user = User::factory()->create();
+        $payment_method = PaymentMethod::factory()->create(['debit_customer' => true]);
+        $customer = Customer::factory()->create();
 
-        $barrel = factory(Barrel::class)->create();
-        $barrel->prices()->save(factory(Price::class)->make(['value' => 4, 'second_value' => 2]));
+        $barrel = Barrel::factory()
+            ->hasPrices(1, ['value' => 4, 'second_value' => 2])
+            ->create();
 
         $response = $this->postJson('/api/transactions', [
             'value' => 11.5,
@@ -290,33 +296,39 @@ class TransactionsRoutingTest extends TestCase
 
     public function testUpdate1(): void
     {
-        $user_1 = factory(User::class)->create();
-        $user_2 = factory(User::class)->create();
-        $payment_method_1 = factory(PaymentMethod::class)->create();
-        $payment_method_2 = factory(PaymentMethod::class)->create(['debit_customer' => true]);
-        $customer = factory(Customer::class)->create(['is_staff' => true]);
+        $newUser = User::factory()->create();
+        $newPaymentMethod = PaymentMethod::factory()->create(['debit_customer' => true]);
+        $customer = Customer::factory()->create(['is_staff' => true]);
 
-        $barrel = factory(Barrel::class)->create();
-        $barrel->prices()->save(factory(Price::class)->make(['value' => 4, 'second_value' => 2]));
-        $food = factory(Food::class)->create();
-        $food->prices()->save(factory(Price::class)->make(['value' => 6]));
+        $barrel = Barrel::factory()
+            ->hasPrices(1, ['value' => 4, 'second_value' => 2])
+            ->create();
+        $food = Food::factory()
+            ->hasPrices(1, ['value' => 6])
+            ->create();
 
-        $transaction = factory(Transaction::class)->create([
-            'user_id' => $user_1->id, 'payment_method_id' => $payment_method_1->id,
+        $transaction = Transaction::factory()->create();
+        $transaction->barrels()->attach($barrel->id, [
+            'quantity' => 2,
+            'value' => 4,
         ]);
-        $transaction->barrels()->attach($barrel->id, ['quantity' => 2, 'value' => 4]);
-        $transaction->food()->attach($food->id, ['quantity' => 1, 'value' => 6]);
+        $transaction->food()->attach($food->id, [
+            'quantity' => 1,
+            'value' => 6,
+        ]);
 
-        $bottle = factory(Bottle::class)->create();
-        $bottle->prices()->save(factory(Price::class)->make(['value' => 3.5]));
-        $bundle = factory(Bundle::class)->create();
-        $bundle->prices()->save(factory(Price::class)->make(['value' => 1.5]));
+        $bottle = Bottle::factory()
+            ->hasPrices(1, ['value' => 3.5])
+            ->create();
+        $bundle = Bundle::factory()
+            ->hasPrices(1, ['value' => 1.5])
+            ->create();
 
         $response = $this->putJson('/api/transactions/' . $transaction->id, [
             'value' => 8.5,
             'comment' => 'foo bar',
-            'user_id' => $user_2->id,
-            'payment_method_id' => $payment_method_2->id,
+            'user_id' => $newUser->id,
+            'payment_method_id' => $newPaymentMethod->id,
             'customer_id' => $customer->id,
             'barrels' => [
                 [
@@ -358,10 +370,10 @@ class TransactionsRoutingTest extends TestCase
                     'value' => 8.50,
                     'comment' => 'foo bar',
                     'user' => [
-                        'id' => $user_2->id,
-                        'name' => $user_2->name,
-                        'username' => $user_2->username,
-                        'email' => $user_2->email,
+                        'id' => $newUser->id,
+                        'name' => $newUser->name,
+                        'username' => $newUser->username,
+                        'email' => $newUser->email,
                     ],
                     'customer' => [
                         'id' => $customer->id,
@@ -371,10 +383,10 @@ class TransactionsRoutingTest extends TestCase
                         'isStaff' => 1,
                     ],
                     'paymentMethod' => [
-                        'id' => $payment_method_2->id,
-                        'name' => $payment_method_2->name,
-                        'debitCustomer' => $payment_method_2->debit_customer,
-                        'iconName' => $payment_method_2->icon_name,
+                        'id' => $newPaymentMethod->id,
+                        'name' => $newPaymentMethod->name,
+                        'debitCustomer' => $newPaymentMethod->debit_customer,
+                        'iconName' => $newPaymentMethod->icon_name,
                         'parameters' => null,
                     ],
                     'items' => [
@@ -411,18 +423,25 @@ class TransactionsRoutingTest extends TestCase
 
     public function testShow1(): void
     {
-        $user = factory(User::class)->create();
-        $payment_method = factory(PaymentMethod::class)->create();
-        $customer = factory(Customer::class)->create();
+        $user = User::factory()->create();
+        $payment_method = PaymentMethod::factory()->create();
+        $customer = Customer::factory()->create();
 
-        $other = factory(Other::class)->create();
-        $other->prices()->save(factory(Price::class)->make(['value' => 4]));
+        $other = Other::factory()
+            ->hasPrices(1, ['value' => 4])
+            ->create();
 
-        $transaction = factory(Transaction::class)->create([
-            'user_id' => $user->id, 'payment_method_id' => $payment_method->id,
-            'customer_id' => $customer->id,
+        $transaction = Transaction::factory()
+            ->state([
+                'user_id' => $user->id,
+                'payment_method_id' => $payment_method->id,
+                'customer_id' => $customer->id,
+            ])
+            ->create();
+        $transaction->others()->attach($other->id, [
+            'quantity' => 2,
+            'value' => 4,
         ]);
-        $transaction->others()->attach($other->id, ['quantity' => 2, 'value' => 4]);
 
         $response = $this->getJson('/api/transactions/' . $transaction->id);
 
@@ -482,12 +501,9 @@ class TransactionsRoutingTest extends TestCase
 
     public function testDestroy1(): void
     {
-        $user = factory(User::class)->create();
-        $payment_method = factory(PaymentMethod::class)->create();
-        $customer = factory(Customer::class)->create();
+        $customer = Customer::factory()->create();
 
-        $transaction = factory(Transaction::class)->create([
-            'user_id' => $user->id, 'payment_method_id' => $payment_method->id,
+        $transaction = Transaction::factory()->create([
             'customer_id' => $customer->id,
         ]);
 
@@ -506,15 +522,17 @@ class TransactionsRoutingTest extends TestCase
 
     public function testDestroy2(): void
     {
-        $user = factory(User::class)->create();
-        $payment_method = factory(PaymentMethod::class)->create();
-        $customer = factory(Customer::class)->create();
+        $customer = Customer::factory()->create();
 
-        $food = factory(Food::class)->create();
-        $food->prices()->save(factory(Price::class)->make(['value' => 4]));
+        $transaction = Transaction::factory()->create([
+            'customer_id' => $customer->id,
+        ]);
 
-        $transaction = factory(Transaction::class)->create([
-            'user_id' => $user->id, 'payment_method_id' => $payment_method->id,
+        $food = Food::factory()
+            ->hasPrices(1, ['value' => 4])
+            ->create();
+
+        $transaction = Transaction::factory()->create([
             'customer_id' => $customer->id,
         ]);
         $transaction->food()->attach($food->id, ['quantity' => 2, 'value' => 4]);

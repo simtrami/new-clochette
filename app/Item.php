@@ -5,10 +5,12 @@ namespace App;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * App\Item
@@ -24,6 +26,8 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
  */
 class Item extends Model
 {
+    use SoftDeletes, HasFactory;
+
     ##
     # Relationships
     ##

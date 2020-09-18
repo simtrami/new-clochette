@@ -1,16 +1,33 @@
 <?php
 
-/* @var $factory Factory */
+namespace Database\Factories;
 
 use App\Other;
-use Faker\Generator as Faker;
-use Illuminate\Database\Eloquent\Factory;
+use App\Supplier;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-$factory->define(Other::class, function (Faker $faker) {
-    return [
-        'name' => $faker->colorName,
-        'quantity' => $faker->numberBetween(0, 100),
-        'unit_price' => $faker->randomFloat(3, 0, 150.999),
-        'description' => $faker->text(255),
-    ];
-});
+class OtherFactory extends Factory
+{
+    /**
+     * The name of the factory's corresponding model.
+     *
+     * @var string
+     */
+    protected $model = Other::class;
+
+    /**
+     * Define the model's default state.
+     *
+     * @return array
+     */
+    public function definition(): array
+    {
+        return [
+            'supplier_id' => Supplier::factory(),
+            'name' => $this->faker->colorName,
+            'quantity' => $this->faker->numberBetween(0, 100),
+            'unit_price' => $this->faker->randomFloat(3, 0, 150.999),
+            'description' => $this->faker->text(255),
+        ];
+    }
+}

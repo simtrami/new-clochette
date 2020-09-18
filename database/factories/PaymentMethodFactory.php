@@ -1,15 +1,30 @@
 <?php
 
-/* @var $factory Factory */
+namespace Database\Factories;
 
 use App\PaymentMethod;
-use Faker\Generator as Faker;
-use Illuminate\Database\Eloquent\Factory;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-$factory->define(PaymentMethod::class, function (Faker $faker) {
-    return [
-        'name' => $faker->unique()->monthName,
-        'debit_customer' => $faker->boolean,
-        'icon_name' => $faker->word,
-    ];
-});
+class PaymentMethodFactory extends Factory
+{
+    /**
+     * The name of the factory's corresponding model.
+     *
+     * @var string
+     */
+    protected $model = PaymentMethod::class;
+
+    /**
+     * Define the model's default state.
+     *
+     * @return array
+     */
+    public function definition(): array
+    {
+        return [
+            'name' => $this->faker->unique()->monthName,
+            'debit_customer' => $this->faker->boolean,
+            'icon_name' => $this->faker->word,
+        ];
+    }
+}

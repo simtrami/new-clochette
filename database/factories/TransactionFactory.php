@@ -1,14 +1,33 @@
 <?php
 
-/* @var $factory Factory */
+namespace Database\Factories;
 
+use App\PaymentMethod;
 use App\Transaction;
-use Faker\Generator as Faker;
-use Illuminate\Database\Eloquent\Factory;
+use App\User;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-$factory->define(Transaction::class, function (Faker $faker) {
-    return [
-        'value' => $faker->randomFloat(2, -10, 100),
-        'comment' => $faker->sentence,
-    ];
-});
+class TransactionFactory extends Factory
+{
+    /**
+     * The name of the factory's corresponding model.
+     *
+     * @var string
+     */
+    protected $model = Transaction::class;
+
+    /**
+     * Define the model's default state.
+     *
+     * @return array
+     */
+    public function definition(): array
+    {
+        return [
+            'user_id' => User::factory(),
+            'payment_method_id' => PaymentMethod::factory(),
+            'value' => $this->faker->randomFloat(2, -10, 100),
+            'comment' => $this->faker->sentence,
+        ];
+    }
+}

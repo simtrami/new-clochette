@@ -16,8 +16,7 @@ class ContactsRoutingTest extends TestCase
      */
     public function testIndex(): void
     {
-        $supplier = factory(Supplier::class)->create();
-        factory(Contact::class, 2)->create(['supplier_id' => $supplier->id]);
+        Contact::factory()->count(2)->create();
 
         $response = $this->get('/api/contacts');
 
@@ -48,7 +47,7 @@ class ContactsRoutingTest extends TestCase
 
     public function testCreate(): void
     {
-        $supplier = factory(Supplier::class)->create();
+        $supplier = Supplier::factory()->create();
 
         $response = $this->postJson('/api/contacts', [
             'supplier_id' => $supplier->id,
@@ -77,13 +76,11 @@ class ContactsRoutingTest extends TestCase
 
     public function testUpdate1(): void
     {
-        $supplier1 = factory(Supplier::class)->create();
-        $contact = factory(Contact::class)->create(['supplier_id' => $supplier1->id]);
-
-        $supplier2 = factory(Supplier::class)->create();
+        $contact = Contact::factory()->create();
+        $newSupplier = Supplier::factory()->create();
 
         $response = $this->putJson('/api/contacts/' . $contact->id, [
-            'supplier_id' => $supplier2->id,
+            'supplier_id' => $newSupplier->id,
             'first_name' => 'Contact',
             'last_name' => 'McTest',
             'phone' => "762.943.3595 x82638",
@@ -97,13 +94,13 @@ class ContactsRoutingTest extends TestCase
                 'data' => [
                     'id' => $contact->id,
                     'supplier' => [
-                        'id' => $supplier2->id,
-                        'name' => $supplier2->name,
-                        'description' => $supplier2->description,
-                        'address' => $supplier2->address,
-                        'phone' => $supplier2->phone,
-                        'email' => $supplier2->email,
-                        'supplierSince' => $supplier2->supplier_since->toISOString(),
+                        'id' => $newSupplier->id,
+                        'name' => $newSupplier->name,
+                        'description' => $newSupplier->description,
+                        'address' => $newSupplier->address,
+                        'phone' => $newSupplier->phone,
+                        'email' => $newSupplier->email,
+                        'supplierSince' => $newSupplier->supplier_since->toISOString(),
                     ],
                     'firstName' => 'Contact',
                     'lastName' => 'McTest',
@@ -123,8 +120,7 @@ class ContactsRoutingTest extends TestCase
 
     public function testShow1(): void
     {
-        $supplier = factory(Supplier::class)->create();
-        $contact = factory(Contact::class)->create(['supplier_id' => $supplier->id]);
+        $contact = Contact::factory()->create();
 
         $response = $this->getJson('/api/contacts/' . $contact->id);
 
@@ -151,8 +147,7 @@ class ContactsRoutingTest extends TestCase
 
     public function testDestroy(): void
     {
-        $supplier = factory(Supplier::class)->create();
-        $contact = factory(Contact::class)->create(['supplier_id' => $supplier->id]);
+        $contact = Contact::factory()->create();
 
         $response = $this->deleteJson('/api/contacts/' . $contact->id);
         $response->assertStatus(204);

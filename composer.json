@@ -9,27 +9,26 @@
     ],
     "license": "MIT",
     "require": {
-        "php": "^7.2.5",
+        "php": "^7.3",
         "ext-json": "*",
-        "fideloper/proxy": "^4.3",
+        "fideloper/proxy": "^4.4",
         "fruitcake/laravel-cors": "^1.0",
-        "guzzlehttp/guzzle": "^6.5",
-        "laravel/framework": "^7.14",
-        "laravel/passport": "^8.5",
+        "guzzlehttp/guzzle": "^7.0.1",
+        "laravel/framework": "^8.0",
         "laravel/tinker": "^2.4",
-        "laravel/ui": "^2.1",
-        "spatie/laravel-permission": "^3.13",
-        "spatie/laravel-tags": "^2.6"
+        "laravel/ui": "^3.0",
+        "spatie/laravel-permission": "^3.17",
+        "spatie/laravel-tags": "^2.7.2"
     },
     "require-dev": {
-        "barryvdh/laravel-ide-helper": "^2.7",
-        "beyondcode/laravel-dump-server": "^1.4",
-        "facade/ignition": "^2.0",
+        "barryvdh/laravel-ide-helper": "^2.8.1",
+        "beyondcode/laravel-dump-server": "^1.5",
+        "facade/ignition": "^2.3.7",
         "fzaninotto/faker": "^1.9.1",
-        "laravel/homestead": "^10.8",
-        "mockery/mockery": "^1.4",
-        "nunomaduro/collision": "^4.2",
-        "phpunit/phpunit": "^8.5",
+        "laravel/homestead": "^10.13",
+        "mockery/mockery": "^1.4.2",
+        "nunomaduro/collision": "^5.0",
+        "phpunit/phpunit": "^9.0",
         "roave/security-advisories": "dev-master"
     },
     "config": {
@@ -44,12 +43,10 @@
     },
     "autoload": {
         "psr-4": {
-            "App\\": "app/"
-        },
-        "classmap": [
-            "database/seeds",
-            "database/factories"
-        ]
+            "App\\": "app/",
+            "Database\\Factories\\": "database/factories/",
+            "Database\\Seeders\\": "database/seeders/"
+        }
     },
     "autoload-dev": {
         "psr-4": {

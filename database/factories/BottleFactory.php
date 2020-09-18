@@ -1,19 +1,36 @@
 <?php
 
-/* @var $factory Factory */
+namespace Database\Factories;
 
 use App\Bottle;
-use Faker\Generator as Faker;
-use Illuminate\Database\Eloquent\Factory;
+use App\Supplier;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-$factory->define(Bottle::class, function (Faker $faker) {
-    return [
-        'name' => $faker->colorName,
-        'quantity' => $faker->numberBetween(0, 100),
-        'unit_price' => $faker->randomFloat(3, 0, 150.999),
-        'volume' => $faker->randomFloat(3, 0.100, 2.999),
-        'is_returnable' => $faker->boolean(),
-        'abv' => $faker->randomFloat(1, 0, 99.99),
-        'ibu' => $faker->randomFloat(1, 0, 999.9),
-    ];
-});
+class BottleFactory extends Factory
+{
+    /**
+     * The name of the factory's corresponding model.
+     *
+     * @var string
+     */
+    protected $model = Bottle::class;
+
+    /**
+     * Define the model's default state.
+     *
+     * @return array
+     */
+    public function definition(): array
+    {
+        return [
+            'supplier_id' => Supplier::factory(),
+            'name' => $this->faker->colorName,
+            'quantity' => $this->faker->numberBetween(0, 100),
+            'unit_price' => $this->faker->randomFloat(3, 0, 150.999),
+            'volume' => $this->faker->randomFloat(3, 0.100, 2.999),
+            'is_returnable' => $this->faker->boolean(),
+            'abv' => $this->faker->randomFloat(1, 0, 99.99),
+            'ibu' => $this->faker->randomFloat(1, 0, 999.9),
+        ];
+    }
+}

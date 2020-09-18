@@ -6,7 +6,6 @@ use Eloquent;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Carbon;
 
@@ -49,8 +48,6 @@ use Illuminate\Support\Carbon;
  */
 class Bundle extends Item
 {
-    use SoftDeletes;
-
     protected $fillable = ['name', 'quantity'];
 
     ##

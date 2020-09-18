@@ -17,7 +17,7 @@ class CustomersRoutingTest extends TestCase
      */
     public function testIndex(): void
     {
-        factory(Customer::class, 2)->create();
+        Customer::factory()->count(2)->create();
 
         $response = $this->get('/api/customers');
 
@@ -69,7 +69,7 @@ class CustomersRoutingTest extends TestCase
 
     public function testUpdate1(): void
     {
-        $customer = factory(Customer::class)->create();
+        $customer = Customer::factory()->create();
 
         $response = $this->putJson('/api/customers/' . $customer->id, [
             'first_name' => 'Customer',
@@ -98,7 +98,7 @@ class CustomersRoutingTest extends TestCase
 
     public function testShow1(): void
     {
-        $customer = factory(Customer::class)->create();
+        $customer = Customer::factory()->create();
 
         $response = $this->getJson('/api/customers/' . $customer->id);
 
@@ -123,7 +123,7 @@ class CustomersRoutingTest extends TestCase
 
     public function testDestroy1(): void
     {
-        $customer = factory(Customer::class)->create();
+        $customer = Customer::factory()->create();
 
         $response = $this->deleteJson('/api/customers/' . $customer->id);
         $response->assertStatus(204);
@@ -140,8 +140,8 @@ class CustomersRoutingTest extends TestCase
 
     public function testDestroy2(): void
     {
-        $customer = factory(Customer::class)->create();
-        $user = factory(User::class)->create(['customer_id' => $customer->id]);
+        $customer = Customer::factory()->create();
+        $user = User::factory()->create(['customer_id' => $customer->id]);
 
         self::assertEquals(1, User::whereCustomerId($customer->id)->count());
 
@@ -154,8 +154,8 @@ class CustomersRoutingTest extends TestCase
 
     public function testDestroy3(): void
     {
-        $customer = factory(Customer::class)->create();
-        $transaction = factory(Transaction::class)->create(['customer_id' => $customer->id]);
+        $customer = Customer::factory()->create();
+        $transaction = Transaction::factory()->create(['customer_id' => $customer->id]);
 
         self::assertEquals(1, Transaction::whereCustomerId($customer->id)->count());
 

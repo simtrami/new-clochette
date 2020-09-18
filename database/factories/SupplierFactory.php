@@ -1,18 +1,33 @@
 <?php
 
-/* @var $factory Factory */
+namespace Database\Factories;
 
 use App\Supplier;
-use Faker\Generator as Faker;
-use Illuminate\Database\Eloquent\Factory;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-$factory->define(Supplier::class, function (Faker $faker) {
-    return [
-        'name' => $faker->company,
-        'description' => $faker->paragraph,
-        'address' => $faker->address,
-        'phone' => $faker->phoneNumber,
-        'email' => $faker->companyEmail,
-        'supplier_since' => $faker->date()
-    ];
-});
+class SupplierFactory extends Factory
+{
+    /**
+     * The name of the factory's corresponding model.
+     *
+     * @var string
+     */
+    protected $model = Supplier::class;
+
+    /**
+     * Define the model's default state.
+     *
+     * @return array
+     */
+    public function definition(): array
+    {
+        return [
+            'name' => $this->faker->company,
+            'description' => $this->faker->paragraph,
+            'address' => $this->faker->address,
+            'phone' => $this->faker->phoneNumber,
+            'email' => $this->faker->companyEmail,
+            'supplier_since' => $this->faker->date()
+        ];
+    }
+}
