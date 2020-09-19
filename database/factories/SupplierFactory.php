@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-use App\Supplier;
+use App\Models\Supplier;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class SupplierFactory extends Factory

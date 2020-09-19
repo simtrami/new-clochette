@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
 /**
- * App\Article
+ * App\Models\Article
  *
  * @property-read Collection|Bundle[] $bundles
  * @property-read int|null $bundles_count
@@ -20,10 +20,7 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
  * @property-read int|null $transactions_count
  * @method static Builder|Article newModelQuery()
  * @method static Builder|Article newQuery()
- * @method static \Illuminate\Database\Query\Builder|Article onlyTrashed()
  * @method static Builder|Article query()
- * @method static \Illuminate\Database\Query\Builder|Article withTrashed()
- * @method static \Illuminate\Database\Query\Builder|Article withoutTrashed()
  * @mixin Eloquent
  */
 class Article extends Item

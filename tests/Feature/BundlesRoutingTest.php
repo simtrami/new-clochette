@@ -2,11 +2,11 @@
 
 namespace Tests\Feature;
 
-use App\Barrel;
-use App\Bottle;
-use App\Bundle;
-use App\Food;
-use App\Price;
+use App\Models\Barrel;
+use App\Models\Bottle;
+use App\Models\Bundle;
+use App\Models\Food;
+use App\Models\Price;
 use Exception;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -103,13 +103,13 @@ class BundlesRoutingTest extends TestCase
                     'articles' => [
                         [
                             'id' => $barrel->id,
-                            'type' => 'App\Barrel',
+                            'type' => 'App\Models\Barrel',
                             'name' => $barrel->name,
                             'quantity' => 1,
                         ],
                         [
                             'id' => $food->id,
-                            'type' => 'App\Food',
+                            'type' => 'App\Models\Food',
                             'name' => $food->name,
                             'quantity' => 2,
                         ],
@@ -197,13 +197,13 @@ class BundlesRoutingTest extends TestCase
                     'articles' => [
                         [
                             'id' => $barrel->id,
-                            'type' => 'App\Barrel',
+                            'type' => 'App\Models\Barrel',
                             'name' => $barrel->name,
                             'quantity' => 1,
                         ],
                         [
                             'id' => $bottle->id,
-                            'type' => 'App\Bottle',
+                            'type' => 'App\Models\Bottle',
                             'name' => $bottle->name,
                             'quantity' => 2,
                         ],
@@ -281,13 +281,13 @@ class BundlesRoutingTest extends TestCase
                     'articles' => [
                         [
                             'id' => $barrel->id,
-                            'type' => 'App\Barrel',
+                            'type' => 'App\Models\Barrel',
                             'name' => $barrel->name,
                             'quantity' => 1,
                         ],
                         [
                             'id' => $bottle->id,
-                            'type' => 'App\Bottle',
+                            'type' => 'App\Models\Bottle',
                             'name' => $bottle->name,
                             'quantity' => 10,
                         ],

@@ -1,13 +1,14 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Eloquent;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Carbon;
 
 /**
- * App\Food
+ * App\Models\Food
  *
  * @property int $id
  * @property int|null $supplier_id
@@ -25,18 +26,18 @@ use Illuminate\Support\Carbon;
  * @property-read Supplier|null $supplier
  * @property-read Collection|Transaction[] $transactions
  * @property-read int|null $transactions_count
- * @method static \Illuminate\Database\Eloquent\Builder|Food newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Food newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Food query()
- * @method static \Illuminate\Database\Eloquent\Builder|Food whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Food whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Food whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Food whereIsBulk($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Food whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Food whereQuantity($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Food whereSupplierId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Food whereUnitPrice($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Food whereUpdatedAt($value)
+ * @method static Builder|Food newModelQuery()
+ * @method static Builder|Food newQuery()
+ * @method static Builder|Food query()
+ * @method static Builder|Food whereCreatedAt($value)
+ * @method static Builder|Food whereDeletedAt($value)
+ * @method static Builder|Food whereId($value)
+ * @method static Builder|Food whereIsBulk($value)
+ * @method static Builder|Food whereName($value)
+ * @method static Builder|Food whereQuantity($value)
+ * @method static Builder|Food whereSupplierId($value)
+ * @method static Builder|Food whereUnitPrice($value)
+ * @method static Builder|Food whereUpdatedAt($value)
  * @mixin Eloquent
  */
 class Food extends Article

@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * App\Item
+ * App\Models\Item
  *
  * @property-read Collection|Price[] $prices
  * @property-read int|null $prices_count
@@ -21,7 +21,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property-read int|null $transactions_count
  * @method static Builder|Item newModelQuery()
  * @method static Builder|Item newQuery()
+ * @method static \Illuminate\Database\Query\Builder|Item onlyTrashed()
  * @method static Builder|Item query()
+ * @method static \Illuminate\Database\Query\Builder|Item withTrashed()
+ * @method static \Illuminate\Database\Query\Builder|Item withoutTrashed()
  * @mixin Eloquent
  */
 class Item extends Model

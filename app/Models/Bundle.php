@@ -1,16 +1,16 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Eloquent;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
-use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Carbon;
 
 /**
- * App\Bundle
+ * App\Models\Bundle
  *
  * @property int $id
  * @property string $name
@@ -32,18 +32,15 @@ use Illuminate\Support\Carbon;
  * @property-read int|null $prices_count
  * @property-read Collection|Transaction[] $transactions
  * @property-read int|null $transactions_count
- * @method static \Illuminate\Database\Eloquent\Builder|Bundle newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Bundle newQuery()
- * @method static Builder|Bundle onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|Bundle query()
- * @method static \Illuminate\Database\Eloquent\Builder|Bundle whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Bundle whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Bundle whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Bundle whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Bundle whereQuantity($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Bundle whereUpdatedAt($value)
- * @method static Builder|Bundle withTrashed()
- * @method static Builder|Bundle withoutTrashed()
+ * @method static Builder|Bundle newModelQuery()
+ * @method static Builder|Bundle newQuery()
+ * @method static Builder|Bundle query()
+ * @method static Builder|Bundle whereCreatedAt($value)
+ * @method static Builder|Bundle whereDeletedAt($value)
+ * @method static Builder|Bundle whereId($value)
+ * @method static Builder|Bundle whereName($value)
+ * @method static Builder|Bundle whereQuantity($value)
+ * @method static Builder|Bundle whereUpdatedAt($value)
  * @mixin Eloquent
  */
 class Bundle extends Item

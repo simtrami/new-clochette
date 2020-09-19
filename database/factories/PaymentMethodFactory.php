@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-use App\PaymentMethod;
+use App\Models\PaymentMethod;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class PaymentMethodFactory extends Factory

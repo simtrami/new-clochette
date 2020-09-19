@@ -2,8 +2,8 @@
 
 namespace Database\Factories;
 
-use App\Contact;
-use App\Supplier;
+use App\Models\Contact;
+use App\Models\Supplier;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class ContactFactory extends Factory

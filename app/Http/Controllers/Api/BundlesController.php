@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Bundle;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\BundleResource;
-use App\Price;
+use App\Models\Bundle;
+use App\Models\Price;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;

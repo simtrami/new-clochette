@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\PaymentMethodResource;
-use App\PaymentMethod;
+use App\Models\PaymentMethod;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;

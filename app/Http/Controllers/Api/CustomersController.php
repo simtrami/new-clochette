@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Customer;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\CustomerResource;
+use App\Models\Customer;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;

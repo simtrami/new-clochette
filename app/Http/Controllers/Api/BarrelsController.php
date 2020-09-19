@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Barrel;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\BarrelResource;
-use App\Price;
-use App\Supplier;
+use App\Models\Barrel;
+use App\Models\Price;
+use App\Models\Supplier;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;

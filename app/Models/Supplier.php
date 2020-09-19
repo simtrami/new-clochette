@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
@@ -11,11 +11,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
 
 /**
- * App\Supplier
+ * App\Models\Supplier
  *
  * @property int $id
  * @property string $name
- * @property string $notes
+ * @property string|null $notes
  * @property string|null $address
  * @property string|null $phone
  * @property string|null $email
@@ -29,10 +29,10 @@ use Illuminate\Support\Carbon;
  * @method static Builder|Supplier query()
  * @method static Builder|Supplier whereAddress($value)
  * @method static Builder|Supplier whereCreatedAt($value)
- * @method static Builder|Supplier whereDescription($value)
  * @method static Builder|Supplier whereEmail($value)
  * @method static Builder|Supplier whereId($value)
  * @method static Builder|Supplier whereName($value)
+ * @method static Builder|Supplier whereNotes($value)
  * @method static Builder|Supplier wherePhone($value)
  * @method static Builder|Supplier whereSupplierSince($value)
  * @method static Builder|Supplier whereUpdatedAt($value)

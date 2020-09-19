@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
@@ -13,15 +13,12 @@ use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Notifications\DatabaseNotificationCollection;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
-use Laravel\Passport\Client;
-use Laravel\Passport\HasApiTokens;
-use Laravel\Passport\Token;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Traits\HasRoles;
 
 /**
- * App\User
+ * App\Models\User
  *
  * @property int $id
  * @property string $name
@@ -33,8 +30,6 @@ use Spatie\Permission\Traits\HasRoles;
  * @property string|null $remember_token
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property-read Collection|Client[] $clients
- * @property-read int|null $clients_count
  * @property-read Customer|null $customer
  * @property-read DatabaseNotificationCollection|DatabaseNotification[] $notifications
  * @property-read int|null $notifications_count
@@ -42,8 +37,6 @@ use Spatie\Permission\Traits\HasRoles;
  * @property-read int|null $permissions_count
  * @property-read Collection|Role[] $roles
  * @property-read int|null $roles_count
- * @property-read Collection|Token[] $tokens
- * @property-read int|null $tokens_count
  * @property-read Collection|Transaction[] $transactions
  * @property-read int|null $transactions_count
  * @method static Builder|User newModelQuery()

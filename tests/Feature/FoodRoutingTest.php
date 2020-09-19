@@ -2,9 +2,9 @@
 
 namespace Tests\Feature;
 
-use App\Food;
-use App\Price;
-use App\Supplier;
+use App\Models\Food;
+use App\Models\Price;
+use App\Models\Supplier;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 

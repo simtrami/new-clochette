@@ -2,11 +2,11 @@
 
 namespace App\Http\Resources;
 
-use App\Barrel;
-use App\Bottle;
-use App\Bundle;
-use App\Food;
-use App\Other;
+use App\Models\Barrel;
+use App\Models\Bottle;
+use App\Models\Bundle;
+use App\Models\Food;
+use App\Models\Other;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 

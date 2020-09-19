@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-use App\BundleArticle;
+use App\Models\BundleArticle;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class BundleArticleFactory extends Factory

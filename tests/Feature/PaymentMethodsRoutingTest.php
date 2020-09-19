@@ -2,8 +2,8 @@
 
 namespace Tests\Feature;
 
-use App\PaymentMethod;
-use App\Transaction;
+use App\Models\PaymentMethod;
+use App\Models\Transaction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 

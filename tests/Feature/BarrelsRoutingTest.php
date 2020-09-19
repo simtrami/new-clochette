@@ -2,9 +2,9 @@
 
 namespace Tests\Feature;
 
-use App\Barrel;
-use App\Price;
-use App\Supplier;
+use App\Models\Barrel;
+use App\Models\Price;
+use App\Models\Supplier;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 

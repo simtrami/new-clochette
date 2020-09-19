@@ -2,9 +2,9 @@
 
 namespace Tests\Feature;
 
-use App\Barrel;
-use App\Contact;
-use App\Supplier;
+use App\Models\Barrel;
+use App\Models\Contact;
+use App\Models\Supplier;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;

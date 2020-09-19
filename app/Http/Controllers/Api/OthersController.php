@@ -4,9 +4,9 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\OtherResource;
-use App\Other;
-use App\Price;
-use App\Supplier;
+use App\Models\Other;
+use App\Models\Price;
+use App\Models\Supplier;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;

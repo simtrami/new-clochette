@@ -2,8 +2,8 @@
 
 namespace Tests\Feature;
 
-use App\Contact;
-use App\Supplier;
+use App\Models\Contact;
+use App\Models\Supplier;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 

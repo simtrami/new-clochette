@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Barrel;
-use App\Bottle;
-use App\Bundle;
-use App\Food;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\TransactionResource;
-use App\Other;
-use App\PaymentMethod;
-use App\Transaction;
+use App\Models\Barrel;
+use App\Models\Bottle;
+use App\Models\Bundle;
+use App\Models\Food;
+use App\Models\Other;
+use App\Models\PaymentMethod;
+use App\Models\Transaction;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;

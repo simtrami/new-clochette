@@ -2,17 +2,16 @@
 
 namespace Tests\Feature;
 
-use App\Barrel;
-use App\Bottle;
-use App\Customer;
-use App\Bundle;
-use App\Food;
-use App\Other;
-use App\PaymentMethod;
-use App\Price;
-use App\Transaction;
-use App\TransactionDetail;
-use App\User;
+use App\Models\Barrel;
+use App\Models\Bottle;
+use App\Models\Bundle;
+use App\Models\Customer;
+use App\Models\Food;
+use App\Models\Other;
+use App\Models\PaymentMethod;
+use App\Models\Transaction;
+use App\Models\TransactionDetail;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -145,21 +144,21 @@ class TransactionsRoutingTest extends TestCase
                     'items' => [
                         [
                             'id' => $food->id,
-                            'type' => 'App\Food',
+                            'type' => 'App\Models\Food',
                             'name' => $food->name,
                             'quantity' => 2,
                             'value' => 3.5
                         ],
                         [
                             'id' => $bundle->id,
-                            'type' => 'App\Bundle',
+                            'type' => 'App\Models\Bundle',
                             'name' => $bundle->name,
                             'quantity' => 1,
                             'value' => 3,
                         ],
                         [
                             'id' => $barrel->id,
-                            'type' => 'App\Barrel',
+                            'type' => 'App\Models\Barrel',
                             'name' => $barrel->name,
                             'quantity' => 1,
                             'value' => 4,
@@ -284,7 +283,7 @@ class TransactionsRoutingTest extends TestCase
                     'items' => [
                         [
                             'id' => $barrel->id,
-                            'type' => 'App\Barrel',
+                            'type' => 'App\Models\Barrel',
                             'name' => $barrel->name,
                             'quantity' => 1,
                             'value' => 2,
@@ -392,21 +391,21 @@ class TransactionsRoutingTest extends TestCase
                     'items' => [
                         [
                             'id' => $barrel->id,
-                            'type' => 'App\Barrel',
+                            'type' => 'App\Models\Barrel',
                             'name' => $barrel->name,
                             'quantity' => 1,
                             'value' => 2,
                         ],
                         [
                             'id' => $bottle->id,
-                            'type' => 'App\Bottle',
+                            'type' => 'App\Models\Bottle',
                             'name' => $bottle->name,
                             'quantity' => 2,
                             'value' => 3.5,
                         ],
                         [
                             'id' => $bundle->id,
-                            'type' => 'App\Bundle',
+                            'type' => 'App\Models\Bundle',
                             'name' => $bundle->name,
                             'quantity' => 1,
                             'value' => 1.5,
@@ -484,7 +483,7 @@ class TransactionsRoutingTest extends TestCase
                     'items' => [
                         [
                             'id' => $other->id,
-                            'type' => 'App\Other',
+                            'type' => 'App\Models\Other',
                             'name' => $other->name,
                             'quantity' => 2,
                             'value' => 4,

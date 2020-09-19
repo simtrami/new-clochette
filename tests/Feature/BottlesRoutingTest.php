@@ -2,9 +2,9 @@
 
 namespace Tests\Feature;
 
-use App\Bottle;
-use App\Price;
-use App\Supplier;
+use App\Models\Bottle;
+use App\Models\Price;
+use App\Models\Supplier;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 

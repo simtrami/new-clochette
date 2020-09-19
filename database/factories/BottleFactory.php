@@ -2,8 +2,8 @@
 
 namespace Database\Factories;
 
-use App\Bottle;
-use App\Supplier;
+use App\Models\Bottle;
+use App\Models\Supplier;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class BottleFactory extends Factory

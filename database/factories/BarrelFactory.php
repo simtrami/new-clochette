@@ -2,8 +2,8 @@
 
 namespace Database\Factories;
 
-use App\Barrel;
-use App\Supplier;
+use App\Models\Barrel;
+use App\Models\Supplier;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class BarrelFactory extends Factory
