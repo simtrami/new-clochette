@@ -40,7 +40,7 @@ class SuppliersController extends Controller
     {
         $data = $request->validate([
             'name' => 'required|string|min:2|max:255|unique:suppliers',
-            'description' => 'required|string|min:2|max:500',
+            'notes' => 'required|string|min:2|max:1000',
             'address' => 'nullable|string',
             'phone' => 'nullable|string',
             'email' => 'nullable|email',
@@ -66,7 +66,7 @@ class SuppliersController extends Controller
                 'string', 'min:2', 'max:255',
                 Rule::unique('suppliers')->ignore($supplier),
             ],
-            'description' => 'string|min:2|max:500',
+            'notes' => 'string|min:2|max:1000',
             'address' => 'nullable|string',
             'phone' => 'nullable|string',
             'email' => 'nullable|email',

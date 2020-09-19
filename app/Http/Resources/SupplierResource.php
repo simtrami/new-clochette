@@ -7,7 +7,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
  * @property mixed name
- * @property mixed description
+ * @property mixed notes
  * @property mixed address
  * @property mixed phone
  * @property mixed email
@@ -28,7 +28,7 @@ class SupplierResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'description' => $this->description,
+            'notes' => $this->notes,
             'address' => $this->address,
             'phone' => $this->phone,
             'email' => $this->email,

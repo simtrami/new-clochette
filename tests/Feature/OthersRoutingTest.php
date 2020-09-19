@@ -76,7 +76,7 @@ class OthersRoutingTest extends TestCase
                         'id', 'value',
                     ],
                     'supplier' => [
-                        'id', 'name', 'description',
+                        'id', 'name', 'notes',
                         'address', 'phone', 'email', 'supplierSince',
                     ],
                 ]
@@ -93,7 +93,7 @@ class OthersRoutingTest extends TestCase
                     'supplier' => [
                         'id' => $supplier->id,
                         'name' => $supplier->name,
-                        'description' => $supplier->description,
+                        'notes' => $supplier->notes,
                         'address' => $supplier->address,
                         'phone' => $supplier->phone,
                         'email' => $supplier->email,
@@ -149,7 +149,7 @@ class OthersRoutingTest extends TestCase
                     'supplier' => [
                         'id' => $newSupplier->id,
                         'name' => $newSupplier->name,
-                        'description' => $newSupplier->description,
+                        'notes' => $newSupplier->notes,
                         'address' => $newSupplier->address,
                         'phone' => $newSupplier->phone,
                         'email' => $newSupplier->email,
@@ -202,7 +202,7 @@ class OthersRoutingTest extends TestCase
                     ],
                     'priceHistory',
                     'supplier' => [
-                        'id', 'name', 'description',
+                        'id', 'name', 'notes',
                         'address', 'phone', 'email', 'supplierSince',
                     ],
                 ]
@@ -228,7 +228,7 @@ class OthersRoutingTest extends TestCase
                     'supplier' => [
                         'id' => $supplier->id,
                         'name' => $supplier->name,
-                        'description' => $supplier->description,
+                        'notes' => $supplier->notes,
                         'address' => $supplier->address,
                         'phone' => $supplier->phone,
                         'email' => $supplier->email,

@@ -15,7 +15,7 @@ use Illuminate\Support\Carbon;
  *
  * @property int $id
  * @property string $name
- * @property string $description
+ * @property string $notes
  * @property string|null $address
  * @property string|null $phone
  * @property string|null $email
@@ -43,7 +43,7 @@ class Supplier extends Model
     use HasFactory;
 
     protected $fillable = [
-        'name', 'description', 'address', 'phone', 'email', 'supplier_since',
+        'name', 'notes', 'address', 'phone', 'email', 'supplier_since',
     ];
 
     /**

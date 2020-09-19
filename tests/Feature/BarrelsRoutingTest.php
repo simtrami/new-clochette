@@ -88,7 +88,7 @@ class BarrelsRoutingTest extends TestCase
                     'coupler',
                     'abv', 'ibu',
                     'supplier' => [
-                        'id', 'name', 'description',
+                        'id', 'name', 'notes',
                         'address', 'phone', 'email', 'supplierSince',
                     ],
                 ]
@@ -109,7 +109,7 @@ class BarrelsRoutingTest extends TestCase
                     'supplier' => [
                         'id' => $supplier->id,
                         'name' => $supplier->name,
-                        'description' => $supplier->description,
+                        'notes' => $supplier->notes,
                         'address' => $supplier->address,
                         'phone' => $supplier->phone,
                         'email' => $supplier->email,
@@ -159,7 +159,7 @@ class BarrelsRoutingTest extends TestCase
                     'coupler',
                     'abv', 'ibu',
                     'supplier' => [
-                        'id', 'name', 'description',
+                        'id', 'name', 'notes',
                         'address', 'phone', 'email', 'supplierSince',
                     ],
                 ]
@@ -196,7 +196,7 @@ class BarrelsRoutingTest extends TestCase
                     'supplier' => [
                         'id' => $newSupplier->id,
                         'name' => $newSupplier->name,
-                        'description' => $newSupplier->description,
+                        'notes' => $newSupplier->notes,
                         'address' => $newSupplier->address,
                         'phone' => $newSupplier->phone,
                         'email' => $newSupplier->email,
@@ -265,7 +265,7 @@ class BarrelsRoutingTest extends TestCase
                     'coupler',
                     'abv', 'ibu',
                     'supplier' => [
-                        'id', 'name', 'description',
+                        'id', 'name', 'notes',
                         'address', 'phone', 'email', 'supplierSince',
                     ],
                 ]
@@ -296,7 +296,7 @@ class BarrelsRoutingTest extends TestCase
                     'supplier' => [
                         'id' => $supplier->id,
                         'name' => $supplier->name,
-                        'description' => $supplier->description,
+                        'notes' => $supplier->notes,
                         'address' => $supplier->address,
                         'phone' => $supplier->phone,
                         'email' => $supplier->email,

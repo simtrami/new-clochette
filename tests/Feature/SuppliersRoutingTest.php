@@ -28,7 +28,7 @@ class SuppliersRoutingTest extends TestCase
                     0 => [
                         'id',
                         'name',
-                        'description',
+                        'notes',
                         'address',
                         'phone',
                         'email',
@@ -37,7 +37,7 @@ class SuppliersRoutingTest extends TestCase
                     1 => [
                         'id',
                         'name',
-                        'description',
+                        'notes',
                         'address',
                         'phone',
                         'email',
@@ -51,7 +51,7 @@ class SuppliersRoutingTest extends TestCase
     {
         $response = $this->postJson('/api/suppliers', [
             'name' => 'Supplier McTest',
-            'description' => "Labore cupiditate doloribus qui laborum. Voluptatibus deleniti facere quasi sit tenetur accusantium magnam. Ab et consequatur itaque nostrum. Sint voluptas similique nihil.",
+            'notes' => "Labore cupiditate doloribus qui laborum. Voluptatibus deleniti facere quasi sit tenetur accusantium magnam. Ab et consequatur itaque nostrum. Sint voluptas similique nihil.",
             'address' => "568 Dane Harbors Apt. 171, Runteburgh, IL 00560",
             'phone' => "762.943.3595 x82638",
             'email' => 'supplier@mctest.com',
@@ -63,7 +63,7 @@ class SuppliersRoutingTest extends TestCase
                 'data' => [
                     'id',
                     'name',
-                    'description',
+                    'notes',
                     'address',
                     'phone',
                     'email',
@@ -78,7 +78,7 @@ class SuppliersRoutingTest extends TestCase
 
         $response = $this->putJson('/api/suppliers/' . $supplier->id, [
             'name' => 'Supplier McTest',
-            'description' => "Labore cupiditate doloribus qui laborum. Voluptatibus deleniti facere quasi sit tenetur accusantium magnam. Ab et consequatur itaque nostrum. Sint voluptas similique nihil.",
+            'notes' => "Labore cupiditate doloribus qui laborum. Voluptatibus deleniti facere quasi sit tenetur accusantium magnam. Ab et consequatur itaque nostrum. Sint voluptas similique nihil.",
             'address' => "568 Dane Harbors Apt. 171, Runteburgh, IL 00560",
             'phone' => "762.943.3595 x82638",
             'email' => 'supplier@mctest.com',
@@ -92,7 +92,7 @@ class SuppliersRoutingTest extends TestCase
                 'data' => [
                     'id' => $supplier->id,
                     'name' => 'Supplier McTest',
-                    'description' => "Labore cupiditate doloribus qui laborum. Voluptatibus deleniti facere quasi sit tenetur accusantium magnam. Ab et consequatur itaque nostrum. Sint voluptas similique nihil.",
+                    'notes' => "Labore cupiditate doloribus qui laborum. Voluptatibus deleniti facere quasi sit tenetur accusantium magnam. Ab et consequatur itaque nostrum. Sint voluptas similique nihil.",
                     'address' => "568 Dane Harbors Apt. 171, Runteburgh, IL 00560",
                     'phone' => "762.943.3595 x82638",
                     'email' => 'supplier@mctest.com',
@@ -119,7 +119,7 @@ class SuppliersRoutingTest extends TestCase
                 'data' => [
                     'id',
                     'name',
-                    'description',
+                    'notes',
                     'address',
                     'phone',
                     'email',

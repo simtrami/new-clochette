@@ -96,7 +96,7 @@ class ContactsRoutingTest extends TestCase
                     'supplier' => [
                         'id' => $newSupplier->id,
                         'name' => $newSupplier->name,
-                        'description' => $newSupplier->description,
+                        'notes' => $newSupplier->notes,
                         'address' => $newSupplier->address,
                         'phone' => $newSupplier->phone,
                         'email' => $newSupplier->email,

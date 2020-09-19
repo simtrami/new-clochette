@@ -45,7 +45,7 @@ class ContactsController extends Controller
             'phone' => 'string',
             'email' => 'email',
             'role' => 'required|string|min:2|max:255',
-            'notes' => 'nullable|string|min:2|max:500',
+            'notes' => 'nullable|string|min:2|max:1000',
         ]);
 
         $contact = new Contact($data);
@@ -72,7 +72,7 @@ class ContactsController extends Controller
                 Rule::unique('contacts')->ignore($contact),
             ],
             'role' => 'string|min:2|max:255',
-            'notes' => 'nullable|string|min:2|max:500',
+            'notes' => 'nullable|string|min:2|max:1000',
         ]);
 
         $contact->update($data);
