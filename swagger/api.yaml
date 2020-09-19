@@ -50,6 +50,7 @@ paths:
         schema:
           minimum: 1
           type: integer
+          format: int32
         example: 2
       responses:
         "200":
@@ -57,13 +58,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/inline_response_200'
+                $ref: '#/components/schemas/inline_response_200_barrels_list'
         default:
           description: Unexpected error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/InternalError'
   /bottles/:
     get:
       tags:
@@ -79,6 +80,7 @@ paths:
         schema:
           minimum: 1
           type: integer
+          format: int32
         example: 2
       responses:
         "200":
@@ -86,13 +88,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/inline_response_200_1'
+                $ref: '#/components/schemas/inline_response_200_bottles_list'
         default:
           description: Unexpected error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/InternalError'
   /bundles/:
     get:
       tags:
@@ -108,6 +110,7 @@ paths:
         schema:
           minimum: 1
           type: integer
+          format: int32
         example: 2
       responses:
         "200":
@@ -115,13 +118,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/inline_response_200_2'
+                $ref: '#/components/schemas/inline_response_200_bundles_list'
         default:
           description: Unexpected error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/InternalError'
   /contacts/:
     get:
       tags:
@@ -137,6 +140,7 @@ paths:
         schema:
           minimum: 1
           type: integer
+          format: int32
         example: 2
       responses:
         "200":
@@ -144,13 +148,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/inline_response_200_3'
+                $ref: '#/components/schemas/inline_response_200_contact_list'
         default:
           description: Unexpected error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/InternalError'
   /customers/:
     get:
       tags:
@@ -166,6 +170,7 @@ paths:
         schema:
           minimum: 1
           type: integer
+          format: int32
         example: 2
       responses:
         "200":
@@ -173,13 +178,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/inline_response_200_4'
+                $ref: '#/components/schemas/inline_response_200_customers_list'
         default:
           description: Unexpected error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/InternalError'
   /food/:
     get:
       tags:
@@ -195,6 +200,7 @@ paths:
         schema:
           minimum: 1
           type: integer
+          format: int32
         example: 2
       responses:
         "200":
@@ -202,13 +208,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/inline_response_200_5'
+                $ref: '#/components/schemas/inline_response_200_food_list'
         default:
           description: Unexpected error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/InternalError'
   /others/:
     get:
       tags:
@@ -224,6 +230,7 @@ paths:
         schema:
           minimum: 1
           type: integer
+          format: int32
         example: 2
       responses:
         "200":
@@ -231,13 +238,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/inline_response_200_6'
+                $ref: '#/components/schemas/inline_response_200_others_list'
         default:
           description: Unexpected error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/InternalError'
   /payment-methods/:
     get:
       tags:
@@ -253,6 +260,7 @@ paths:
         schema:
           minimum: 1
           type: integer
+          format: int32
         example: 2
       responses:
         "200":
@@ -260,13 +268,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/inline_response_200_7'
+                $ref: '#/components/schemas/inline_response_200_payment-methods_list'
         default:
           description: Unexpected error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/InternalError'
   /prices/:
     get:
       tags:
@@ -282,6 +290,7 @@ paths:
         schema:
           minimum: 1
           type: integer
+          format: int32
         example: 2
       responses:
         "200":
@@ -289,13 +298,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/inline_response_200_8'
+                $ref: '#/components/schemas/inline_response_200_prices_list'
         default:
           description: Unexpected error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/InternalError'
   /suppliers/:
     get:
       tags:
@@ -311,6 +320,7 @@ paths:
         schema:
           minimum: 1
           type: integer
+          format: int32
         example: 2
       responses:
         "200":
@@ -318,13 +328,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/inline_response_200_9'
+                $ref: '#/components/schemas/inline_response_200_suppliers_list'
         default:
           description: Unexpected error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/InternalError'
   /transactions/:
     get:
       tags:
@@ -340,6 +350,7 @@ paths:
         schema:
           minimum: 1
           type: integer
+          format: int32
         example: 2
       responses:
         "200":
@@ -347,13 +358,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/inline_response_200_10'
+                $ref: '#/components/schemas/inline_response_200_transactions_list'
         default:
           description: Unexpected error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/InternalError'
   /transactions/{id}:
     get:
       tags:
@@ -377,13 +388,19 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/inline_response_200_11'
+                $ref: '#/components/schemas/inline_response_200_transactions_show'
+        "404":
+          description: Non existing resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundError'
         default:
           description: Unexpected error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/InternalError'
   /users/:
     get:
       tags:
@@ -399,6 +416,7 @@ paths:
         schema:
           minimum: 1
           type: integer
+          format: int32
         example: 2
       responses:
         "200":
@@ -406,13 +424,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/inline_response_200_12'
+                $ref: '#/components/schemas/inline_response_200_users_list'
         default:
           description: Unexpected error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/InternalError'
   /users/{id}:
     get:
       tags:
@@ -436,19 +454,19 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/inline_response_200_13'
+                $ref: '#/components/schemas/inline_response_200_users_show'
         "404":
           description: Non existing resource
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/inline_response_404'
+                $ref: '#/components/schemas/NotFoundError'
         default:
           description: Unexpected error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/InternalError'
 components:
   schemas:
     Barrel:
@@ -460,20 +478,24 @@ components:
           readOnly: true
           example: 1
         name:
+          maxLength: 255
           type: string
           example: Korun On Berg
         quantity:
           minimum: 10
           type: integer
+          format: int32
         unitPrice:
           minimum: 0
           type: number
           description: Of the entire barrel
+          format: float
           example: 120
         volume:
           minimum: 0
           type: number
           description: In metric litre
+          format: float
           example: 30
         coupler:
           type: string
@@ -488,24 +510,24 @@ components:
           - U
         abv:
           type: number
+          format: float
           nullable: true
           example: 4.2
         ibu:
           type: number
+          format: float
           nullable: true
           example: 4
-        variety:
-          type: string
-          nullable: true
-          example: Euro Pale Lager
         value:
           minimum: 0
           type: number
+          format: float
           writeOnly: true
           example: 3
         secondValue:
           minimum: 0
           type: number
+          format: float
           nullable: true
           writeOnly: true
           example: 2
@@ -523,20 +545,24 @@ components:
           readOnly: true
           example: 1
         name:
+          maxLength: 255
           type: string
           example: Dunk
         quantity:
           minimum: 0
           type: integer
+          format: int32
           example: 10
         unitPrice:
           minimum: 0
           type: number
+          format: float
           example: 1.5
         volume:
           minimum: 0
           type: number
           description: In metric centilitre
+          format: float
           example: 33
         isReturnable:
           type: boolean
@@ -544,15 +570,18 @@ components:
           default: false
         abv:
           type: number
+          format: float
           nullable: true
           example: 5.6
         ibu:
           type: number
+          format: float
           nullable: true
           example: 35
         value:
           minimum: 0
           type: number
+          format: float
           writeOnly: true
           example: 2.5
         supplier_id:
@@ -569,15 +598,18 @@ components:
           readOnly: true
           example: 1
         name:
+          maxLength: 255
           type: string
           example: Pint and peanuts
         quantity:
           minimum: 0
           type: integer
+          format: int32
           example: 10
         value:
           minimum: 0
           type: number
+          format: float
           writeOnly: true
           example: 4
     Contact:
@@ -589,15 +621,19 @@ components:
           readOnly: true
           example: 1
         firstName:
+          maxLength: 255
           type: string
           example: Jane
         lastName:
+          maxLength: 255
           type: string
           example: Contact
         phone:
+          maxLength: 12
+          pattern: /^[+0-9][0-9]{9}[0-9]{0,2}$/
           type: string
           nullable: true
-          example: "123456789"
+          example: "0123456789"
         email:
           type: string
           format: email
@@ -607,6 +643,7 @@ components:
           type: string
           example: Truck driver
         notes:
+          maxLength: 1000
           type: string
           nullable: true
           example: Loves apples
@@ -624,9 +661,11 @@ components:
           readOnly: true
           example: 1
         firstName:
+          maxLength: 255
           type: string
           example: Jane
         lastName:
+          maxLength: 255
           type: string
           example: Customer
         nickname:
@@ -635,6 +674,7 @@ components:
           example: Happy Feet
         balance:
           type: number
+          format: float
           default: 0
         isStaff:
           type: boolean
@@ -648,15 +688,18 @@ components:
           readOnly: true
           example: 1
         name:
+          maxLength: 255
           type: string
           example: Candy bar
         quantity:
           minimum: 0
           type: integer
+          format: int32
           example: 10
         unitPrice:
           minimum: 0
           type: number
+          format: float
           example: 1.5
         isBulk:
           type: boolean
@@ -664,6 +707,7 @@ components:
         value:
           minimum: 0
           type: number
+          format: float
           writeOnly: true
           example: 2
         supplier_id:
@@ -680,23 +724,28 @@ components:
           readOnly: true
           example: 1
         name:
+          maxLength: 255
           type: string
           example: Green hat
         quantity:
           minimum: 0
           type: integer
+          format: inr32
           example: 10
         unitPrice:
           minimum: 0
           type: number
+          format: float
           example: 1
         description:
+          maxLength: 255
           type: string
           nullable: true
           example: Purchasable goodie for the St Patrick's day event
         value:
           minimum: 0
           type: number
+          format: float
           writeOnly: true
           example: 1.5
         supplier_id:
@@ -713,12 +762,14 @@ components:
           readOnly: true
           example: 1
         name:
+          maxLength: 255
           type: string
           example: Cash
-        needsCashDrawer:
+        debitCustomer:
           type: boolean
           default: false
         iconName:
+          maxLength: 100
           type: string
           nullable: true
           example: coin
@@ -737,16 +788,15 @@ components:
         value:
           minimum: 0
           type: number
+          format: float
           example: 3
         secondValue:
           minimum: 0
           type: number
           description: For smaller variant of the same article (eg. half a pint)
+          format: float
           nullable: true
           example: 2
-        isActive:
-          type: boolean
-          default: true
     Supplier:
       type: object
       properties:
@@ -756,9 +806,11 @@ components:
           readOnly: true
           example: 1
         name:
+          maxLength: 255
           type: string
           example: Jane Supplier
-        description:
+        notes:
+          maxLength: 1000
           type: string
           example: Nice people
         address:
@@ -766,6 +818,7 @@ components:
           nullable: true
           example: 1 Foo Street, 1234 Bar
         phone:
+          pattern: /^[+0-9][0-9]{9}[0-9]{0,2}$/
           type: string
           nullable: true
           example: "0123456789"
@@ -788,8 +841,10 @@ components:
         value:
           minimum: 0
           type: number
+          format: float
           example: 1.5
         comment:
+          maxLength: 255
           type: string
           nullable: true
           example: This is awesome!
@@ -817,6 +872,7 @@ components:
           readOnly: true
           example: 1
         username:
+          maxLength: 255
           type: string
           example: user
         email:
@@ -862,6 +918,7 @@ components:
           format: url
           nullable: true
           example: http://example.com/resources?page=3
+      additionalProperties: false
       readOnly: true
     Meta:
       type: object
@@ -869,10 +926,12 @@ components:
         current_page:
           type: integer
           description: Active page number
+          format: int32
           example: 2
         last_page:
           type: integer
           description: Last page number
+          format: int32
           example: 3
         path:
           type: string
@@ -882,33 +941,50 @@ components:
         per_page:
           type: integer
           description: Number of resources per page
+          format: int32
           example: 10
         from:
           type: integer
           description: First resource index number available in this page
+          format: int32
           nullable: true
           example: 11
         to:
           type: integer
           description: Last resource index number available in this page
+          format: int32
           nullable: true
           example: 20
         total:
           type: integer
           description: Total number of resources
+          format: int32
           example: 33
       readOnly: true
-    Error:
+    InternalError:
       required:
       - message
       type: object
       properties:
         message:
+          maxLength: 500
           type: string
           readOnly: true
           default: An error occured.
       readOnly: true
-    inline_response_200:
+    NotFoundError:
+      required:
+      - message
+      type: object
+      properties:
+        message:
+          maxLength: 500
+          type: string
+          readOnly: true
+          example: No query results for model ModelName QueriedID
+          default: An error occured.
+      readOnly: true
+    inline_response_200_barrels_list:
       type: object
       properties:
         data:
@@ -925,7 +1001,7 @@ components:
           $ref: '#/components/schemas/Links'
         meta:
           $ref: '#/components/schemas/Meta'
-    inline_response_200_1:
+    inline_response_200_bottles_list:
       type: object
       properties:
         data:
@@ -942,7 +1018,7 @@ components:
           $ref: '#/components/schemas/Links'
         meta:
           $ref: '#/components/schemas/Meta'
-    inline_response_200_2:
+    inline_response_200_bundles_list:
       type: object
       properties:
         data:
@@ -956,6 +1032,7 @@ components:
                 price:
                   $ref: '#/components/schemas/Price'
                 barrels:
+                  maxItems: 100
                   type: array
                   nullable: true
                   items:
@@ -966,7 +1043,9 @@ components:
                       quantity:
                         minimum: 1
                         type: integer
+                        format: int32
                 bottles:
+                  maxItems: 100
                   type: array
                   nullable: true
                   items:
@@ -977,7 +1056,9 @@ components:
                       quantity:
                         minimum: 1
                         type: integer
+                        format: int32
                 food:
+                  maxItems: 100
                   type: array
                   nullable: true
                   items:
@@ -988,7 +1069,9 @@ components:
                       quantity:
                         minimum: 1
                         type: integer
+                        format: int32
                 others:
+                  maxItems: 100
                   type: array
                   nullable: true
                   items:
@@ -999,11 +1082,12 @@ components:
                       quantity:
                         minimum: 1
                         type: integer
+                        format: int32
         links:
           $ref: '#/components/schemas/Links'
         meta:
           $ref: '#/components/schemas/Meta'
-    inline_response_200_3:
+    inline_response_200_contact_list:
       type: object
       properties:
         data:
@@ -1015,7 +1099,7 @@ components:
           $ref: '#/components/schemas/Links'
         meta:
           $ref: '#/components/schemas/Meta'
-    inline_response_200_4:
+    inline_response_200_customers_list:
       type: object
       properties:
         data:
@@ -1027,7 +1111,7 @@ components:
           $ref: '#/components/schemas/Links'
         meta:
           $ref: '#/components/schemas/Meta'
-    inline_response_200_5:
+    inline_response_200_food_list:
       type: object
       properties:
         data:
@@ -1044,7 +1128,7 @@ components:
           $ref: '#/components/schemas/Links'
         meta:
           $ref: '#/components/schemas/Meta'
-    inline_response_200_6:
+    inline_response_200_others_list:
       type: object
       properties:
         data:
@@ -1061,7 +1145,7 @@ components:
           $ref: '#/components/schemas/Links'
         meta:
           $ref: '#/components/schemas/Meta'
-    inline_response_200_7:
+    inline_response_200_payment-methods_list:
       type: object
       properties:
         data:
@@ -1073,7 +1157,7 @@ components:
           $ref: '#/components/schemas/Links'
         meta:
           $ref: '#/components/schemas/Meta'
-    inline_response_200_8:
+    inline_response_200_prices_list:
       type: object
       properties:
         data:
@@ -1085,7 +1169,7 @@ components:
           $ref: '#/components/schemas/Links'
         meta:
           $ref: '#/components/schemas/Meta'
-    inline_response_200_9:
+    inline_response_200_suppliers_list:
       type: object
       properties:
         data:
@@ -1097,7 +1181,7 @@ components:
           $ref: '#/components/schemas/Links'
         meta:
           $ref: '#/components/schemas/Meta'
-    inline_response_200_10:
+    inline_response_200_transactions_list:
       type: object
       properties:
         data:
@@ -1118,7 +1202,7 @@ components:
           $ref: '#/components/schemas/Links'
         meta:
           $ref: '#/components/schemas/Meta'
-    inline_response_200_11:
+    inline_response_200_transactions_show:
       allOf:
       - $ref: '#/components/schemas/Transaction'
       - type: object
@@ -1130,31 +1214,36 @@ components:
           paymentMethod:
             $ref: '#/components/schemas/PaymentMethod'
           barrels:
+            maxItems: 100
             type: array
             nullable: true
             items:
-              $ref: '#/components/schemas/inline_response_200_11_barrels'
+              $ref: '#/components/schemas/inline_response_200_transactions_show_barrels'
           bottles:
+            maxItems: 100
             type: array
             nullable: true
             items:
-              $ref: '#/components/schemas/inline_response_200_11_bottles'
+              $ref: '#/components/schemas/inline_response_200_transactions_show_bottles'
           food:
+            maxItems: 100
             type: array
             nullable: true
             items:
-              $ref: '#/components/schemas/inline_response_200_11_food'
+              $ref: '#/components/schemas/inline_response_200_transactions_show_food'
           others:
+            maxItems: 100
             type: array
             nullable: true
             items:
-              $ref: '#/components/schemas/inline_response_200_11_others'
+              $ref: '#/components/schemas/inline_response_200_transactions_show_others'
           bundles:
+            maxItems: 100
             type: array
             nullable: true
             items:
-              $ref: '#/components/schemas/inline_response_200_11_bundles'
-    inline_response_200_12:
+              $ref: '#/components/schemas/inline_response_200_transactions_show_bundles'
+    inline_response_200_users_list:
       type: object
       properties:
         data:
@@ -1166,65 +1255,63 @@ components:
           $ref: '#/components/schemas/Links'
         meta:
           $ref: '#/components/schemas/Meta'
-    inline_response_200_13:
+    inline_response_200_users_show:
       allOf:
       - $ref: '#/components/schemas/User'
       - type: object
         properties:
           customer:
             $ref: '#/components/schemas/Customer'
-    inline_response_404:
-      allOf:
-      - $ref: '#/components/schemas/Error'
-      - type: object
-        properties:
-          message:
-            example: No query results for model User 47
-    inline_response_200_11_barrels:
+    inline_response_200_transactions_show_barrels:
       type: object
       properties:
         quantity:
           minimum: 1
           type: integer
+          format: int32
         price:
           $ref: '#/components/schemas/Price'
         item:
           $ref: '#/components/schemas/Barrel'
-    inline_response_200_11_bottles:
+    inline_response_200_transactions_show_bottles:
       type: object
       properties:
         quantity:
           minimum: 1
           type: integer
+          format: int32
         price:
           $ref: '#/components/schemas/Price'
         item:
           $ref: '#/components/schemas/Bottle'
-    inline_response_200_11_food:
+    inline_response_200_transactions_show_food:
       type: object
       properties:
         quantity:
           minimum: 1
           type: integer
+          format: int32
         price:
           $ref: '#/components/schemas/Price'
         item:
           $ref: '#/components/schemas/Food'
-    inline_response_200_11_others:
+    inline_response_200_transactions_show_others:
       type: object
       properties:
         quantity:
           minimum: 1
           type: integer
+          format: int32
         price:
           $ref: '#/components/schemas/Price'
         item:
           $ref: '#/components/schemas/Other'
-    inline_response_200_11_bundles:
+    inline_response_200_transactions_show_bundles:
       properties:
         quantity:
           minimum: 1
           type: integer
+          format: int32
         price:
           $ref: '#/components/schemas/Price'
         item:
