@@ -212,6 +212,30 @@ class BarrelsRoutingTest extends TestCase
         $response->assertStatus(404);
     }
 
+    public function testUpdate3(): void
+    {
+        $barrel = Barrel::factory()->create();
+        $price = Price::factory()->make();
+        $barrel->prices()->save($price);
+
+        $response = $this->putJson('/api/barrels/' . $barrel->id, [
+            'name' => 'Barrel',
+        ]);
+        $response->assertStatus(200);
+    }
+
+    public function testUpdate4(): void
+    {
+        $barrel = Barrel::factory()->create();
+        $price = Price::factory()->make();
+        $barrel->prices()->save($price);
+
+        $response = $this->putJson('/api/barrels/' . $barrel->id, [
+            'second_value' => 2.6,
+        ]);
+        $response->assertStatus(422);
+    }
+
     public function testShow1(): void
     {
         $supplier = Supplier::factory()->create();

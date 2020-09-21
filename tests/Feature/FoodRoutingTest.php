@@ -166,6 +166,18 @@ class FoodRoutingTest extends TestCase
         $response->assertStatus(404);
     }
 
+    public function testUpdate3(): void
+    {
+        $food = Food::factory()->create();
+        $price = Price::factory()->make();
+        $food->prices()->save($price);
+
+        $response = $this->putJson('/api/food/' . $food->id, [
+            'name' => 'Food',
+        ]);
+        $response->assertStatus(200);
+    }
+
     public function testShow1(): void
     {
         $supplier = Supplier::factory()->create();

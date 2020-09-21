@@ -217,6 +217,18 @@ class BundlesRoutingTest extends TestCase
         $response->assertStatus(404);
     }
 
+    public function testUpdate3(): void
+    {
+        $bundle = Bundle::factory()->create();
+        $price = Price::factory()->make();
+        $bundle->prices()->save($price);
+
+        $response = $this->putJson('/api/bundles/' . $bundle->id, [
+            'name' => 'Bundle',
+        ]);
+        $response->assertStatus(200);
+    }
+
     public function testShow1(): void
     {
         $barrel = Barrel::factory()

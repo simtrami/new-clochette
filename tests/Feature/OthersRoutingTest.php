@@ -165,6 +165,18 @@ class OthersRoutingTest extends TestCase
         $response->assertStatus(404);
     }
 
+    public function testUpdate3(): void
+    {
+        $other = Other::factory()->create();
+        $price = Price::factory()->make();
+        $other->prices()->save($price);
+
+        $response = $this->putJson('/api/others/' . $other->id, [
+            'name' => 'Other',
+        ]);
+        $response->assertStatus(200);
+    }
+
     public function testShow1(): void
     {
         $supplier = Supplier::factory()->create();

@@ -74,8 +74,8 @@ class BarrelsController extends Controller
             'quantity' => 'numeric|min:0',
             'supplier_id' => 'exists:suppliers,id',
             'unit_price' => 'numeric|min:0',
-            'value' => 'numeric|min:0',
             'second_value' => 'nullable|numeric|min:0',
+            'value' => 'required_with:second_value|numeric|min:0',
             'volume' => 'numeric|min:0',
             'coupler' => 'nullable|string|min:1|max:255',
             'abv' => 'nullable|numeric|min:0|max:99.9',
@@ -86,7 +86,10 @@ class BarrelsController extends Controller
         if ($request->has('supplier_id')) {
             $barrel->supplier()->associate(Supplier::find($data['supplier_id']));
         }
-        $barrel->setActivePrice(new Price($data));
+        // Update price / create a new one
+        if ($request->hasAny('value', 'second_value')) {
+            $barrel->setActivePrice(new Price($data));
+        }
         // Update barrel's fields
         $barrel->update($data);
 

@@ -184,6 +184,18 @@ class BottlesRoutingTest extends TestCase
         $response->assertStatus(404);
     }
 
+    public function testUpdate3(): void
+    {
+        $bottle = Bottle::factory()->create();
+        $price = Price::factory()->make();
+        $bottle->prices()->save($price);
+
+        $response = $this->putJson('/api/bottles/' . $bottle->id, [
+            'name' => 'Bottle',
+        ]);
+        $response->assertStatus(200);
+    }
+
     public function testShow1(): void
     {
         $supplier = Supplier::factory()->create();
